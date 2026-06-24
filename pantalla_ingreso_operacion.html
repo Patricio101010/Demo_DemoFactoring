@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIM-ONE · Ingreso de Operación</title>
+    <title>Dim720 · Ingreso de Operación · FactorSuite</title>
     <link rel="shortcut icon" href="assets/img/icono.ico" type="image/x-icon">
     <script src="assets/js/hyper-config2.js"></script>
     <!-- Bootstrap 5 CSS -->
@@ -11,12 +11,12 @@
     <link href="assets/css/style-2.css" rel="stylesheet">
     <!-- MDI Icons -->
     <link rel="stylesheet" href="assets/css/icons.min.css">
-    <!-- Google Fonts (DIM-ONE) -->
+    <!-- Google Fonts (Dim720) -->
     <link href="assets/css/fonts.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS del DIM-ONE -->
+    <!-- Custom CSS del Dim720 -->
     <style>
         /* Estilos específicos para el wizard de ingreso de operación */
         .stepper-dim {
@@ -386,7 +386,6 @@
                         <li class="side-nav-item nav-item"><a href="pantalla_prorroga.html" class="side-nav-link" onclick="scrollToSection('view-prorrogas')"><i class="mdi mdi-calendar-clock"></i><span>Prórrogas</span><span class="nav-badge orange">8</span></a></li>
                         <li class="side-nav-title">Administración</li>
                         <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-clientes')"><i class="mdi mdi-account-multiple"></i><span>Clientes y Deudores</span></a></li>
-                        <li class="side-nav-item nav-item"><a href="factoring_taller_productos.html" class="side-nav-link"><i class="mdi mdi-toolbox-outline"></i><span>Taller de Productos</span></a></li>
                         <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-riesgo')"><i class="mdi mdi-shield-half-full"></i><span>Riesgo y Líneas</span></a></li>
                         <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-reportes')"><i class="mdi mdi-chart-line"></i><span>Reportes</span></a></li>
                         <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-config')"><i class="mdi mdi-cog"></i><span>Configuración</span></a></li>
@@ -404,10 +403,8 @@
                 <!-- Topbar interno con tasas -->
                 <div class="topbar-operaciones">
                     <div class="rate-list">
-                        <div class="rate"><b>UF</b><span class="v">$38.245,67</span></div>
-                        <div class="rate"><b>DÓLAR</b><span class="v">$945,30</span></div>
-                        <div class="rate"><b>EURO</b><span class="v">$1.020,15</span></div>
-                        <div class="rate"><b>UTM</b><span class="v">$68.034,00</span></div>
+                        <div class="rate"><b>UF</b><span class="v">$40.763,26</span></div>
+                        <div class="rate"><b>DÓLAR</b><span class="v">$918,91</span></div>
                         <div class="demo-tag"><span class="dot"></span>Datos de ejemplo</div>
                     </div>
                 </div>
@@ -500,8 +497,8 @@
                                         <tr><th>#</th><th>Rut Deudor</th><th>Razón social</th><th>N° documento</th><th>Código</th><th class="text-end">Monto</th><th class="text-end">Monto Anticipo</th><th class="text-center">F. emisión</th><th class="text-center">F. vencimiento</th><th class="text-center">F. pago</th></tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td class="mono">1</td><td class="mono">76.543.210-K</td><td>Comercial Andes SpA</td><td class="mono">0001234</td><td class="text-center">FC</td><td class="text-end mono">18.900.000</td><td class="text-end mono">15.120.000</td><td class="text-center mono">02/05/2026</td><td class="text-center mono">12/05/2026</td><td class="text-center">—</td></tr>
-                                        <tr><td class="mono">2</td><td class="mono">77.111.222-3</td><td>Distribuidora Sur Ltda.</td><td class="mono">0008876</td><td class="text-center">FC</td><td class="text-end mono">24.500.000</td><td class="text-end mono">19.600.000</td><td class="text-center mono">04/05/2026</td><td class="text-center mono">14/05/2026</td><td class="text-center">—</td></tr>
+                                        <tr><td class="mono">1</td><td class="mono">76.543.210-K</td><td>Comercial Andes SpA</td><td class="mono">0001234</td><td class="text-center">FC</td><td class="text-end mono">18.900.000</td><td class="text-end mono">15.120.000</td><td class="text-center mono">02/05/2026</td><td class="text-center mono">12/06/2026</td><td class="text-center">—</td></tr>
+                                        <tr><td class="mono">2</td><td class="mono">77.111.222-3</td><td>Distribuidora Sur Ltda.</td><td class="mono">0008876</td><td class="text-center">FC</td><td class="text-end mono">24.500.000</td><td class="text-end mono">19.600.000</td><td class="text-center mono">05/05/2026</td><td class="text-center mono">20/06/2026</td><td class="text-center">—</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -576,7 +573,7 @@
                                     <div class="op-card"><div class="op-head">Condiciones de desembolso</div><div class="op-body">
                                         <div class="row g-2">
                                             <div class="col-12"><label class="form-label small fw-semibold text-muted">Tipo Giro</label><select class="form-select form-select-sm"><option>Transferencia</option></select></div>
-                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Banco</label><select class="form-select form-select-sm"><option>Banco de Chile</option></select></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Banco</label><select class="form-select form-select-sm"><option>Banco Scotiabank</option></select></div>
                                             <div class="col-12"><label class="form-label small fw-semibold text-muted">Tipo Desemb.</label><select class="form-select form-select-sm"><option>Total</option></select></div>
                                             <div class="col-12"><label class="form-label small fw-semibold text-muted">Tipo Cta.</label><select class="form-select form-select-sm"><option>Corriente</option></select></div>
                                             <div class="col-12"><label class="form-label small fw-semibold text-muted">Nro. Cta.</label><div class="input-group input-group-sm"><input type="text" class="form-control"></div></div>
@@ -645,7 +642,7 @@
                             <div class="row g-3">
                                 <div class="col-md-4"><div class="sum"><div class="sum-title">Deuda y cuentas</div><div class="sum-row"><span class="lbl">Monto Deuda</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Deuda Vigente</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Deuda Morosa</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Cuenta x Cobrar</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Cuenta x Pagar</span><span class="val">0</span></div></div></div>
                                 <div class="col-md-4"><div class="sum"><div class="sum-title">Precios y comisión</div><div class="sum-row"><span class="lbl">Precio Compra</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Monto Comisión</span><span class="val">0</span></div><div class="sum-row hl"><span class="lbl">Diferencia Precio</span><span class="val">0</span></div></div></div>
-                                <div class="col-md-4"><div class="sum"><div class="sum-title">Giro y saldos</div><div class="sum-row"><span class="lbl">Excedentes</span><span class="val">0</span></div><div class="sum-row hl"><span class="lbl">Monto a Girar</span><span class="val">0</span></div><div class="sum-row hl"><span class="lbl">Saldo a Pagar</span><span class="val">0</span></div></div></div>
+                                <div class="col-md-4"><div class="sum"><div class="sum-title">Giro y saldos</div><div class="sum-row"><span class="lbl">Excedentes</span><span class="val">0</span></div><div class="sum-row hl"><span class="lbl">Monto a Girar</span><span class="val">42.000.000,00</span></div><div class="sum-row hl"><span class="lbl">Saldo a Pagar</span><span class="val">42.000.000,00</span></div></div></div>
                             </div>
                         </div>
                     </div>
@@ -675,7 +672,7 @@
     </div>
 
     <footer class="dashboard-footer footer text-center d-flex justify-content-center">
-        <i class="mdi mdi-shield-check"></i> DIM-ONE · Motor de Evaluación de Riesgo · Confidencial — Uso Interno
+        <i class="mdi mdi-shield-check"></i> Dim720 · Motor de Evaluación de Riesgo · Dimensión S.A. · Confidencial — Uso Interno
     </footer>
 </div>
 
