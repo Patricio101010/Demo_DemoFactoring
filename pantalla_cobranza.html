@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIM-ONE · Gestión de Cobranza</title>
+    <link rel="shortcut icon" href="assets/img/icono.ico" type="image/x-icon">
+    <script src="assets/js/hyper-config2.js"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="assets/css/app-dim.min.css" class="app-style" rel="stylesheet">
+    <link href="assets/css/style-2.css" rel="stylesheet">
+    <!-- MDI Icons -->
+    <link rel="stylesheet" href="assets/css/icons.min.css">
+    <!-- Google Fonts (Dim720) -->
+    <link href="assets/css/fonts.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+    <style>
+        /* Estilos específicos para la pantalla de Gestión de Cobranza */
+        .group {
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            margin-bottom: 0.75rem;
+            background: var(--bg-card);
+            overflow: hidden;
+        }
+        
+        .group-head {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            cursor: pointer;
+            background: var(--gray-50);
+            transition: all var(--transition-fast);
+            border-bottom: 1px solid transparent;
+        }
+        
+        .group-head:hover {
+            background: var(--bg-hover);
+        }
+        
+        .group-head.open {
+            border-bottom-color: var(--border-color);
+        }
+        
+        .group-head .tw {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            transition: transform var(--transition-fast);
+            display: inline-block;
+        }
+        
+        .group-head.open .tw {
+            transform: rotate(90deg);
+        }
+        
+        .group-head .nm {
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+        
+        .group-head .meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+        
+        .group-head .meta .mono {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .group-body {
+            display: none;
+            padding: 1rem;
+        }
+        
+        .group-body.open {
+            display: block;
+        }
+        
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        .pill.red { background: var(--danger-light); color: var(--danger); }
+        .pill.y { background: var(--warning-light); color: #92400e; }
+        .pill.g { background: var(--success-light); color: var(--success); }
+        
+        .tool-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .tool-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--btn-radius);
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tool-btn:hover {
+            border-color: var(--dim-red);
+            color: var(--dim-red);
+            background: var(--dim-red-glow);
+            transform: translateY(-2px);
+        }
+        
+        .tool-btn .ic {
+            font-size: 1.25rem;
+        }
+        
+        .estado-ic {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .leyenda {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.7rem;
+        }
+        
+        .leyenda .it {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--text-secondary);
+        }
+        
+        .leyenda .sw {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .sel-all {
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .note {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: var(--gray-50);
+            border-radius: var(--card-radius);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        
+        @media (max-width: 1200px) {
+            .group-head .meta {
+                flex-direction: column;
+                gap: 0.25rem;
+                align-items: flex-end;
+            }
+        }
+
+        /* Estilos adicionales para los input-group con input-group-text */
+        .input-group .input-group-text {
+            background-color: var(--gray-100);
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 100px;
+        }
+        
+        .input-group-sm .input-group-text {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+    </style>
+        <!-- Custom CSS del Dim720 -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="wrapper">
+    <!-- ========== Topbar (idéntica Dim720) ========== -->
+    <div class="rd-navbar context rd-navbar-original rd-navbar-fullwidth">
+        <div class="navbar-container fixed-top">
+            <div class="navbar-custom">
+                <div class="topbar">
+                    <div class="d-flex align-items-center gap-lg-1 gap-1">
+                        <div class="logo-topbar">
+                            <a class="logo-light"><span class="logo-lg"><img src="assets/img/logo.png" alt="logo"></span><span class="logo-sm"><img src="assets/img/logo-sm.png" alt="small logo"></span></a>
+                            <a class="logo-dark"><span class="logo-lg"><img src="assets/img/logo-dark.png" alt="dark logo"></span><span class="logo-sm"><img src="assets/img/logo-dark-sm.png" alt="small logo"></span></a>
+                        </div>
+                        <button class="button-toggle-menu"><i class="mdi mdi-menu"></i></button>
+                        <button class="navbar-toggle" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content"><div class="lines"><span></span><span></span><span></span></div></button>
+                        <div class="topbar-title" style="font-family: dim-regular;"><i class="mdi mdi-cash-100"></i> GESTIÓN DE COBRANZA</div>
+                    </div>
+                    <div class="topbar-right">
+                        <div class="live-indicator"><div class="live-dot"></div>EN VIVO</div>
+                        <div class="topbar-date" id="topbarDate">22 MAY 2026 · 10:24</div>
+                          <div class="d-flex gap-2 ms-3">
+                            <a href="panel_general.html" class="btn btn-secondary btn-sm"><i class="mdi mdi-view-dashboard me-1"></i>Panel General</a>
+                            <a href="dashboard_cobranza.html" class="btn btn-danger btn-sm"><i class="mdi mdi-phone me-1"></i>Dashboard Cobranza</a>
+                        </div>
+                    </div>
+                    <ul class="topbar-menu d-flex align-items-center gap-1">
+                        <li class="d-none d-sm-inline-block"><div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" title="COLOR MODE"><i class="mdi mdi-brightness-4 mdi-24px"></i></div></li>
+                        <li class="d-none d-md-inline-block"><a class="nav-link" href="" data-toggle="fullscreen"><i class="mdi mdi-fullscreen mdi-24px"></i></a></li>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                <span class="account-user-avatar"><i class="mdi mdi-account-circle h2 icon-danger icon-circle icon-style-2 mdi-36px"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                                <a href="" class="dropdown-item"><i class="mdi mdi-account-edit me-1"></i>Modificar Usuario</a>
+                                <a href="" class="dropdown-item"><i class="mdi mdi-lock-outline me-1"></i>Cambiar Contraseña</a>
+                                <a href="index.html" class="dropdown-item"><i class="mdi mdi-logout me-1"></i>Cerrar Sesión</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Sidebar completa (con todos los enlaces) ========== -->
+    <div class="leftside-menu border-0 rounded-0">
+        <a class="logo logo-light m-0 p-0"><span class="logo-lg justify-content-center mt-3"><img src="assets/images/logo.png" alt="logo"></span><span class="logo-sm mt-0 mb-2"><img src="assets/images/logo-sm.png" alt="small logo"></span></a>
+        <a class="logo logo-dark m-0 p-0"><span class="logo-lg"><img src="assets/images/logo-dark.png" alt="logo"></span><span class="logo-sm"><img src="assets/images/logo-dark-sm.png" alt="small logo"></span></a>
+        <div class="button-sm-hover" data-bs-toggle="tooltip" title="Mantener Sidebar"><i class="ri-checkbox-blank-circle-line"></i></div>
+        <div class="button-close-fullsidebar"><i class="ri-close-fill"></i></div>
+        <div class="leftbar-user">
+            <a class="avatar-sm"><img src="assets/images/users/user-1.jpg" width="130" alt="user-image" class="avatar-img rounded-circle shadow-out"><span class="leftbar-user-name">John Sanders</span></a>
+            <div class="info"><a><span style="color:#faaec2"><div class="user-role">Gerencia General</div></span></a></div>
+        </div>
+        <div id="leftside-menu-container" data-simplebar="init" style="height: 66vh !important;">
+            <div class="simplebar-wrapper"><div class="simplebar-mask"><div class="simplebar-offset"><div class="simplebar-content-wrapper"><div class="simplebar-content">
+                <nav id="sidebarNav">
+                    <ul class="side-nav mt-2">
+                    <!-- Ítems del menú original del factoring integrados -->
+                        <li class="side-nav-item nav-item active"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-panel-general')"><i class="mdi mdi-view-dashboard"></i><span>Panel General</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_operaciones.html" class="side-nav-link" onclick="scrollToSection('view-operaciones')"><i class="mdi mdi-file-document-edit"></i><span>Operaciones</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-cartera')"><i class="mdi mdi-account-group"></i><span>Cartera</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_cobranza.html" class="side-nav-link" onclick="scrollToSection('view-cobranza')"><i class="mdi mdi-cash-100"></i><span>Cobranza</span><span class="nav-badge green">activo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_recaudacion.html" class="side-nav-link" onclick="scrollToSection('view-recaudacion')"><i class="mdi mdi-cash-multiple"></i><span>Recaudación</span><span class="nav-badge blue">nuevo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_prorroga.html" class="side-nav-link" onclick="scrollToSection('view-prorrogas')"><i class="mdi mdi-calendar-clock"></i><span>Prórrogas</span><span class="nav-badge orange">8</span></a></li>
+                        <li class="side-nav-title">Administración</li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-clientes')"><i class="mdi mdi-account-multiple"></i><span>Clientes y Deudores</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="factoring_taller_productos.html" class="side-nav-link"><i class="mdi mdi-toolbox-outline"></i><span>Taller de Productos</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-riesgo')"><i class="mdi mdi-shield-half-full"></i><span>Riesgo y Líneas</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-reportes')"><i class="mdi mdi-chart-line"></i><span>Reportes</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-config')"><i class="mdi mdi-cog"></i><span>Configuración</span></a></li>
+                    </ul>
+                </nav>
+            </div></div></div></div></div>
+        </div>
+        <ul class="side-nav fixed-bottom"><li class="side-nav-item nav-item m-0"><a class="side-nav-link h-100" onclick="logout()" data-bs-toggle="tooltip" title="Cerrar Sesión"><i class="mdi mdi-logout-variant mdi-24px"></i></a></li></ul>
+    </div>
+
+    <!-- ========== Contenido principal ========== -->
+    <div class="content-page p-0">
+        <main class="dashboard-content" id="dashboardContent">
+            <div class="dashboard-view active">
+                <!-- Criterios + Pagadores + herramientas -->
+                <div class="row g-3">
+                    <!-- Criterios -->
+                    <div class="col-md-4">
+                        <div class="card-dim mb-3">
+                            <div class="card-header-dim py-2">
+                                <h3><i class="mdi mdi-filter-variant"></i> Seleccione Criterios de Búsqueda</h3>
+                            </div>
+                            <div class="card-body-dim">
+                                <!-- Estado Docto. -->
+                                <div class="mb-3">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Estado Docto.</span>
+                                        <select class="form-select form-select-sm">
+                                            <option>Todos</option>
+                                            <option>Vigente</option>
+                                            <option>En mora</option>
+                                            <option>Protestado</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Ordenar -->
+                                <div class="mb-3">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Ordenar</span>
+                                        <select class="form-select form-select-sm">
+                                            <option>Por Identificación</option>
+                                            <option>Por Nombre</option>
+                                            <option>Por Pago No Liberado</option>
+                                            <option>Por Sólo Hoy</option>
+                                            <option>Por Fecha Seguimiento</option>
+                                            <option>Por Monto</option>
+                                            <option>Por Cob. Anticipada</option>
+                                            <option>Por No Recaudado</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Pagador -->
+                                <div class="mb-3">
+                                    <div class="input-group input-group-sm mb-2">
+                                        <span class="input-group-text">Pagador RUT</span>
+                                        <input type="text" class="form-control" placeholder="99.999.999">
+                                        <input type="text" class="form-control" maxlength="1" style="width: 50px;" placeholder="DV">
+                                        <button class="btn btn-outline-secondary" type="button">⌕</button>
+                                    </div>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Razón Social</span>
+                                        <input type="text" class="form-control" placeholder="Razón social" readonly>
+                                    </div>
+                                </div>
+
+                                <!-- Cliente -->
+                                <div class="mb-3">
+                                    <div class="input-group input-group-sm mb-2">
+                                        <span class="input-group-text">Cliente RUT</span>
+                                        <input type="text" class="form-control" placeholder="99.999.999">
+                                        <input type="text" class="form-control" maxlength="1" style="width: 50px;" placeholder="DV">
+                                        <button class="btn btn-outline-secondary" type="button">⌕</button>
+                                    </div>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Razón Social</span>
+                                        <input type="text" class="form-control" placeholder="Razón social" readonly>
+                                    </div>
+                                </div>
+
+                                <!-- Nro. Docto. y Nro. Ope. -->
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">Nro. Docto.</span>
+                                            <input type="text" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">Nro. Ope.</span>
+                                            <input type="text" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Checkboxes (sin input-group) -->
+                                <div class="d-flex gap-3 my-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="prorrogados">
+                                        <label class="form-check-label small" for="prorrogados">Prorrogados</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="sinCobrar">
+                                        <label class="form-check-label small" for="sinCobrar">Sin cobrar próx. 45 días</label>
+                                    </div>
+                                </div>
+
+                                <!-- Códigos de Cobranza -->
+                                <label class="form-label small fw-semibold text-muted mb-2">Códigos de Cobranza</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <select class="form-select form-select-sm">
+                                            <option>001</option>
+                                            <option>010</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <select class="form-select form-select-sm">
+                                            <option>099</option>
+                                            <option>120</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagadores y contactos -->
+                    <div class="col-md-7">
+                        <div class="card-dim mb-3">
+                            <div class="card-header-dim py-2">
+                                <h3><i class="mdi mdi-account-group"></i> Pagadores y Contactos</h3>
+                            </div>
+                            <div class="card-body-dim">
+                                <div class="group">
+                                    <div class="group-head open" onclick="toggleGroup(this)">
+                                        <span class="tw">▶</span>
+                                        <span class="nm">Comercial Andes SpA</span>
+                                        <div class="meta">
+                                            <span>Docs: <b class="mono">2</b></span>
+                                            <span>Monto: <b class="mono">$41.400.000</b></span>
+                                            <span class="pill red">Con gestión</span>
+                                        </div>
+                                    </div>
+                                    <div class="group-body open">
+                                        <table class="table-dim w-100">
+                                            <thead>
+                                                <tr><th>Id</th><th>Nombre</th><th>Cargo</th><th>Teléfono</th><th>e-Mail</th><th class="text-center">Sel.</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td class="mono">01</td><td>María Soto</td><td>Tesorería</td><td class="mono">+56 2 2345 6789</td><td>m.soto@andes.cl</td><td class="text-center"><i class="mdi mdi-checkbox-marked-circle-outline text-success"></i></td></tr>
+                                                <tr><td class="mono">02</td><td>Jorge Pérez</td><td>Finanzas</td><td class="mono">+56 9 8765 4321</td><td>j.perez@andes.cl</td><td class="text-center"><i class="mdi mdi-checkbox-marked-circle-outline text-success"></i></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="group">
+                                    <div class="group-head open" onclick="toggleGroup(this)">
+                                        <span class="tw">▶</span>
+                                        <span class="nm">Distribuidora Sur Ltda.</span>
+                                        <div class="meta">
+                                            <span>Docs: <b class="mono">2</b></span>
+                                            <span>Monto: <b class="mono">$33.900.000</b></span>
+                                            <span class="pill y">Pendiente</span>
+                                        </div>
+                                    </div>
+                                    <div class="group-body open">
+                                        <table class="table-dim w-100">
+                                            <thead><tr><th>Id</th><th>Nombre</th><th>Cargo</th><th>Teléfono</th><th>e-Mail</th><th class="text-center">Sel.</th></tr></thead>
+                                            <tbody><tr><td class="mono">01</td><td>Ana Rivas</td><td>Pagos</td><td class="mono">+56 41 220 1100</td><td>a.rivas@sur.cl</td><td class="text-center"><i class="mdi mdi-checkbox-marked-circle-outline text-success"></i></td></tr></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="group">
+                                    <div class="group-head" onclick="toggleGroup(this)">
+                                        <span class="tw">▶</span>
+                                        <span class="nm">Inversiones Pacífico</span>
+                                        <div class="meta">
+                                            <span>Docs: <b class="mono">1</b></span>
+                                            <span>Monto: <b class="mono">$11.200.000</b></span>
+                                            <span class="pill g">Sin gestión</span>
+                                        </div>
+                                    </div>
+                                    <div class="group-body">
+                                        <table class="table-dim w-100">
+                                            <thead><tr><th>Id</th><th>Nombre</th><th>Cargo</th><th>Teléfono</th><th>e-Mail</th><th class="text-center">Sel.</th></tr></thead>
+                                            <tbody><tr><td class="mono">01</td><td>Luis Fuentes</td><td>Gerencia</td><td class="mono">+56 2 2987 6543</td><td>l.fuentes@pacifico.cl</td><td class="text-center"><i class="mdi mdi-checkbox-marked-circle-outline text-success"></i></td></tr></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Herramientas -->
+                    <div class="col-md-1">
+                        <div class="tool-col">
+                            <button class="tool-btn" title="Contactos"><span class="ic">☎</span></button>
+                            <button class="tool-btn" title="Días de Pago"><span class="ic">📅</span></button>
+                            <button class="tool-btn" title="Observación del Pagador"><span class="ic">📝</span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clientes y Documentos -->
+                <div class="card-dim mb-3">
+                    <div class="card-header-dim py-2">
+                        <h3><i class="mdi mdi-file-document"></i> Clientes y Documentos</h3>
+                    </div>
+                    <div class="card-body-dim">
+                        <div class="sel-all">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAllDocs">
+                                <label class="form-check-label small" for="selectAllDocs">Seleccionar todos los documentos del pagador</label>
+                            </div>
+                        </div>
+                        <div class="group">
+                            <div class="group-head open" onclick="toggleGroup(this)">
+                                <span class="tw">▶</span>
+                                <span class="nm">Cliente: DIMENSIÓN S.A.</span>
+                                <div class="meta">
+                                    <span>Docs: <b class="mono">3</b></span>
+                                    <span>Suma: <b class="mono">$52.600.000</b></span>
+                                </div>
+                            </div>
+                            <div class="group-body open">
+                                <div class="table-responsive">
+                                    <table class="table-dim w-100">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Sel.</th><th>Tipo Docto</th><th class="text-center">Nro. Ope.</th><th class="text-center">Nro. Docto.</th><th class="text-center">Cuota</th><th class="text-center">Fecha Vcto.</th><th class="text-center">Vcto. Orig.</th><th>Estado Cob.</th><th class="text-end">Saldo Pagador</th><th class="text-end">Saldo Cliente</th><th class="text-center">Moneda</th><th class="text-end">Monto Dcto.</th><th class="text-center">Estado Gestión</th><th class="text-center">Estado Dcto.</th><th class="text-center">Detalle</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center"><input type="checkbox" class="doc-check"></td>
+                                                <td>Factura</td><td class="mono text-center">100245</td><td class="mono text-center">0001234</td><td class="text-center">1/1</td>
+                                                <td class="mono text-center">12/05/2026</td><td class="mono text-center">12/05/2026</td><td class="text-center">901</td>
+                                                <td class="mono text-end">18.900.000</td><td class="mono text-end">18.900.000</td><td class="text-center">CLP</td>
+                                                <td class="mono text-end">18.900.000</td><td class="text-center"><span class="estado-ic" style="background:#B3261E"></span></td>
+                                                <td class="text-center"><span class="pill red">En mora</span></td>
+                                                <td class="text-center"><i class="mdi mdi-magnify"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center"><input type="checkbox" class="doc-check"></td>
+                                                <td>Factura</td><td class="mono text-center">100246</td><td class="mono text-center">0001240</td><td class="text-center">1/1</td>
+                                                <td class="mono text-center">18/05/2026</td><td class="mono text-center">18/05/2026</td><td class="text-center">901</td>
+                                                <td class="mono text-end">22.500.000</td><td class="mono text-end">22.500.000</td><td class="text-center">CLP</td>
+                                                <td class="mono text-end">22.500.000</td><td class="text-center"><span class="estado-ic" style="background:#B4690E"></span></td>
+                                                <td class="text-center"><span class="pill red">En mora</span></td>
+                                                <td class="text-center"><i class="mdi mdi-magnify"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center"><input type="checkbox" class="doc-check"></td>
+                                                <td>Cheque</td><td class="mono text-center">100247</td><td class="mono text-center">0004410</td><td class="text-center">2/3</td>
+                                                <td class="mono text-center">20/05/2026</td><td class="mono text-center">20/04/2026</td><td class="text-center">120</td>
+                                                <td class="mono text-end">11.200.000</td><td class="mono text-end">11.200.000</td><td class="text-center">CLP</td>
+                                                <td class="mono text-end">11.200.000</td><td class="text-center"><span class="estado-ic" style="background:#157347"></span></td>
+                                                <td class="text-center"><span class="pill g">Vigente</span></td>
+                                                <td class="text-center"><i class="mdi mdi-magnify"></i></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Leyenda -->
+                        <div class="leyenda">
+                            <div class="it"><span class="sw" style="background:#9aa3ad"></span>Sin Gestionar</div>
+                            <div class="it"><span class="sw" style="background:#157347"></span>Gestión Pendiente</div>
+                            <div class="it"><span class="sw" style="background:#6D4AB6"></span>Doctos. Pendientes</div>
+                            <div class="it"><span class="sw" style="background:#B3261E"></span>Pago en Línea</div>
+                            <div class="it"><span class="sw" style="background:#B4690E"></span>Nunca Recaudado</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Datos de gestión -->
+                <div class="card-dim mb-3">
+                    <div class="card-header-dim py-2">
+                        <h3><i class="mdi mdi-calendar-clock"></i> Datos de Gestión</h3>
+                    </div>
+                    <div class="card-body-dim">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Fec. Próx. Gestión</span>
+                                    <input type="text" class="form-control" placeholder="dd/mm/aaaa">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm" >
+                                    <span class="input-group-text">Hora</span>
+                                    <input type="text" class="form-control" placeholder="hh:mm">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Suc. Cobranza</span>
+                                    <select class="form-select form-select-sm">
+                                        <option>Santiago Centro</option>
+                                        <option>Providencia</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Descripción Cobranza</span>
+                                    <select class="form-select form-select-sm">
+                                        <option>Llamado telefónico</option>
+                                        <option>Correo</option>
+                                        <option>Visita</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Suc. Recaudación</span>
+                                    <select class="form-select form-select-sm">
+                                        <option>Santiago Centro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Acción Cobranza</span>
+                                    <input type="text" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Est. Cobranza</span>
+                                    <select class="form-select form-select-sm">
+                                        <option>Comprometido a pago</option>
+                                        <option>Sin contacto</option>
+                                        <option>En disputa</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Doc. Necesaria</span>
+                                    <textarea rows="1" class="form-control form-control-sm"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Fecha Pago</span>
+                                    <input type="text" class="form-control" placeholder="dd/mm/aaaa">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm" >
+                                    <span class="input-group-text">Hora Desde</span>
+                                    <input type="text" class="form-control" placeholder="hh:mm">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm" >
+                                    <span class="input-group-text">Hora Hasta</span>
+                                    <input type="text" class="form-control" placeholder="hh:mm">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Observación</span>
+                                    <textarea rows="1" class="form-control form-control-sm"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Región</span>
+                                    <select class="form-select form-select-sm">
+                                        <option>Metropolitana</option>
+                                        <option>Biobío</option>
+                                        <option>Valparaíso</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Ciudad</span>
+                                    <select class="form-select form-select-sm">
+                                        <option>Santiago</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Comuna</span>
+                                    <select class="form-select form-select-sm">
+                                        <option>Las Condes</option>
+                                        <option>Providencia</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Zona</span>
+                                    <input type="text" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Dirección</span>
+                                    <input type="text" class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex gap-3 flex-wrap pt-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="orden" id="ordenBanco">
+                                        <label class="form-check-label small" for="ordenBanco">A la orden: Banco</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gestionPendiente">
+                                        <label class="form-check-label small" for="gestionPendiente">Gestión Pendiente</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="aRecaudar">
+                                        <label class="form-check-label small" for="aRecaudar">A Recaudar</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="confHorario">
+                                        <label class="form-check-label small" for="confHorario">Conf. Horario</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer-dim p-3 border-top">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-danger btn-sm px-4"><i class="mdi mdi-magnify me-1"></i>Buscar</button>
+                            <button class="btn btn-success btn-sm px-4"><i class="mdi mdi-content-save me-1"></i>Guardar Gestión</button>
+                            <button class="btn btn-secondary btn-sm px-4"><i class="mdi mdi-broom me-1"></i>Limpiar</button>
+                            <a href="pantalla_cobranza.html" class="btn btn-secondary btn-sm px-4"><i class="mdi mdi-arrow-left me-1"></i>Volver</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="dashboard-footer footer text-center d-flex justify-content-center">
+        <i class="mdi mdi-shield-check"></i> DIM-ONE · Motor de Evaluación de Riesgo · Confidencial — Uso Interno
+    </footer>
+</div>
+
+<!-- Scripts base -->
+<script src="assets/js/vendor.min.js"></script>
+<script src="assets/js/app.min.js"></script>
+<script>
+    // Función para colapsar/expandir grupos
+    function toggleGroup(element) {
+        element.classList.toggle('open');
+        const body = element.nextElementSibling;
+        if (body) {
+            body.classList.toggle('open');
+        }
+    }
+    
+    // Actualizar fecha/hora en topbar
+    (function updateDate() {
+        const M = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+        const n = new Date();
+        const el = document.getElementById('topbarDate');
+        if(el) el.textContent = String(n.getDate()).padStart(2,'0')+' '+M[n.getMonth()]+' '+n.getFullYear()+' · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+        setTimeout(updateDate, 30000);
+    })();
+    
+    // Funcionalidad de logout
+    function logout() {
+        Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: 'Serás redirigido al inicio de sesión',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d21047',
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'index.html';
+            }
+        });
+    }
+    
+    // Seleccionar todos los documentos
+    const selectAllCheckbox = document.getElementById('selectAllDocs');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function(e) {
+            const docChecks = document.querySelectorAll('.doc-check');
+            docChecks.forEach(cb => cb.checked = e.target.checked);
+        });
+    }
+</script>
+</body>
+</html>

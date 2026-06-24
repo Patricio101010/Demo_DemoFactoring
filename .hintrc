@@ -1,0 +1,64 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "axe/name-role-value": [
+      "default",
+      {
+        "button-name": "off",
+        "link-name": "off"
+      }
+    ],
+    "axe/forms": [
+      "default",
+      {
+        "label": "off",
+        "select-name": "off"
+      }
+    ],
+    "no-inline-styles": "off",
+    "axe/text-alternatives": [
+      "default",
+      {
+        "image-alt": "off",
+        "document-title": "off"
+      }
+    ],
+    "meta-viewport": "off",
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "-ms-filter",
+          "backdrop-filter",
+          "user-select",
+          "text-align: -webkit-match-parent",
+          "-webkit-text-size-adjust",
+          "-webkit-overflow-scrolling",
+          "print-color-adjust",
+          "print-color-adjust: exact"
+        ]
+      }
+    ],
+    "axe/parsing": [
+      "default",
+      {
+        "duplicate-id-active": "off"
+      }
+    ],
+    "disown-opener": "off",
+    "axe/aria": [
+      "default",
+      {
+        "aria-progressbar-name": "off"
+      }
+    ],
+    "axe/structure": [
+      "default",
+      {
+        "list": "off"
+      }
+    ]
+  }
+}

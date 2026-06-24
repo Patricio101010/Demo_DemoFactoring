@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIM-ONE · Ingreso de Operación</title>
+    <link rel="shortcut icon" href="assets/img/icono.ico" type="image/x-icon">
+    <script src="assets/js/hyper-config2.js"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="assets/css/app-dim.min.css" class="app-style" rel="stylesheet">
+    <link href="assets/css/style-2.css" rel="stylesheet">
+    <!-- MDI Icons -->
+    <link rel="stylesheet" href="assets/css/icons.min.css">
+    <!-- Google Fonts (DIM-ONE) -->
+    <link href="assets/css/fonts.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS del DIM-ONE -->
+    <style>
+        /* Estilos específicos para el wizard de ingreso de operación */
+        .stepper-dim {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .step-dim {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all var(--transition-base);
+            min-width: 70px;
+        }
+        .step-dim.active {
+            opacity: 1;
+        }
+        .step-dim.done {
+            opacity: 0.7;
+        }
+        .step-dim .circ {
+            width: 48px;
+            height: 48px;
+            background: var(--gray-200);
+            border-radius: 60px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            transition: all var(--transition-base);
+        }
+        .step-dim.active .circ {
+            background: var(--dim-red);
+            color: white;
+        }
+        .step-dim.done .circ {
+            background: var(--success);
+        }
+        .step-dim .circ svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+        }
+        .step-dim .nm {
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+        .step-dim .pn {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+        .wiz-dim {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .wiz-title {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 700;
+            background: rgba(0,0,0,0.01);
+        }
+        .wiz-body {
+            padding: 1.5rem;
+        }
+        .panel-dim {
+            display: none;
+        }
+        .panel-dim.active {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .client-banner {
+            background: var(--dim-teal-glow);
+            border-left: 4px solid var(--dim-teal);
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.25rem;
+            font-size: 0.85rem;
+        }
+        .op-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+        }
+        .op-head {
+            background: rgba(0,0,0,0.02);
+            padding: 0.7rem 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+        .op-body {
+            padding: 1rem;
+        }
+        .toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .toggle .tl {
+            font-weight: 500;
+        }
+        .opts {
+            display: flex;
+            gap: 1rem;
+        }
+        .opts label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .total-line {
+            margin-top: 1rem;
+            font-weight: 700;
+            text-align: right;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 0.75rem;
+        }
+        .tablebar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            font-size: 0.75rem;
+        }
+        .grp-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .grp-head {
+            background: rgba(0,0,0,0.02);
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+        .sum {
+            background: rgba(0,0,0,0.01);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
+            padding: 0.8rem;
+        }
+        .sum-title {
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+        .sum-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            padding: 0.2rem 0;
+        }
+        .sum-row.hl {
+            background: var(--dim-teal-glow);
+            margin-top: 0.3rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+        .wiz-foot {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            background: rgba(0,0,0,0.01);
+        }
+        /* --- BARRA DE PROGRESO CORREGIDA --- */
+        .progress-dim {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
+            padding: 1.25rem 1rem;
+            margin-top: 1rem;
+        }
+        .pr-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .track {
+            background: var(--gray-200);
+            border-radius: 20px;
+            height: 8px;
+            position: relative;
+            margin: 0 2px 12px 2px;
+        }
+        .fill {
+            background: var(--dim-red);
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            transition: width var(--transition-base);
+        }
+        .dots {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            top: -12px;
+            padding: 0 0px;
+        }
+        .dots .dot {
+            width: 18px;
+            height: 18px;
+            background: var(--gray-400);
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+            transition: all 0.2s ease;
+        }
+        .dots .dot.on {
+            background: var(--dim-red);
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px rgba(210, 16, 71, 0.2);
+        }
+        /* --- FIN BARRA DE PROGRESO CORREGIDA --- */
+        .btn-dim {
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--btn-radius);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        .btn-dim.btn-ok { background: var(--success); color: white; }
+        .btn-dim.btn-teal2 { background: var(--dim-teal); color: var(--gray-900); }
+        .btn-dim.btn-prime { background: var(--dim-red); color: white; }
+        .btn-dim.btn-black { background: var(--gray-800); color: white; }
+        .pill {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .pill.g { background: var(--success-light); color: var(--success); }
+        .pill.n { background: var(--gray-200); color: var(--gray-700); }
+        .rate-list {
+            display: flex;
+            gap: 1rem;
+            background: rgba(0,0,0,0.03);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+        }
+        .demo-tag {
+            background: var(--dim-teal-glow);
+            border-radius: 20px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .topbar-operaciones {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+        .eye {
+            cursor: pointer;
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+        .eye:hover { opacity: 1; }
+        .table-dim {
+            width: 100%;
+            font-size: 0.75rem;
+            border-collapse: collapse;
+        }
+        .table-dim th, .table-dim td {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .mono {
+            font-family: monospace;
+        }
+    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
+<body>
+<div class="wrapper">
+    <!-- ========== Topbar ========== -->
+    <div class="rd-navbar context rd-navbar-original rd-navbar-fullwidth">
+        <div class="navbar-container fixed-top">
+            <div class="navbar-custom">
+                <div class="topbar">
+                    <div class="d-flex align-items-center gap-lg-1 gap-1">
+                        <div class="logo-topbar">
+                            <a class="logo-light"><span class="logo-lg"><img src="assets/img/logo.png" alt="logo"></span><span class="logo-sm"><img src="assets/img/logo-sm.png" alt="small logo"></span></a>
+                            <a class="logo-dark"><span class="logo-lg"><img src="assets/img/logo-dark.png" alt="dark logo"></span><span class="logo-sm"><img src="assets/img/logo-dark-sm.png" alt="small logo"></span></a>
+                        </div>
+                        <button class="button-toggle-menu"><i class="mdi mdi-menu"></i></button>
+                        <button class="navbar-toggle" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content"><div class="lines"><span></span><span></span><span></span></div></button>
+                        <div class="topbar-title"><i class="mdi mdi-plus-circle"></i> INGRESO DE OPERACIÓN</div>
+                    </div>
+                    <div class="topbar-right">
+                        <div class="live-indicator"><div class="live-dot"></div>EN VIVO</div>
+                        <div class="topbar-date" id="topbarDate">22 MAY 2026 · 10:24</div>
+                    </div>
+                    <ul class="topbar-menu d-flex align-items-center gap-1">
+                        <li class="d-none d-sm-inline-block"><div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" title="COLOR MODE"><i class="mdi mdi-brightness-4 mdi-24px"></i></div></li>
+                        <li class="d-none d-md-inline-block"><a class="nav-link" href="" data-toggle="fullscreen"><i class="mdi mdi-fullscreen mdi-24px"></i></a></li>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                <span class="account-user-avatar"><i class="mdi mdi-account-circle h2 icon-danger icon-circle icon-style-2 mdi-36px"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                                <a href="" class="dropdown-item"><i class="mdi mdi-account-edit me-1"></i>Modificar Usuario</a>
+                                <a href="" class="dropdown-item"><i class="mdi mdi-lock-outline me-1"></i>Cambiar Contraseña</a>
+                                <a href="index.html" class="dropdown-item"><i class="mdi mdi-logout me-1"></i>Cerrar Sesión</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Sidebar ========== -->
+    <div class="leftside-menu border-0 rounded-0">
+        <a class="logo logo-light m-0 p-0"><span class="logo-lg justify-content-center mt-3"><img src="assets/images/logo.png" alt="logo"></span><span class="logo-sm mt-0 mb-2"><img src="assets/images/logo-sm.png" alt="small logo"></span></a>
+        <a class="logo logo-dark m-0 p-0"><span class="logo-lg"><img src="assets/images/logo-dark.png" alt="logo"></span><span class="logo-sm"><img src="assets/images/logo-dark-sm.png" alt="small logo"></span></a>
+        <div class="button-sm-hover" data-bs-toggle="tooltip" title="Mantener Sidebar"><i class="ri-checkbox-blank-circle-line"></i></div>
+        <div class="button-close-fullsidebar"><i class="ri-close-fill"></i></div>
+        <div class="leftbar-user">
+            <a class="avatar-sm"><img src="assets/images/users/user-1.jpg" width="130" alt="user-image" class="avatar-img rounded-circle shadow-out"><span class="leftbar-user-name">John Sanders</span></a>
+            <div class="info"><a><span style="color:#faaec2"><div class="user-role">Gerencia General</div></span></a></div>
+        </div>
+        <div id="leftside-menu-container" data-simplebar="init" style="height: 66vh !important;">
+            <div class="simplebar-wrapper"><div class="simplebar-mask"><div class="simplebar-offset"><div class="simplebar-content-wrapper"><div class="simplebar-content">
+                <nav id="sidebarNav">
+                    <ul class="side-nav mt-2">
+                         <!-- Ítems del menú original del factoring integrados -->
+                        <li class="side-nav-item nav-item active"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-panel-general')"><i class="mdi mdi-view-dashboard"></i><span>Panel General</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_operaciones.html" class="side-nav-link" onclick="scrollToSection('view-operaciones')"><i class="mdi mdi-file-document-edit"></i><span>Operaciones</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-cartera')"><i class="mdi mdi-account-group"></i><span>Cartera</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_cobranza.html" class="side-nav-link" onclick="scrollToSection('view-cobranza')"><i class="mdi mdi-cash-100"></i><span>Cobranza</span><span class="nav-badge green">activo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_recaudacion.html" class="side-nav-link" onclick="scrollToSection('view-recaudacion')"><i class="mdi mdi-cash-multiple"></i><span>Recaudación</span><span class="nav-badge blue">nuevo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_prorroga.html" class="side-nav-link" onclick="scrollToSection('view-prorrogas')"><i class="mdi mdi-calendar-clock"></i><span>Prórrogas</span><span class="nav-badge orange">8</span></a></li>
+                        <li class="side-nav-title">Administración</li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-clientes')"><i class="mdi mdi-account-multiple"></i><span>Clientes y Deudores</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="factoring_taller_productos.html" class="side-nav-link"><i class="mdi mdi-toolbox-outline"></i><span>Taller de Productos</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-riesgo')"><i class="mdi mdi-shield-half-full"></i><span>Riesgo y Líneas</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-reportes')"><i class="mdi mdi-chart-line"></i><span>Reportes</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-config')"><i class="mdi mdi-cog"></i><span>Configuración</span></a></li>
+                    </ul>
+                </nav>
+            </div></div></div></div></div>
+        </div>
+        <ul class="side-nav fixed-bottom"><li class="side-nav-item nav-item m-0"><a class="side-nav-link h-100" onclick="logout()" data-bs-toggle="tooltip" title="Cerrar Sesión"><i class="mdi mdi-logout-variant mdi-24px"></i></a></li></ul>
+    </div>
+
+    <!-- ========== Contenido principal ========== -->
+    <div class="content-page p-0">
+        <main class="dashboard-content" id="dashboardContent">
+            <div class="dashboard-view active">
+                <!-- Topbar interno con tasas -->
+                <div class="topbar-operaciones">
+                    <div class="rate-list">
+                        <div class="rate"><b>UF</b><span class="v">$38.245,67</span></div>
+                        <div class="rate"><b>DÓLAR</b><span class="v">$945,30</span></div>
+                        <div class="rate"><b>EURO</b><span class="v">$1.020,15</span></div>
+                        <div class="rate"><b>UTM</b><span class="v">$68.034,00</span></div>
+                        <div class="demo-tag"><span class="dot"></span>Datos de ejemplo</div>
+                    </div>
+                </div>
+
+                <!-- STEPPER SUPERIOR (Etapas) -->
+                <div class="stepper-dim" id="stepperDim">
+                    <div class="step-dim" data-step="0"><div class="circ"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4h6v3H9zM9 11h6M9 15h4"/></svg></div><div class="nm">Datos generales</div><div class="pn">Paso 1</div></div>
+                    <div class="step-dim" data-step="1"><div class="circ"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg></div><div class="nm">Documentos</div><div class="pn">Paso 2</div></div>
+                    <div class="step-dim" data-step="2"><div class="circ"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></div><div class="nm">Info. Negociación</div><div class="pn">Paso 3</div></div>
+                    <div class="step-dim" data-step="3"><div class="circ"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9 16l2-2 2 1 2-3"/></svg></div><div class="nm">Condiciones</div><div class="pn">Paso 4</div></div>
+                    <div class="step-dim" data-step="4"><div class="circ"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 1.5-2M4 12l1 1 1.5-2M4 18l1 1 1.5-2"/></svg></div><div class="nm">Gastos</div><div class="pn">Paso 5</div></div>
+                    <div class="step-dim" data-step="5"><div class="circ"><svg viewBox="0 0 24 24"><path d="M7 3h10v18l-5-3-5 3z"/><path d="M9.5 10l1.8 1.8 3.2-3.4"/></svg></div><div class="nm">Resumen</div><div class="pn">Paso 6</div></div>
+                </div>
+
+                <!-- WIZARD CONTENT (Paneles) -->
+                <div class="wiz-dim">
+                    <div class="wiz-title" id="wizTitleDim">Datos generales · número operación: 0</div>
+                    <div class="wiz-body">
+                        <!-- PASO 0 -->
+                        <div class="panel-dim active" id="pDim0">
+                            <div class="client-banner">Datos del Cliente: <b>96.571.480-4 · DIMENSIÓN S.A.</b></div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold text-muted">Fecha Negociación</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control" value="09/06/2026 15:29" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold text-muted">Moneda</label>
+                                    <select class="form-select form-select-sm">
+                                        <option>PESO CL</option>
+                                        <option>USD</option>
+                                        <option>UF</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold text-muted">Tipo Documento</label>
+                                    <select class="form-select form-select-sm">
+                                        <option>-- Seleccionar --</option>
+                                        <option>Factura</option>
+                                        <option>Cheque</option>
+                                        <option>Letra</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold text-muted">Spread</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control" value="2,5">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold text-muted">% Anticipo</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control" value="0,00">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold text-muted">Monto Operación</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">$</span>
+                                        <input type="text" class="form-control" value="0">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold text-muted">Días de Retención</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control" value="0">
+                                        <span class="input-group-text">días</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold text-muted">Tasa Negocio</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control" value="00,0000">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PASO 1 - Documentos -->
+                        <div class="panel-dim" id="pDim1">
+                            <div class="client-banner">Datos del Cliente: <b>96.571.480-4 · DIMENSIÓN S.A.</b></div>
+                            <div class="table-responsive">
+                                <table class="table-dim w-100">
+                                    <thead>
+                                        <tr><th>#</th><th>Rut Deudor</th><th>Razón social</th><th>N° documento</th><th>Código</th><th class="text-end">Monto</th><th class="text-end">Monto Anticipo</th><th class="text-center">F. emisión</th><th class="text-center">F. vencimiento</th><th class="text-center">F. pago</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="mono">1</td><td class="mono">76.543.210-K</td><td>Comercial Andes SpA</td><td class="mono">0001234</td><td class="text-center">FC</td><td class="text-end mono">18.900.000</td><td class="text-end mono">15.120.000</td><td class="text-center mono">02/05/2026</td><td class="text-center mono">12/05/2026</td><td class="text-center">—</td></tr>
+                                        <tr><td class="mono">2</td><td class="mono">77.111.222-3</td><td>Distribuidora Sur Ltda.</td><td class="mono">0008876</td><td class="text-center">FC</td><td class="text-end mono">24.500.000</td><td class="text-end mono">19.600.000</td><td class="text-center mono">04/05/2026</td><td class="text-center mono">14/05/2026</td><td class="text-center">—</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tablebar"><span>Mostrando 1 a 2 de 2 registros</span><span class="pager"><a href="javascript:void(0)">Anterior</a><a href="javascript:void(0)">Siguiente</a></span></div>
+                            <div class="total-line">Total documentos: $43.400.000</div>
+                            <div class="d-flex gap-2 mt-3">
+                                <button class="btn btn-danger btn-sm"><i class="mdi mdi-plus me-1"></i>Ingresar documento</button>
+                                <button class="btn btn-info btn-sm"><i class="mdi mdi-cloud-upload me-1"></i>Carga masiva</button>
+                            </div>
+                        </div>
+
+                        <!-- PASO 2 - Info Negociación -->
+                        <div class="panel-dim" id="pDim2">
+                            <div class="client-banner">Datos del Cliente: <b>96.571.480-4 · DIMENSIÓN S.A.</b></div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="op-card"><div class="op-head">Antecedentes generales</div><div class="op-body">
+                                        <div class="row g-2">
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Fecha ing.</label><div class="input-group input-group-sm"><input type="text" class="form-control" value="09/06/2026" readonly></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Tipo Docto</label><select class="form-select form-select-sm"><option>Factura</option></select></div>
+                                            <div class="col-6"><label class="form-label small fw-semibold text-muted">% Anticipo</label><div class="input-group input-group-sm"><input type="text" class="form-control" value="0,00"><span class="input-group-text">%</span></div></div>
+                                            <div class="col-6"><label class="form-label small fw-semibold text-muted">Moneda</label><select class="form-select form-select-sm"><option>PESO CL</option></select></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Monto Ope.</label><div class="input-group input-group-sm"><span class="input-group-text">$</span><input type="text" class="form-control" value="0"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Estado Ope.</label><select class="form-select form-select-sm"><option>En evaluación</option></select></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Días Retención</label><div class="input-group input-group-sm"><input type="text" class="form-control" value="0"><span class="input-group-text">días</span></div></div>
+                                        </div>
+                                    </div></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="op-card"><div class="op-head">Información comercial</div><div class="op-body">
+                                        <div class="row g-2">
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Línea Apro</label><div class="input-group input-group-sm"><span class="input-group-text">$</span><input type="text" class="form-control" value="0"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Línea Útil</label><div class="input-group input-group-sm"><span class="input-group-text">$</span><input type="text" class="form-control" value="0"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Línea Disp</label><div class="input-group input-group-sm"><span class="input-group-text">$</span><input type="text" class="form-control" value="0"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Nue. Sald In</label><div class="input-group input-group-sm"><span class="input-group-text">$</span><input type="text" class="form-control" value="0"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Fec. Vcto. In</label><div class="input-group input-group-sm"><input type="text" class="form-control" placeholder="DD/MM/AAAA"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Mto Deuda</label><div class="input-group input-group-sm"><span class="input-group-text">$</span><input type="text" class="form-control" value="0"></div></div>
+                                        </div>
+                                    </div></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="op-card"><div class="op-head">Características de la operación</div><div class="op-body">
+                                        <div class="toggle"><span class="tl">Ope Puntual</span><span class="opts"><label><input type="radio" name="opun">Sí</label><label><input type="radio" name="opun" checked>No</label></span></div>
+                                        <div class="toggle"><span class="tl">Con respon.</span><span class="opts"><label><input type="radio" name="cres">Sí</label><label><input type="radio" name="cres" checked>No</label></span></div>
+                                        <div class="toggle"><span class="tl">Con Cuota</span><span class="opts"><label><input type="radio" name="ccuo">Sí</label><label><input type="radio" name="ccuo" checked>No</label></span></div>
+                                        <div class="toggle"><span class="tl">Notificación</span><span class="opts"><label><input type="radio" name="noti">Sí</label><label><input type="radio" name="noti" checked>No</label></span></div>
+                                        <div class="toggle"><span class="tl">Con Respaldo</span><span class="opts"><label><input type="radio" name="cresp">Sí</label><label><input type="radio" name="cresp" checked>No</label></span></div>
+                                        <div class="toggle"><span class="tl">Confirmación</span><span class="opts"><label><input type="radio" name="conf">Sí</label><label><input type="radio" name="conf" checked>No</label></span></div>
+                                        <div class="toggle"><span class="tl">Tipo Ope</span><span class="opts"><label><input type="radio" name="tope" checked>Lineal</label><label><input type="radio" name="tope">Exponencial</label></span></div>
+                                    </div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PASO 3 - Condiciones -->
+                        <div class="panel-dim" id="pDim3">
+                            <div class="client-banner">Datos del Cliente: <b>96.571.480-4 · DIMENSIÓN S.A.</b></div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="op-card"><div class="op-head">Condiciones financieras vigentes</div><div class="op-body">
+                                        <div class="row g-2">
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Fecha ing.</label><div class="input-group input-group-sm"><input type="text" class="form-control" value="09/06/2026" readonly></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Spread</label><div class="input-group input-group-sm"><input type="text" class="form-control" value="2,5"><span class="input-group-text">%</span></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Tipo Período</label><select class="form-select form-select-sm"><option>Mensual</option></select></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Costo Fondo</label><div class="input-group input-group-sm"><input type="text" class="form-control" value="0,0000"><span class="input-group-text">%</span></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Tipo Tasa</label><select class="form-select form-select-sm"><option>Fija</option></select></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Tasa Negocio</label><div class="input-group input-group-sm"><input type="text" class="form-control" value="0,0000"><span class="input-group-text">%</span></div></div>
+                                        </div>
+                                    </div></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="op-card"><div class="op-head">Condiciones de desembolso</div><div class="op-body">
+                                        <div class="row g-2">
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Tipo Giro</label><select class="form-select form-select-sm"><option>Transferencia</option></select></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Banco</label><select class="form-select form-select-sm"><option>Banco de Chile</option></select></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Tipo Desemb.</label><select class="form-select form-select-sm"><option>Total</option></select></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Tipo Cta.</label><select class="form-select form-select-sm"><option>Corriente</option></select></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Nro. Cta.</label><div class="input-group input-group-sm"><input type="text" class="form-control"></div></div>
+                                        </div>
+                                    </div></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="op-card"><div class="op-head">Condiciones financieras</div><div class="op-body">
+                                        <div class="row g-2">
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Comisión Mínimo</label><div class="input-group input-group-sm"><span class="input-group-text">$</span><input type="text" class="form-control" value="0,0"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Comisión Máximo</label><div class="input-group input-group-sm"><span class="input-group-text">$</span><input type="text" class="form-control" value="0,0"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">% Comisión</label><div class="input-group input-group-sm"><input type="text" class="form-control" value="0,0000"><span class="input-group-text">%</span></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Tasa Contribuciones</label><div class="input-group input-group-sm"><input type="text" class="form-control" value="0,0"><span class="input-group-text">%</span></div></div>
+                                        </div>
+                                    </div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PASO 4 - Gastos -->
+                        <div class="panel-dim" id="pDim4">
+                            <div class="row g-3">
+                                <div class="col-md-7">
+                                    <div class="op-card"><div class="op-head">Gastos Fijos</div><div class="op-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table-dim w-100">
+                                                <thead>
+                                                    <tr><th class="text-center">Sel.</th><th>Descripción</th><th class="text-end">Monto Gasto</th><th class="text-end">Monto IVA</th><th class="text-center">Sí/No</th><th class="text-center">Ver</th></tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr><td class="text-center"><input type="checkbox" checked></td><td>Comisión de cobranza</td><td class="text-end mono">25.000</td><td class="text-end mono">4.750</td><td class="text-center"><span class="pill g">Sí</span></td><td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td></tr>
+                                                    <tr><td class="text-center"><input type="checkbox"></td><td>Gastos notariales</td><td class="text-end mono">12.000</td><td class="text-end mono">0</td><td class="text-center"><span class="pill n">No</span></td><td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="tablebar px-3 pb-3"><span>Mostrando 1 a 2 de 2 registros</span><span>Gastos seleccionados: <b class="mono">1</b></span></div>
+                                    </div></div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="op-card"><div class="op-head">Adicionales</div><div class="op-body">
+                                        <div class="row g-2">
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Monto</label><div class="input-group input-group-sm"><span class="input-group-text">$</span><input type="text" class="form-control" value="0"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Descripción</label><div class="input-group input-group-sm"><input type="text" class="form-control"></div></div>
+                                            <div class="col-12"><label class="form-label small fw-semibold text-muted">Con IVA</label><div class="opts"><label><input type="radio" name="civa">Sí</label><label><input type="radio" name="civa" checked>No</label></div></div>
+                                            <div class="col-12"><div class="d-flex gap-2"><button class="btn btn-teal btn-sm">Nuevo</button><button class="btn btn-danger btn-sm">Agregar Gasto</button></div></div>
+                                        </div>
+                                    </div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PASO 5 - Resumen -->
+                        <div class="panel-dim" id="pDim5">
+                            <div class="grp-row"><div class="grp-head" style="flex:1">Información</div><div class="grp-head" style="flex:2">Datos de la Operación</div></div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4"><div class="sum"><div class="sum-title">Datos comerciales</div><div class="sum-row"><span class="lbl">Tipo Ope.</span><span class="val">Sin definir</span></div><div class="sum-row"><span class="lbl">Banco</span><span class="val">Sin definir</span></div><div class="sum-row"><span class="lbl">Tipo Desemb.</span><span class="val">Sin definir</span></div><div class="sum-row"><span class="lbl">Tipo Cuenta</span><span class="val">Sin definir</span></div><div class="sum-row"><span class="lbl">N° Cuenta</span><span class="val">—</span></div></div></div>
+                                <div class="col-md-4"><div class="sum"><div class="sum-title">Fechas y contexto</div><div class="sum-row"><span class="lbl">ID Operación</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Fecha Negociación</span><span class="val">09-06-2026</span></div><div class="sum-row"><span class="lbl">Fecha Vencimiento</span><span class="val">—</span></div><div class="sum-row"><span class="lbl">Fecha Cálculo</span><span class="val">—</span></div><div class="sum-row"><span class="lbl">Moneda</span><span class="val">Sin definir</span></div><div class="sum-row"><span class="lbl">Tipo Docto.</span><span class="val">Sin definir</span></div></div></div>
+                                <div class="col-md-4"><div class="sum"><div class="sum-title">Montos y tasas</div><div class="sum-row"><span class="lbl">Monto Operación</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">% Anticipo</span><span class="val">—</span></div><div class="sum-row"><span class="lbl">Monto Anticipo</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Tasa Negocio</span><span class="val">0,0000</span></div><div class="sum-row"><span class="lbl">Spread</span><span class="val">2,5000</span></div><div class="sum-row"><span class="lbl">Costo Fondo</span><span class="val">0,0000</span></div><div class="sum-row"><span class="lbl">Tasa Contribución</span><span class="val">0,0000</span></div></div></div>
+                            </div>
+                            <div class="grp-row"><div class="grp-head" style="flex:1">Gastos Calculados</div><div class="grp-head" style="flex:2">Gastos Seleccionados</div></div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4"><div class="sum"><div class="sum-title">Gastos calculados</div><div class="sum-row"><span class="lbl">Gastos Afecto</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Gastos Exento</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Gastos IVA</span><span class="val">0</span></div></div></div>
+                                <div class="col-md-8"><div class="sum"><div class="sum-title">Totales</div><div class="sum-row"><span class="lbl">Cantidad de Gastos</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Cantidad con IVA</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Cantidad sin IVA</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Base con IVA</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Base sin IVA</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Total Gastos</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Total IVA</span><span class="val">0</span></div><div class="sum-row hl"><span class="lbl">Total + IVA</span><span class="val">0</span></div></div></div>
+                            </div>
+                            <div class="grp-row"><div class="grp-head" style="flex:1">Deuda y Cuentas</div><div class="grp-head" style="flex:2">Cálculos y Resultados</div></div>
+                            <div class="row g-3">
+                                <div class="col-md-4"><div class="sum"><div class="sum-title">Deuda y cuentas</div><div class="sum-row"><span class="lbl">Monto Deuda</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Deuda Vigente</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Deuda Morosa</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Cuenta x Cobrar</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Cuenta x Pagar</span><span class="val">0</span></div></div></div>
+                                <div class="col-md-4"><div class="sum"><div class="sum-title">Precios y comisión</div><div class="sum-row"><span class="lbl">Precio Compra</span><span class="val">0</span></div><div class="sum-row"><span class="lbl">Monto Comisión</span><span class="val">0</span></div><div class="sum-row hl"><span class="lbl">Diferencia Precio</span><span class="val">0</span></div></div></div>
+                                <div class="col-md-4"><div class="sum"><div class="sum-title">Giro y saldos</div><div class="sum-row"><span class="lbl">Excedentes</span><span class="val">0</span></div><div class="sum-row hl"><span class="lbl">Monto a Girar</span><span class="val">0</span></div><div class="sum-row hl"><span class="lbl">Saldo a Pagar</span><span class="val">0</span></div></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wiz-foot" id="wizFootDim"></div>
+                </div>
+
+                <!-- BARRA DE PROGRESO INFERIOR (Porcentaje) CORREGIDA -->
+                <div class="progress-dim">
+                    <div class="pr-top">
+                        <span class="lab">Progreso: <b id="prNameDim">Datos generales</b></span>
+                        <span class="pct" id="prPctDim">0%</span>
+                    </div>
+                    <div class="track">
+                        <div class="fill" id="prFillDim" style="width: 0%;"></div>
+                        <div class="dots">
+                            <span class="dot on"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="dashboard-footer footer text-center d-flex justify-content-center">
+        <i class="mdi mdi-shield-check"></i> DIM-ONE · Motor de Evaluación de Riesgo · Confidencial — Uso Interno
+    </footer>
+</div>
+
+<!-- Scripts base -->
+<script src="assets/js/vendor.min.js"></script>
+<script src="assets/js/app.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    // Actualizar fecha/hora en topbar
+    (function updateDate() {
+        const M = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+        const n = new Date();
+        const el = document.getElementById('topbarDate');
+        if(el) el.textContent = String(n.getDate()).padStart(2,'0')+' '+M[n.getMonth()]+' '+n.getFullYear()+' · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+        setTimeout(updateDate, 30000);
+    })();
+    
+    // Función de logout
+    function logout() {
+        Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: 'Serás redirigido al inicio de sesión',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d21047',
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'index.html';
+            }
+        });
+    }
+    
+    // Lógica del wizard (stepper)
+    const stepsDim = [
+        {name:'Datos generales', title:'Datos generales · número operación: 0'},
+        {name:'Documentos', title:'Documentos · número operación: 0'},
+        {name:'Información Negociación', title:'Información Negociación · número operación: 0'},
+        {name:'Condiciones Negociación', title:'Condiciones Negociación · número operación: 0'},
+        {name:'Gastos', title:'Gastos · número operación: 0'},
+        {name:'Resumen', title:'Resumen · número operación: 0'}
+    ];
+    let curDim = 0;
+    const stepElsDim = [...document.querySelectorAll('.step-dim')];
+    const panelsDim = [...document.querySelectorAll('.panel-dim')];
+    const dotsDim = [...document.querySelectorAll('.progress-dim .dots .dot')];
+    const fillBar = document.getElementById('prFillDim');
+    const percentSpan = document.getElementById('prPctDim');
+    const progressNameSpan = document.getElementById('prNameDim');
+    const wizTitleSpan = document.getElementById('wizTitleDim');
+
+    function goDim(i) {
+        if (i < 0 || i >= stepsDim.length) return;
+        curDim = i;
+        
+        // Actualizar stepper superior (etapas)
+        stepElsDim.forEach((s,k) => {
+            s.classList.toggle('done', k < i);
+            s.classList.toggle('active', k === i);
+        });
+        
+        // Mostrar panel correspondiente
+        panelsDim.forEach((p,k) => p.classList.toggle('active', k === i));
+        
+        // Actualizar puntos de la barra de progreso (los 6 puntos)
+        dotsDim.forEach((d,k) => d.classList.toggle('on', k <= i));
+        
+        // Actualizar textos y porcentaje
+        wizTitleSpan.textContent = stepsDim[i].title;
+        progressNameSpan.textContent = stepsDim[i].name;
+        const pct = (i / (stepsDim.length - 1)) * 100;
+        percentSpan.textContent = Math.round(pct) + '%';
+        fillBar.style.width = pct + '%';
+        
+        // Renderizar botones de navegación
+        renderFootDim(i);
+        
+        // Scroll suave al inicio
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderFootDim(i) {
+        const foot = document.getElementById('wizFootDim');
+        const back = i === 0
+            ? `<a class="btn btn-secondary btn-sm" href="pantalla_operaciones.html"><i class="mdi mdi-arrow-left me-1"></i>Volver mantenedor</a>`
+            : `<button class="btn btn-secondary btn-sm" onclick="goDim(${i-1})"><i class="mdi mdi-chevron-left me-1"></i>Volver</button>`;
+        const next = i === 5
+            ? `<button class="btn btn-danger btn-sm" onclick="registrarOperacion()"><i class="mdi mdi-check me-1"></i>Registrar operación</button>`
+            : `<button class="btn btn-danger btn-sm" onclick="goDim(${i+1})">Guardar y continuar <i class="mdi mdi-chevron-right ms-1"></i></button>`;
+        foot.innerHTML = back + next;
+    }
+
+    function registrarOperacion() {
+        Swal.fire({
+            title: 'Operación registrada',
+            text: 'Demo: aquí se guardaría la operación en el sistema.',
+            icon: 'success',
+            confirmButtonColor: '#d21047',
+            confirmButtonText: 'Aceptar'
+        });
+    }
+
+    // Inicializar wizard en paso 0
+    goDim(0);
+    window.goDim = goDim;
+    window.registrarOperacion = registrarOperacion;
+    window.logout = logout;
+</script>
+</body>
+</html>

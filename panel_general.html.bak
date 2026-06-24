@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dim720 · Panel General Factoring</title>
+    <link rel="shortcut icon" href="assets/img/icono.ico" type="image/x-icon">
+    <script src="assets/js/hyper-config2.js"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="assets/css/app-dim.min.css" class="app-style" rel="stylesheet">
+    <link href="assets/css/style-2.css" rel="stylesheet">
+    <!-- MDI Icons -->
+    <link rel="stylesheet" href="assets/css/icons.min.css">
+    <!-- Google Fonts (Dim720) -->
+    <link href="assets/css/fonts.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Custom CSS del Dim720 -->
+    <style>
+        /* Estilos adicionales para tablas, barras y elementos específicos del factoring */
+        .table-custom { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .table-custom th, .table-custom td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); }
+        .table-custom th { text-align: left; font-weight: 600; color: var(--text-secondary); }
+        .table-custom td.r, .table-custom th.r { text-align: right; }
+        .mono { font-family: var(--font-mono); }
+        .bar-track { background: var(--gray-200); border-radius: 20px; height: 6px; width: 100%; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 20px; background: var(--success); width: 0%; }
+        .funnel { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
+        .seg { padding: 0.6rem 1rem; border-radius: 12px; display: flex; justify-content: space-between; font-weight: 500; color: white; }
+        .seg .v { font-family: var(--font-mono); font-weight: 600; }
+        .alerts { display: flex; flex-direction: column; gap: 0.6rem; }
+        .alert { display: flex; align-items: center; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 0.6rem 0.9rem; border-radius: 10px; border: 1px solid var(--border-color); }
+        .alert .tag { font-size: 0.65rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: var(--gray-200); color: var(--gray-700); }
+        .alert .tag.cob { background: #E0F2FE; color: #0369A1; }
+        .alert .tag.rec { background: #D1FAE5; color: #065F46; }
+        .alert .tag.ope { background: #FEF3C7; color: #92400E; }
+        .alert .tag.pro { background: #EDE9FE; color: #5B21B6; }
+        .alert .tag.rie { background: #FFE4E6; color: #BE123C; }
+        .alert .tag.car { background: #E0E7FF; color: #3730A3; }
+        .alert .txt { flex: 1; font-size: 0.8rem; }
+        .alert .cnt { font-weight: 700; font-family: var(--font-mono); }
+        .alert .cnt.r { color: var(--danger); }
+        .alert .cnt.y { color: var(--warning); }
+        .grid.g-8-4 { display: grid; grid-template-columns: 1.8fr 1fr; gap: 1.25rem; }
+        .grid.g-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+        @media (max-width: 1000px) { .grid.g-8-4, .grid.g-3 { grid-template-columns: 1fr; } }
+        .vtype { font-size: 0.6rem; font-weight: normal; background: var(--gray-100); padding: 2px 8px; border-radius: 20px; margin-left: 10px; color: var(--gray-600); }
+        .hint { font-size: 0.7rem; color: var(--text-muted); margin-top: -0.2rem; margin-bottom: 0.75rem; }
+        .chart-wrap canvas { max-height: 100%; width: 100%; }
+        .kpi.warn .value { color: var(--warning); }
+        .semaphore { display: inline-flex; gap: 4px; margin-left: 6px; }
+        .light { width: 8px; height: 8px; border-radius: 8px; background: #ccc; }
+        .light.g { background: var(--success); }
+        .light.y { background: var(--warning); }
+    </style>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="wrapper">
+    <!-- ========== Topbar (idéntica Dim720) ========== -->
+    <div class="rd-navbar context rd-navbar-original rd-navbar-fullwidth">
+        <div class="navbar-container fixed-top">
+            <div class="navbar-custom">
+                <div class="topbar">
+                    <div class="d-flex align-items-center gap-lg-1 gap-1">
+                        <div class="logo-topbar">
+                            <a class="logo-light"><span class="logo-lg"><img src="assets/img/logo.png" alt="logo"></span><span class="logo-sm"><img src="assets/img/logo-sm.png" alt="small logo"></span></a>
+                            <a class="logo-dark"><span class="logo-lg"><img src="assets/img/logo-dark.png" alt="dark logo"></span><span class="logo-sm"><img src="assets/img/logo-dark-sm.png" alt="small logo"></span></a>
+                        </div>
+                        <button class="button-toggle-menu"><i class="mdi mdi-menu"></i></button>
+                        <button class="navbar-toggle" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content"><div class="lines"><span></span><span></span><span></span></div></button>
+                        <div class="topbar-title" style="font-family: dim-regular;"><i class="mdi mdi-view-dashboard"></i> PANEL GENERAL · FACTORING</div>
+                    </div>
+                    <div class="topbar-right">
+                        <div class="live-indicator"><div class="live-dot"></div>EN VIVO</div>
+                        <div class="topbar-date" id="topbarDate">22 MAY 2026 · 10:24</div>
+                    </div>
+                    <ul class="topbar-menu d-flex align-items-center gap-1">
+                        <li class="d-none d-sm-inline-block"><div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" title="COLOR MODE"><i class="mdi mdi-brightness-4 mdi-24px"></i></div></li>
+                        <li class="d-none d-md-inline-block"><a class="nav-link" href="" data-toggle="fullscreen"><i class="mdi mdi-fullscreen mdi-24px"></i></a></li>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                <span class="account-user-avatar"><i class="mdi mdi-account-circle h2 icon-danger icon-circle icon-style-2 mdi-36px"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                                <a href="" class="dropdown-item"><i class="mdi mdi-account-edit me-1"></i>Modificar Usuario</a>
+                                <a href="" class="dropdown-item"><i class="mdi mdi-lock-outline me-1"></i>Cambiar Contraseña</a>
+                                <a href="index.html" class="dropdown-item"><i class="mdi mdi-logout me-1"></i>Cerrar Sesión</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Sidebar completa (con todos los enlaces) ========== -->
+    <div class="leftside-menu border-0 rounded-0">
+        <a class="logo logo-light m-0 p-0"><span class="logo-lg justify-content-center mt-3"><img src="assets/images/logo.png" alt="logo"></span><span class="logo-sm mt-0 mb-2"><img src="assets/images/logo-sm.png" alt="small logo"></span></a>
+        <a class="logo logo-dark m-0 p-0"><span class="logo-lg"><img src="assets/images/logo-dark.png" alt="logo"></span><span class="logo-sm"><img src="assets/images/logo-dark-sm.png" alt="small logo"></span></a>
+        <div class="button-sm-hover" data-bs-toggle="tooltip" title="Mantener Sidebar"><i class="ri-checkbox-blank-circle-line"></i></div>
+        <div class="button-close-fullsidebar"><i class="ri-close-fill"></i></div>
+        <div class="leftbar-user">
+            <a class="avatar-sm"><img src="assets/images/users/user-1.jpg" width="130" alt="user-image" class="avatar-img rounded-circle shadow-out"><span class="leftbar-user-name">John Sanders</span></a>
+            <div class="info"><a><span style="color:#faaec2"><div class="user-role">Gerencia General</div></span></a></div>
+        </div>
+        <div id="leftside-menu-container" data-simplebar="init" style="height: 66vh !important;">
+            <div class="simplebar-wrapper"><div class="simplebar-mask"><div class="simplebar-offset"><div class="simplebar-content-wrapper"><div class="simplebar-content">
+                <nav id="sidebarNav">
+                    <ul class="side-nav mt-2">
+                        <!-- Ítems del menú original del factoring integrados -->
+                        <li class="side-nav-item nav-item active"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-panel-general')"><i class="mdi mdi-view-dashboard"></i><span>Panel General</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_operaciones.html" class="side-nav-link" onclick="scrollToSection('view-operaciones')"><i class="mdi mdi-file-document-edit"></i><span>Operaciones</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-cartera')"><i class="mdi mdi-account-group"></i><span>Cartera</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_cobranza.html" class="side-nav-link" onclick="scrollToSection('view-cobranza')"><i class="mdi mdi-cash-100"></i><span>Cobranza</span><span class="nav-badge green">activo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_recaudacion.html" class="side-nav-link" onclick="scrollToSection('view-recaudacion')"><i class="mdi mdi-cash-multiple"></i><span>Recaudación</span><span class="nav-badge blue">nuevo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_prorroga.html" class="side-nav-link" onclick="scrollToSection('view-prorrogas')"><i class="mdi mdi-calendar-clock"></i><span>Prórrogas</span><span class="nav-badge orange">8</span></a></li>
+                        <li class="side-nav-title">Administración</li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-clientes')"><i class="mdi mdi-account-multiple"></i><span>Clientes y Deudores</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-riesgo')"><i class="mdi mdi-shield-half-full"></i><span>Riesgo y Líneas</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-reportes')"><i class="mdi mdi-chart-line"></i><span>Reportes</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-config')"><i class="mdi mdi-cog"></i><span>Configuración</span></a></li>
+                    </ul>
+                </nav>
+            </div></div></div></div></div>
+        </div>
+        <ul class="side-nav fixed-bottom"><li class="side-nav-item nav-item m-0"><a class="side-nav-link h-100" onclick="logout()" data-bs-toggle="tooltip" title="Cerrar Sesión"><i class="mdi mdi-logout-variant mdi-24px"></i></a></li></ul>
+    </div>
+
+    <!-- ========== Contenido principal ========== -->
+    <div class="content-page p-0">
+        <main class="dashboard-content" id="dashboardContent">
+            <!-- Vista: Panel General (activa por defecto) -->
+            <div class="dashboard-view active" id="view-panel-general">
+                <!-- KPIs originales convertidos a kpi-card -->
+                <div class="kpi-grid">
+                    <div class="kpi-card blurb-boxed rounded-3">
+                        <div class="kpi-icon teal"><i class="mdi mdi-chart-line"></i></div>
+                        <div class="kpi-label">Cartera vigente total</div>
+                        <div class="kpi-value teal">$12.480M</div>
+                        <div class="kpi-delta up"><i class="mdi mdi-arrow-up"></i> +2,4% vs. mes ant.</div>
+                    </div>
+                    <div class="kpi-card blurb-boxed rounded-3">
+                        <div class="kpi-icon green"><i class="mdi mdi-trending-up"></i></div>
+                        <div class="kpi-label">Colocación del período</div>
+                        <div class="kpi-value green">$4.850M</div>
+                        <div class="kpi-delta up"><i class="mdi mdi-arrow-up"></i> +7,2%</div>
+                    </div>
+                    <div class="kpi-card blurb-boxed rounded-3">
+                        <div class="kpi-icon blue"><i class="mdi mdi-cash-multiple"></i></div>
+                        <div class="kpi-label">Recaudación del período</div>
+                        <div class="kpi-value blue">$3.180M</div>
+                        <div class="kpi-sub">91% de la meta</div>
+                    </div>
+                    <div class="kpi-card blurb-boxed rounded-3">
+                        <div class="kpi-icon red"><i class="mdi mdi-alert-circle"></i></div>
+                        <div class="kpi-label">Morosidad global</div>
+                        <div class="kpi-value red">8.4%</div>
+                        <div class="kpi-delta down"><i class="mdi mdi-arrow-up"></i> +1.4 pts sobre umbral</div>
+                    </div>
+                    <div class="kpi-card blurb-boxed rounded-3">
+                        <div class="kpi-icon yellow"><i class="mdi mdi-folder-open"></i></div>
+                        <div class="kpi-label">Operaciones activas</div>
+                        <div class="kpi-value yellow">1.284</div>
+                        <div class="kpi-delta up"><i class="mdi mdi-arrow-up"></i> +38 en el mes</div>
+                    </div>
+                    <div class="kpi-card blurb-boxed rounded-3">
+                        <div class="kpi-icon teal"><i class="mdi mdi-currency-usd"></i></div>
+                        <div class="kpi-label">Ingresos (int. + comis.)</div>
+                        <div class="kpi-value teal">$612,4M</div>
+                        <div class="kpi-delta up"><i class="mdi mdi-arrow-up"></i> +5,4%</div>
+                    </div>
+                </div>
+
+                <!-- Gráficos de tendencias y composición -->
+                <div class="section-header"><div class="section-number">1</div><div class="section-title">Tendencias y composición</div></div>
+                <div class="grid-2">
+                    <div class="card-dim blurb-boxed rounded-3 p-0">
+                        <div class="card-header-dim py-2"><h3><i class="mdi mdi-chart-line"></i> Evolución de la cartera</h3><p class="text-muted small">Saldo vigente · últimos 12 meses</p></div>
+                        <div class="card-body-dim"><div class="chart-wrap" style="height:250px"><canvas id="c_cartera"></canvas></div></div>
+                    </div>
+                    <div class="card-dim blurb-boxed rounded-3 p-0">
+                        <div class="card-header-dim py-2"><h3><i class="mdi mdi-chart-donut"></i> Composición de la cartera</h3><p class="text-muted small">Por tipo de documento</p></div>
+                        <div class="card-body-dim"><div class="chart-wrap" style="height:250px"><canvas id="c_comp"></canvas></div></div>
+                    </div>
+                </div>
+
+                <div class="grid-3 mt-3">
+                    <div class="card-dim blurb-boxed rounded-3 p-0">
+                        <div class="card-header-dim py-2"><h3><i class="mdi mdi-chart-bar"></i> Colocación vs. Recaudación</h3><p class="text-muted small">Flujo mensual · últimos 6 meses</p></div>
+                        <div class="card-body-dim"><div class="chart-wrap" style="height:215px"><canvas id="c_flujo"></canvas></div></div>
+                    </div>
+                    <div class="card-dim blurb-boxed rounded-3 p-0">
+                        <div class="card-header-dim py-2"><h3><i class="mdi mdi-chart-histogram"></i> Antigüedad global</h3><p class="text-muted small">Distribución por tramo de mora</p></div>
+                        <div class="card-body-dim"><div class="chart-wrap" style="height:215px"><canvas id="c_aging"></canvas></div></div>
+                    </div>
+                    <div class="card-dim blurb-boxed rounded-3 p-0">
+                        <div class="card-header-dim py-2"><h3><i class="mdi mdi-chart-sankey"></i> Embudo de cartera</h3><p class="text-muted small">Cartera por situación</p></div>
+                        <div class="card-body-dim">
+                            <div class="funnel">
+                                <div class="seg" style="width:100%;background:#0E7C7B"><span>Vigente</span><span class="v">$12.480M</span></div>
+                                <div class="seg" style="width:66%;background:#2f8d8b"><span>Por vencer (30d)</span><span class="v">$2.140M</span></div>
+                                <div class="seg" style="width:50%;background:#B27A2B"><span>Vencida</span><span class="v">$986M</span></div>
+                                <div class="seg" style="width:44%;background:#B4690E"><span>En prórroga</span><span class="v">$890M</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Riesgo, distribución y alertas -->
+                <div class="section-header mt-3"><div class="section-number">2</div><div class="section-title">Riesgo, distribución y pendientes</div></div>
+                <div class="grid-3">
+                    <div class="card-dim blurb-boxed rounded-3 p-0">
+                        <div class="card-header-dim py-2"><h3><i class="mdi mdi-chart-bar"></i> Concentración de riesgo</h3><p class="text-muted small">Top deudores por exposición</p></div>
+                        <div class="card-body-dim"><div class="chart-wrap" style="height:230px"><canvas id="c_riesgo"></canvas></div></div>
+                    </div>
+                    <div class="card-dim blurb-boxed rounded-3 p-0">
+                        <div class="card-header-dim py-2"><h3><i class="mdi mdi-store"></i> Cartera por sucursal</h3></div>
+                        <div class="card-body-dim p-0">
+                            <div class="table-responsive"><table class="table-dim w-100">
+                                <thead><tr><th>Sucursal</th><th class="text-end">Cartera</th><th class="text-end">Mora</th><th></th></tr></thead>
+                                <tbody>
+                                    <tr><td>Santiago</td><td class="text-end mono">$6.840M</td><td class="text-end mono">6,2%</td><td><div class="bar-track"><div class="bar-fill" style="width:55%"></div></div></td></tr>
+                                    <tr><td>Valparaíso</td><td class="text-end mono">$2.310M</td><td class="text-end mono">8,1%</td><td><div class="bar-track"><div class="bar-fill" style="width:72%;background:var(--warning)"></div></div></td></tr>
+                                    <tr><td>Concepción</td><td class="text-end mono">$1.980M</td><td class="text-end mono">9,4%</td><td><div class="bar-track"><div class="bar-fill" style="width:84%;background:var(--warning)"></div></div></td></tr>
+                                    <tr><td>Antofagasta</td><td class="text-end mono">$1.350M</td><td class="text-end mono">11,2%</td><td><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--danger)"></div></div></td></tr>
+                                </tbody>
+                            </table></div>
+                        </div>
+                    </div>
+                    <div class="card-dim blurb-boxed rounded-3 p-0">
+                        <div class="card-header-dim py-2"><h3><i class="mdi mdi-bell-alert"></i> Alertas y pendientes</h3><p class="text-muted small">Transversal · todos los módulos</p></div>
+                        <div class="card-body-dim">
+                            <div class="alerts">
+                                <div class="alert"><span class="tag cob">Cobranza</span><span class="txt">Documentos que entran en mora hoy</span><span class="cnt r">14</span></div>
+                                <div class="alert"><span class="tag rec">Recaudación</span><span class="txt">Pagos no identificados (+5 días)</span><span class="cnt r mono">$28,9M</span></div>
+                                <div class="alert"><span class="tag ope">Operaciones</span><span class="txt">Operaciones pendientes de curse</span><span class="cnt y">8</span></div>
+                                <div class="alert"><span class="tag pro">Prórrogas</span><span class="txt">Documentos en tope de prórrogas</span><span class="cnt y">8</span></div>
+                                <div class="alert"><span class="tag rie">Riesgo</span><span class="txt">Deudores que superan su línea</span><span class="cnt y">5</span></div>
+                                <div class="alert"><span class="tag car">Cartera</span><span class="txt">Documentos que vencen esta semana</span><span class="cnt">23</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Las otras vistas (Operaciones, Cartera, etc.) se pueden ir llenando dinámicamente, por ahora están vacías pero la navegación funciona -->
+            <div class="dashboard-view" id="view-operaciones"><div class="p-4 text-center text-muted">Vista de Operaciones (próximamente)</div></div>
+            <div class="dashboard-view" id="view-cartera"><div class="p-4 text-center text-muted">Vista de Cartera (próximamente)</div></div>
+            <div class="dashboard-view" id="view-cobranza"><div class="p-4 text-center text-muted">Vista de Cobranza (próximamente)</div></div>
+            <div class="dashboard-view" id="view-recaudacion"><div class="p-4 text-center text-muted">Vista de Recaudación (próximamente)</div></div>
+            <div class="dashboard-view" id="view-prorrogas"><div class="p-4 text-center text-muted">Vista de Prórrogas (próximamente)</div></div>
+            <div class="dashboard-view" id="view-clientes"><div class="p-4 text-center text-muted">Clientes y Deudores</div></div>
+            <div class="dashboard-view" id="view-riesgo"><div class="p-4 text-center text-muted">Riesgo y Líneas</div></div>
+            <div class="dashboard-view" id="view-reportes"><div class="p-4 text-center text-muted">Reportes</div></div>
+            <div class="dashboard-view" id="view-config"><div class="p-4 text-center text-muted">Configuración</div></div>
+        </main>
+    </div>
+
+    <footer class="dashboard-footer footer text-center d-flex justify-content-center">
+        <i class="mdi mdi-shield-check"></i> Dim720 · Motor de Evaluación de Riesgo · Dimensión S.A. · Confidencial — Uso Interno
+    </footer>
+</div>
+
+<!-- Scripts base -->
+<script src="assets/js/vendor.min.js"></script>
+<script src="assets/js/app.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+<script>
+          (function updateDate(){
+ const M=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+ const n=new Date();
+ const el=document.getElementById('topbarDate');
+ if(el)el.textContent=String(n.getDate()).padStart(2,'0')+' '+M[n.getMonth()]+' '+n.getFullYear()+' · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+ setTimeout(updateDate,30000);
+})();
+</script>
+<!-- Scripts de gráficos (adaptados del factoring) -->
+<script>
+    (function(){
+        const CLR = { teal:'#0E7C7B', teal2:'#3FA39A', gold:'#B27A2B', success:'#10b981', warning:'#f59e0b', danger:'#ef4444', grid:'#e5e7eb', muted:'#6b7280' };
+        const fmt = new Intl.NumberFormat('es-CL');
+        Chart.defaults.font.family = "'Inter', 'IBM Plex Sans', sans-serif";
+        Chart.defaults.font.size = 11;
+
+        // Evolución cartera
+        new Chart(c_cartera, { type:'line', data:{ labels:['Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar','Abr','May'], datasets:[{ data:[10920,11150,11380,11240,11600,11820,12010,12150,12030,12260,12380,12480], borderColor:CLR.teal, borderWidth:2.6, tension:0.38, fill: true, backgroundColor: (ctx) => { const g = ctx.chart.ctx.createLinearGradient(0,0,0,250); g.addColorStop(0,CLR.teal+'2e'); g.addColorStop(1,CLR.teal+'00'); return g; } }] }, options:{ plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: (c) => ' $'+fmt.format(c.raw)+'M' } } }, scales:{ y:{ grid:{color:CLR.grid}, ticks:{ callback: (v) => '$'+(v/1000).toFixed(0)+'MM' } }, x:{ grid:{display:false} } }, maintainAspectRatio:false, responsive:true } });
+        // Composición
+        new Chart(c_comp, { type:'doughnut', data:{ labels:['Facturas','Cheques','Letras','Pagarés'], datasets:[{ data:[62,21,11,6], backgroundColor:[CLR.teal, CLR.teal2, CLR.gold, '#C9C3B6'], borderWidth:2, borderColor:'#fff' }] }, options:{ cutout:'60%', plugins:{ legend:{position:'bottom'}, tooltip:{ callbacks:{ label: (c) => ` ${c.label}: ${c.raw}%` } } }, maintainAspectRatio:false, responsive:true } });
+        // Flujo colocación vs recaudación
+        new Chart(c_flujo, { type:'bar', data:{ labels:['Dic','Ene','Feb','Mar','Abr','May'], datasets:[ { label:'Colocación', data:[4200,3950,4480,4610,4720,4850], backgroundColor:CLR.teal, borderRadius:5, maxBarThickness:16 }, { label:'Recaudación', data:[3650,3400,3900,4050,3850,3180], backgroundColor:CLR.gold, borderRadius:5, maxBarThickness:16 } ] }, options:{ plugins:{ legend:{position:'bottom'}, tooltip:{ callbacks:{ label: (c) => ` ${c.dataset.label}: $${fmt.format(c.raw)}M` } } }, scales:{ y:{ grid:{color:CLR.grid}, ticks:{ callback: (v) => '$'+(v/1000).toFixed(0)+'MM' } }, x:{ grid:{display:false} } }, maintainAspectRatio:false, responsive:true } });
+        // Antigüedad
+        new Chart(c_aging, { type:'bar', data:{ labels:['Al día','1-30','31-60','61-90','+90'], datasets:[{ data:[11500,470,280,140,90], backgroundColor:[CLR.success, CLR.teal2, CLR.gold, CLR.warning, CLR.danger], borderRadius:6, maxBarThickness:42 }] }, options:{ plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: (c) => ' $'+fmt.format(c.raw)+'M' } } }, scales:{ y:{ grid:{color:CLR.grid}, ticks:{ callback: (v) => '$'+(v/1000).toFixed(0)+'MM' } }, x:{ grid:{display:false} } }, maintainAspectRatio:false, responsive:true } });
+        // Concentración riesgo (horizontal)
+        new Chart(c_riesgo, { type:'bar', data:{ labels:['Comercial Andes','Distribuidora Sur','Inversiones Pacífico','Maderas del Maule','Retail Cordillera','Otros'], datasets:[{ data:[540,420,360,290,240,980], backgroundColor:CLR.teal, borderRadius:5, maxBarThickness:18 }] }, options:{ indexAxis:'y', plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: (c) => ' $'+fmt.format(c.raw)+'M' } } }, scales:{ x:{ grid:{color:CLR.grid}, ticks:{ callback: (v) => '$'+v+'M' } }, y:{ grid:{display:false} } }, maintainAspectRatio:false, responsive:true } });
+    })();
+
+    // Función de navegación entre vistas
+    function scrollToSection(viewId) {
+        document.querySelectorAll('.dashboard-view').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(viewId);
+        if(target) target.classList.add('active');
+        // Actualizar breadcrumb y título
+        const titles = { 'view-panel-general':'PANEL GENERAL', 'view-operaciones':'OPERACIONES', 'view-cartera':'CARTERA', 'view-cobranza':'COBRANZA', 'view-recaudacion':'RECAUDACIÓN', 'view-prorrogas':'PRÓRROGAS', 'view-clientes':'CLIENTES Y DEUDORES', 'view-riesgo':'RIESGO Y LÍNEAS', 'view-reportes':'REPORTES', 'view-config':'CONFIGURACIÓN' };
+        const titleElem = document.querySelector('.topbar-title');
+        if(titleElem && titles[viewId]) titleElem.innerHTML = `<i class="mdi mdi-${viewId.includes('panel')?'view-dashboard':(viewId.includes('operaciones')?'file-document-edit':(viewId.includes('cobranza')?'cash-100':'folder'))}"></i> ${titles[viewId]}`;
+        const breadSpan = document.querySelector('#breadcrumbRole');
+        if(breadSpan) breadSpan.innerText = titles[viewId] || 'FactorSuite';
+    }
+    window.scrollToSection = scrollToSection;
+</script>
+</body>
+</html>

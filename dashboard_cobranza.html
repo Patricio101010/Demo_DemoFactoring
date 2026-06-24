@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIM-ONE · Dashboard Cobranza</title>
+    <link rel="shortcut icon" href="assets/img/icono.ico" type="image/x-icon">
+    <script src="assets/js/hyper-config2.js"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="assets/css/app-dim.min.css" class="app-style" rel="stylesheet">
+    <link href="assets/css/style-2.css" rel="stylesheet">
+    <!-- MDI Icons -->
+    <link rel="stylesheet" href="assets/css/icons.min.css">
+    <!-- Google Fonts (Dim720) -->
+    <link href="assets/css/fonts.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        /* Estilos específicos para Dashboard Cobranza */
+        .card h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card h3 i {
+            color: var(--dim-red);
+            font-size: 1rem;
+        }
+        .kpi-card {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--dim-red), var(--dim-red-dark));
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .kpi-card:hover::before {
+            opacity: 1;
+        }
+        .kpi-card.warn .kpi-value {
+            color: var(--warning);
+        }
+        .kpi-card.bad .kpi-value {
+            color: var(--danger);
+        }
+        .kpi-card.good .kpi-value {
+            color: var(--success);
+        }
+        .kpi-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+        .kpi-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.35rem;
+        }
+        .kpi-delta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            margin-top: 0.4rem;
+        }
+        .kpi-delta.up {
+            background: var(--success-light);
+            color: var(--success);
+        }
+        .kpi-delta.down {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+        .kpi-delta.flat {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+        .spark {
+            height: 32px;
+            margin-top: 0.5rem;
+        }
+        .semaphore {
+            display: inline-flex;
+            gap: 4px;
+            margin-left: 6px;
+        }
+        .light {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+        .light.on-g {
+            background: var(--success);
+        }
+        .light.on-y {
+            background: var(--warning);
+        }
+        .light.on-r {
+            background: var(--danger);
+        }
+        .gauge-box {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        .gauge-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .gauge-center .g-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            font-family: var(--font-sans);
+            line-height: 1;
+        }
+        .gauge-center .g-lab {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .bar-cell {
+            min-width: 100px;
+        }
+        .grid.g-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+        .grid.g-23 {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 1.25rem;
+        }
+        @media (max-width: 1000px) {
+            .grid.g-3, .grid.g-23 {
+                grid-template-columns: 1fr;
+            }
+        }
+        .chart-wrap canvas {
+            max-height: 100%;
+            width: 100%;
+        }
+        .pill {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .pill.r {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+        .pill.y {
+            background: var(--warning-light);
+            color: #92400e;
+        }
+    </style>
+       <!-- Custom CSS del Dim720 -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="wrapper">
+    <!-- ========== Topbar (idéntica Dim720) ========== -->
+    <div class="rd-navbar context rd-navbar-original rd-navbar-fullwidth">
+        <div class="navbar-container fixed-top">
+            <div class="navbar-custom">
+                <div class="topbar">
+                    <div class="d-flex align-items-center gap-lg-1 gap-1">
+                        <div class="logo-topbar">
+                            <a class="logo-light"><span class="logo-lg"><img src="assets/img/logo.png" alt="logo"></span><span class="logo-sm"><img src="assets/img/logo-sm.png" alt="small logo"></span></a>
+                            <a class="logo-dark"><span class="logo-lg"><img src="assets/img/logo-dark.png" alt="dark logo"></span><span class="logo-sm"><img src="assets/img/logo-dark-sm.png" alt="small logo"></span></a>
+                        </div>
+                        <button class="button-toggle-menu"><i class="mdi mdi-menu"></i></button>
+                        <button class="navbar-toggle" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content"><div class="lines"><span></span><span></span><span></span></div></button>
+                        <div class="topbar-title"><i class="mdi mdi-cash-100"></i> DASHBOARD · COBRANZA</div>
+                    </div>
+                    <div class="topbar-right">
+                        <div class="live-indicator"><div class="live-dot"></div>EN VIVO</div>
+                        <div class="topbar-date" id="topbarDate">22 MAY 2026 · 10:24</div>
+                        <div class="d-flex gap-2 ms-3">
+                            <a href="panel_general.html" class="btn btn-secondary btn-sm"><i class="mdi mdi-view-dashboard me-1"></i>Panel General</a>
+                            <a href="pantalla_cobranza.html" class="btn btn-danger btn-sm"><i class="mdi mdi-phone me-1"></i>Gestión de Cobranza</a>
+                        </div>
+                    </div>
+                    <ul class="topbar-menu d-flex align-items-center gap-1">
+                        <li class="d-none d-sm-inline-block"><div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" title="COLOR MODE"><i class="mdi mdi-brightness-4 mdi-24px"></i></div></li>
+                        <li class="d-none d-md-inline-block"><a class="nav-link" href="" data-toggle="fullscreen"><i class="mdi mdi-fullscreen mdi-24px"></i></a></li>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                <span class="account-user-avatar"><i class="mdi mdi-account-circle h2 icon-danger icon-circle icon-style-2 mdi-36px"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                                <a href="" class="dropdown-item"><i class="mdi mdi-account-edit me-1"></i>Modificar Usuario</a>
+                                <a href="" class="dropdown-item"><i class="mdi mdi-lock-outline me-1"></i>Cambiar Contraseña</a>
+                                <a href="index.html" class="dropdown-item"><i class="mdi mdi-logout me-1"></i>Cerrar Sesión</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Sidebar completa (con todos los enlaces) ========== -->
+    <div class="leftside-menu border-0 rounded-0">
+        <a class="logo logo-light m-0 p-0"><span class="logo-lg justify-content-center mt-3"><img src="assets/images/logo.png" alt="logo"></span><span class="logo-sm mt-0 mb-2"><img src="assets/images/logo-sm.png" alt="small logo"></span></a>
+        <a class="logo logo-dark m-0 p-0"><span class="logo-lg"><img src="assets/images/logo-dark.png" alt="logo"></span><span class="logo-sm"><img src="assets/images/logo-dark-sm.png" alt="small logo"></span></a>
+        <div class="button-sm-hover" data-bs-toggle="tooltip" title="Mantener Sidebar"><i class="ri-checkbox-blank-circle-line"></i></div>
+        <div class="button-close-fullsidebar"><i class="ri-close-fill"></i></div>
+        <div class="leftbar-user">
+            <a class="avatar-sm"><img src="assets/images/users/user-1.jpg" width="130" alt="user-image" class="avatar-img rounded-circle shadow-out"><span class="leftbar-user-name">John Sanders</span></a>
+            <div class="info"><a><span style="color:#faaec2"><div class="user-role">Gerencia General</div></span></a></div>
+        </div>
+        <div id="leftside-menu-container" data-simplebar="init" style="height: 66vh !important;">
+            <div class="simplebar-wrapper"><div class="simplebar-mask"><div class="simplebar-offset"><div class="simplebar-content-wrapper"><div class="simplebar-content">
+                <nav id="sidebarNav">
+                    <ul class="side-nav mt-2">
+                         <!-- Ítems del menú original del factoring integrados -->
+                        <li class="side-nav-item nav-item active"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-panel-general')"><i class="mdi mdi-view-dashboard"></i><span>Panel General</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_operaciones.html" class="side-nav-link" onclick="scrollToSection('view-operaciones')"><i class="mdi mdi-file-document-edit"></i><span>Operaciones</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-cartera')"><i class="mdi mdi-account-group"></i><span>Cartera</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_cobranza.html" class="side-nav-link" onclick="scrollToSection('view-cobranza')"><i class="mdi mdi-cash-100"></i><span>Cobranza</span><span class="nav-badge green">activo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_recaudacion.html" class="side-nav-link" onclick="scrollToSection('view-recaudacion')"><i class="mdi mdi-cash-multiple"></i><span>Recaudación</span><span class="nav-badge blue">nuevo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_prorroga.html" class="side-nav-link" onclick="scrollToSection('view-prorrogas')"><i class="mdi mdi-calendar-clock"></i><span>Prórrogas</span><span class="nav-badge orange">8</span></a></li>
+                        <li class="side-nav-title">Administración</li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-clientes')"><i class="mdi mdi-account-multiple"></i><span>Clientes y Deudores</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="factoring_taller_productos.html" class="side-nav-link"><i class="mdi mdi-toolbox-outline"></i><span>Taller de Productos</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-riesgo')"><i class="mdi mdi-shield-half-full"></i><span>Riesgo y Líneas</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-reportes')"><i class="mdi mdi-chart-line"></i><span>Reportes</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-config')"><i class="mdi mdi-cog"></i><span>Configuración</span></a></li>
+                    </ul>
+                </nav>
+            </div></div></div></div></div>
+        </div>
+        <ul class="side-nav fixed-bottom"><li class="side-nav-item nav-item m-0"><a class="side-nav-link h-100" onclick="logout()" data-bs-toggle="tooltip" title="Cerrar Sesión"><i class="mdi mdi-logout-variant mdi-24px"></i></a></li></ul>
+    </div>
+
+    <!-- ========== Contenido principal ========== -->
+    <div class="content-page p-0">
+        <main class="dashboard-content" id="dashboardContent">
+            <div class="dashboard-view active">
+                <!-- Breadcrumb interno -->
+                <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                    <i class="mdi mdi-cash-100 text-danger"></i>
+                    <span class="text-muted small">Cobranza</span>
+                    <i class="mdi mdi-chevron-right text-muted small"></i>
+                    <span class="fw-semibold small">Dashboard</span>
+                </div>
+
+                <!-- Filtros rápidos en topbar del contenido -->
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-4 pb-2 border-bottom">
+                    <div class="badge-dim" style="background: rgba(14,124,123,0.1); color: #0E7C7B;">
+                        <span class="dot" style="background: #0E7C7B;"></span> Datos de ejemplo
+                    </div>
+                    <div class="badge-dim bg-light text-dark">
+                        <i class="mdi mdi-calendar-month me-1"></i> Período: <b>Mayo 2026</b>
+                    </div>
+                    <div class="badge-dim bg-light text-dark">
+                        <i class="mdi mdi-account-group me-1"></i> Cedente: <b>Todos</b>
+                    </div>
+                </div>
+
+                <!-- KPIs principales con estructura kpi-card -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Cartera gestionada en cobranza <span class="badge-dim bg-secondary text-white ms-1">KPI</span></div>
+                            <div class="kpi-value"><span class="cur">$</span>3.126.000.000</div>
+                            <div class="kpi-sub"><span class="kpi-delta up"><i class="mdi mdi-arrow-up"></i> 3,1%</span> vs. mes anterior</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="kpi-card warn">
+                            <div class="kpi-label">Índice de morosidad <span class="semaphore"><span class="light on-g"></span><span class="light on-y"></span><span class="light"></span></span></div>
+                            <div class="kpi-value">8,4<span class="fs-6">%</span></div>
+                            <div class="kpi-sub"><span class="kpi-delta down"><i class="mdi mdi-arrow-up"></i> 0,6 pts</span> sobre umbral (7%)</div>
+                            <div class="spark"><canvas id="cob_spark_mora" style="height: 32px;"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Plazo prom. de cobro (DSO) <span class="badge-dim bg-secondary text-white ms-1">KPI</span></div>
+                            <div class="kpi-value">47 <span class="fs-6">días</span></div>
+                            <div class="kpi-sub"><span class="kpi-delta up"><i class="mdi mdi-arrow-down"></i> 2 días</span> mejora vs. mes anterior</div>
+                            <div class="spark"><canvas id="cob_spark_dso" style="height: 32px;"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="kpi-card bad">
+                            <div class="kpi-label">Documentos protestados <span class="badge-dim bg-secondary text-white ms-1">KPI</span></div>
+                            <div class="kpi-value">23</div>
+                            <div class="kpi-sub"><span class="num">$185.400.000</span> · <span class="kpi-delta down"><i class="mdi mdi-arrow-up"></i> 5</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Composición y desempeño -->
+                <div class="section-header mb-3">
+                    <div class="section-number">1</div>
+                    <div class="section-title">Composición y desempeño</div>
+                </div>
+
+                <div class="grid g-3 mb-4">
+                    <div class="card-dim">
+                        <div class="card-header-dim py-2">
+                            <h3><i class="mdi mdi-chart-bar"></i> Antigüedad de cartera</h3>
+                            <p class="text-muted small mb-0">Distribución del saldo por tramo de mora</p>
+                        </div>
+                        <div class="card-body-dim">
+                            <div class="chart-wrap" style="height: 250px;"><canvas id="cob_aging"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="card-dim">
+                        <div class="card-header-dim py-2">
+                            <h3><i class="mdi mdi-gauge"></i> Efectividad de cobranza</h3>
+                            <p class="text-muted small mb-0">Cobrado vs. lo que vencía</p>
+                        </div>
+                        <div class="card-body-dim">
+                            <div class="gauge-box">
+                                <div class="chart-wrap" style="height: 160px;"><canvas id="cob_gauge"></canvas></div>
+                                <div class="gauge-center">
+                                    <div class="g-val">76%</div>
+                                    <div class="g-lab">meta: 82%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-dim">
+                        <div class="card-header-dim py-2">
+                            <h3><i class="mdi mdi-chart-line"></i> Compromisos de pago</h3>
+                            <p class="text-muted small mb-0">Comprometidos vs. cumplidos</p>
+                        </div>
+                        <div class="card-body-dim">
+                            <div class="chart-wrap" style="height: 200px;"><canvas id="cob_comp"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top deudores morosos y Alertas -->
+                <div class="grid g-23 mb-4">
+                    <div class="card-dim">
+                        <div class="card-header-dim py-2">
+                            <h3><i class="mdi mdi-account-alert"></i> Top deudores morosos</h3>
+                        </div>
+                        <div class="card-body-dim p-0">
+                            <div class="table-responsive">
+                                <table class="table-dim w-100">
+                                    <thead>
+                                        <tr><th>Deudor</th><th>Tramo</th><th class="text-end">Monto en mora</th><th style="width: 120px;">Participación</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-semibold">Comercial Andes SpA</td>
+                                            <td><span class="pill r">+90 días</span></td>
+                                            <td class="text-end mono">$98.450.000</td>
+                                            <td><div class="bar-track"><div class="bar-fill" style="width: 100%; background: var(--danger);"></div></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Distribuidora Sur Ltda.</td>
+                                            <td><span class="pill r">+90 días</span></td>
+                                            <td class="text-end mono">$76.200.000</td>
+                                            <td><div class="bar-track"><div class="bar-fill" style="width: 77%; background: var(--danger);"></div></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Inversiones Pacífico</td>
+                                            <td><span class="pill y">61-90</span></td>
+                                            <td class="text-end mono">$54.800.000</td>
+                                            <td><div class="bar-track"><div class="bar-fill" style="width: 56%; background: var(--warning);"></div></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Maderas del Maule</td>
+                                            <td><span class="pill y">61-90</span></td>
+                                            <td class="text-end mono">$41.300.000</td>
+                                            <td><div class="bar-track"><div class="bar-fill" style="width: 42%; background: var(--warning);"></div></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Constructora Volcán</td>
+                                            <td><span class="pill y">31-60</span></td>
+                                            <td class="text-end mono">$33.900.000</td>
+                                            <td><div class="bar-track"><div class="bar-fill" style="width: 34%;"></div></div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-dim">
+                        <div class="card-header-dim py-2">
+                            <h3><i class="mdi mdi-bell-alert"></i> Alertas</h3>
+                        </div>
+                        <div class="card-body-dim">
+                            <div class="alerts">
+                                <div class="alert-item">
+                                    <div class="alert-icon danger"><i class="mdi mdi-alert-circle"></i></div>
+                                    <div class="alert-content"><h4>Documentos que entran en mora hoy</h4></div>
+                                    <div class="fw-bold text-danger">14</div>
+                                </div>
+                                <div class="alert-item">
+                                    <div class="alert-icon warning"><i class="mdi mdi-arrow-up"></i></div>
+                                    <div class="alert-content"><h4>Deudores sobre umbral de exposición</h4></div>
+                                    <div class="fw-bold text-warning">6</div>
+                                </div>
+                                <div class="alert-item">
+                                    <div class="alert-icon info"><i class="mdi mdi-timer-sand"></i></div>
+                                    <div class="alert-content"><h4>Compromisos de pago vencidos sin cumplir</h4></div>
+                                    <div class="fw-bold">9</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note mt-3">
+                    <i class="mdi mdi-information-outline me-1"></i>
+                    Pantalla independiente · mockup de presentación · datos de ejemplo (CLP).
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="dashboard-footer footer text-center d-flex justify-content-center">
+        <i class="mdi mdi-shield-check"></i> DIM-ONE · Motor de Evaluación de Riesgo · Confidencial — Uso Interno
+    </footer>
+</div>
+
+<!-- Scripts base -->
+<script src="assets/js/vendor.min.js"></script>
+<script src="assets/js/app.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+
+<!-- Script de gráficos -->
+<script>
+    (function() {
+        // Paleta de colores coherente con el Dim720
+        const CLR = {
+            accent: '#0E7C7B',
+            accent2: '#3FA39A',
+            gold: '#B27A2B',
+            success: '#10b981',
+            warning: '#f59e0b',
+            danger: '#ef4444',
+            grid: '#e5e7eb',
+            muted: '#6b7280'
+        };
+        
+        const fmtCLP = new Intl.NumberFormat('es-CL');
+        Chart.defaults.font.family = "'Inter', 'IBM Plex Sans', sans-serif";
+        Chart.defaults.font.size = 11;
+        
+        // Sparkline - Evolución morosidad
+        new Chart(document.getElementById('cob_spark_mora'), {
+            type: 'line',
+            data: {
+                labels: [0, 1, 2, 3, 4, 5],
+                datasets: [{
+                    data: [6.9, 7.2, 7.4, 7.8, 8.1, 8.4],
+                    borderColor: CLR.danger,
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: function(ctx) {
+                        const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 30);
+                        gradient.addColorStop(0, CLR.danger + '33');
+                        gradient.addColorStop(1, CLR.danger + '00');
+                        return gradient;
+                    },
+                    tension: 0.4,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                scales: { x: { display: false }, y: { display: false } },
+                maintainAspectRatio: false,
+                responsive: true
+            }
+        });
+        
+        // Sparkline - DSO
+        new Chart(document.getElementById('cob_spark_dso'), {
+            type: 'line',
+            data: {
+                labels: [0, 1, 2, 3, 4, 5],
+                datasets: [{
+                    data: [51, 50, 49, 49, 48, 47],
+                    borderColor: CLR.accent,
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: function(ctx) {
+                        const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 30);
+                        gradient.addColorStop(0, CLR.accent + '33');
+                        gradient.addColorStop(1, CLR.accent + '00');
+                        return gradient;
+                    },
+                    tension: 0.4,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                scales: { x: { display: false }, y: { display: false } },
+                maintainAspectRatio: false,
+                responsive: true
+            }
+        });
+        
+        // Gauge 76%
+        new Chart(document.getElementById('cob_gauge'), {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [76, 24],
+                    backgroundColor: [CLR.accent, '#ECEAE3'],
+                    borderWidth: 0,
+                    circumference: 180,
+                    rotation: 270
+                }]
+            },
+            options: {
+                cutout: '72%',
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                maintainAspectRatio: false,
+                responsive: true
+            }
+        });
+        
+        // Gráfico de barras - Antigüedad de cartera
+        new Chart(document.getElementById('cob_aging'), {
+            type: 'bar',
+            data: {
+                labels: ['Al día', '1-30', '31-60', '61-90', '+90'],
+                datasets: [{
+                    data: [2156, 463, 275, 152, 80].map(v => v * 1e6),
+                    backgroundColor: [CLR.success, CLR.accent2, CLR.gold, CLR.warning, CLR.danger],
+                    borderRadius: 6,
+                    maxBarThickness: 46
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ' $' + fmtCLP.format(context.raw);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: CLR.grid },
+                        ticks: { callback: function(v) { return '$' + (v / 1e6).toFixed(0) + 'M'; } }
+                    },
+                    x: { grid: { display: false } }
+                },
+                maintainAspectRatio: false,
+                responsive: true
+            }
+        });
+        
+        // Gráfico de barras - Compromisos de pago
+        new Chart(document.getElementById('cob_comp'), {
+            type: 'bar',
+            data: {
+                labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                datasets: [
+                    {
+                        label: 'Comprometidos',
+                        data: [42, 38, 51, 47],
+                        backgroundColor: CLR.accent2,
+                        borderRadius: 5,
+                        maxBarThickness: 18
+                    },
+                    {
+                        label: 'Cumplidos',
+                        data: [31, 29, 37, 38],
+                        backgroundColor: CLR.accent,
+                        borderRadius: 5,
+                        maxBarThickness: 18
+                    }
+                ]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom' } },
+                scales: {
+                    y: { grid: { color: CLR.grid } },
+                    x: { grid: { display: false } }
+                },
+                maintainAspectRatio: false,
+                responsive: true
+            }
+        });
+    })();
+    
+    // Actualizar fecha/hora en topbar
+    (function updateDate() {
+        const M = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+        const n = new Date();
+        const el = document.getElementById('topbarDate');
+        if (el) {
+            el.textContent = String(n.getDate()).padStart(2, '0') + ' ' + M[n.getMonth()] + ' ' + n.getFullYear() + ' · ' + 
+                           String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0');
+        }
+        setTimeout(updateDate, 30000);
+    })();
+    
+    // Función de logout
+    function logout() {
+        Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: 'Serás redirigido al inicio de sesión',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d21047',
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'index.html';
+            }
+        });
+    }
+</script>
+</body>
+</html>

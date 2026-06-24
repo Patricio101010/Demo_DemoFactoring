@@ -1,0 +1,347 @@
+/* Estilos para la pantalla de fin de sesión */
+
+.fin-sesion-container {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fin-sesion-card {
+  max-width: 500px;
+  border: none;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.fin-sesion-header {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.fin-sesion-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.fin-sesion-icono {
+  font-size: 5rem;
+  animation: pulse 2s infinite;
+  display: inline-block;
+}
+
+.fin-sesion-titulo {
+  margin: 0;
+  font-weight: bold;
+  font-size: 1.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.fin-sesion-body {
+  padding: 2.5rem;
+  text-align: center;
+  background: white;
+}
+
+.fin-sesion-motivo {
+  font-size: 1.25rem;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.fin-sesion-contador {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #f8f9fa;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.fin-sesion-contador::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  border: 3px solid #dc3545;
+  border-top-color: transparent;
+  animation: spin 3s linear infinite;
+}
+
+.fin-sesion-numero {
+  font-size: 3rem;
+  line-height: 1;
+  color: #dc3545;
+  font-weight: bold;
+  z-index: 1;
+}
+
+.fin-sesion-label {
+  font-size: 0.75rem;
+  color: #6c757d;
+  z-index: 1;
+}
+
+.fin-sesion-boton {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+  border-radius: 50px;
+  padding: 0.875rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+  cursor: pointer;
+  width: 100%;
+}
+
+.fin-sesion-boton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
+
+.fin-sesion-boton:active {
+  transform: translateY(0);
+}
+
+.fin-sesion-footer {
+  background: #f8f9fa;
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.fin-sesion-alerta {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.fin-sesion-alerta-info {
+  background: rgba(13, 202, 240, 0.1);
+  border: 1px solid rgba(13, 202, 240, 0.2);
+}
+
+.fin-sesion-alerta-warning {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fin-sesion-card {
+    margin: 1rem;
+  }
+
+  .fin-sesion-body {
+    padding: 1.5rem;
+  }
+
+  .fin-sesion-header {
+    padding: 1.5rem;
+  }
+
+  .fin-sesion-icono {
+    font-size: 4rem;
+  }
+
+  .fin-sesion-titulo {
+    font-size: 1.5rem;
+  }
+
+  .fin-sesion-motivo {
+    font-size: 1rem;
+  }
+
+  .fin-sesion-contador {
+    width: 80px;
+    height: 80px;
+  }
+
+  .fin-sesion-numero {
+    font-size: 2.5rem;
+  }
+}
+
+/* Modo oscuro (opcional) */
+@media (prefers-color-scheme: dark) {
+  .fin-sesion-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+
+  .fin-sesion-body {
+    background: #2c2c3e;
+    color: #e0e0e0;
+  }
+
+  .fin-sesion-motivo {
+    color: #b0b0b0;
+  }
+
+  .fin-sesion-contador {
+    background: #1a1a2e;
+  }
+
+  .fin-sesion-footer {
+    background: #1a1a2e;
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .fin-sesion-alerta {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.3);
+  }
+}
+
+/* Estilos para el botón de cerrar sesión */
+.boton-cerrar-sesion {
+  position: relative;
+  overflow: hidden;
+}
+
+.boton-cerrar-sesion::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.boton-cerrar-sesion:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Estilos para el menú de usuario */
+.menu-usuario-dropdown {
+  min-width: 250px;
+  border: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-usuario-item {
+  padding: 0.75rem 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.menu-usuario-item:hover {
+  background: rgba(220, 53, 69, 0.05);
+  padding-left: 1.5rem;
+}
+
+.menu-usuario-item.danger:hover {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+/* Efecto de carga en el contador */
+.contador-loading {
+  position: relative;
+}
+
+.contador-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: #dc3545;
+  animation: spin 1s linear infinite;
+}
+
+/* Estados del botón */
+.btn-cerrar-sesion-loading {
+  position: relative;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-cerrar-sesion-loading::after {
+  content: '';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIM-ONE · Pago Directo · Recaudación</title>
+    <link rel="shortcut icon" href="assets/img/icono.ico" type="image/x-icon">
+    <script src="assets/js/hyper-config2.js"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="assets/css/app-dim.min.css" class="app-style" rel="stylesheet">
+    <link href="assets/css/style-2.css" rel="stylesheet">
+    <!-- MDI Icons -->
+    <link rel="stylesheet" href="assets/css/icons.min.css">
+    <!-- Google Fonts (DIM-ONE) -->
+    <link href="assets/css/fonts.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para Pago Directo */
+        .totales {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            padding: 1rem;
+        }
+        .totales .tt {
+            font-weight: 700;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin: 0.75rem 0 0.5rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.75rem;
+        }
+        .totales .tt:first-child {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 0;
+        }
+        .totales .trow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+        .totales .trow .v {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .totales .grand {
+            background: var(--dim-red);
+            color: white;
+            border-radius: var(--btn-radius);
+            padding: 0.75rem 1rem;
+            margin-top: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .totales .grand .lbl {
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+        .totales .grand .v {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+        .nav-tabs2 {
+            display: flex;
+            gap: 0.25rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 0;
+        }
+        .nav-tabs2 button {
+            background: none;
+            border: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all var(--transition-fast);
+        }
+        .nav-tabs2 button:hover {
+            color: var(--dim-red);
+        }
+        .nav-tabs2 button.active {
+            color: var(--dim-red);
+            border-bottom-color: var(--dim-red);
+        }
+        .tabpane {
+            display: none;
+            padding: 1rem 0;
+        }
+        .tabpane.active {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+        .toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .inline-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+        .inline-fields .field {
+            margin-bottom: 0;
+            min-width: 120px;
+        }
+        .grid-scroll {
+            overflow: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            max-height: 280px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+       <!-- Custom CSS del DIM-ONE -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="wrapper">
+    <!-- ========== Topbar (idéntica DIM-ONE) ========== -->
+    <div class="rd-navbar context rd-navbar-original rd-navbar-fullwidth">
+        <div class="navbar-container fixed-top">
+            <div class="navbar-custom">
+                <div class="topbar">
+                    <div class="d-flex align-items-center gap-lg-1 gap-1">
+                        <div class="logo-topbar">
+                            <a class="logo-light"><span class="logo-lg"><img src="assets/img/logo.png" alt="logo"></span><span class="logo-sm"><img src="assets/img/logo-sm.png" alt="small logo"></span></a>
+                            <a class="logo-dark"><span class="logo-lg"><img src="assets/img/logo-dark.png" alt="dark logo"></span><span class="logo-sm"><img src="assets/img/logo-dark-sm.png" alt="small logo"></span></a>
+                        </div>
+                        <button class="button-toggle-menu"><i class="mdi mdi-menu"></i></button>
+                        <button class="navbar-toggle" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content"><div class="lines"><span></span><span></span><span></span></div></button>
+                        <div class="topbar-title"><i class="mdi mdi-cash-multiple"></i> PAGO DIRECTO · RECAUDACIÓN</div>
+                    </div>
+                    <div class="topbar-right">
+                        <div class="live-indicator"><div class="live-dot"></div>EN VIVO</div>
+                        <div class="topbar-date" id="topbarDate">22 MAY 2026 · 10:24</div>
+                         <div class="d-flex gap-2 ms-3">
+                            <a href="panel_general.html" class="btn btn-secondary btn-sm"><i class="mdi mdi-view-dashboard me-1"></i>Panel General</a>
+                            <a href="dashboard_recaudacion.html" class="btn btn-danger btn-sm"><i class="mdi mdi-plus me-1"></i>Dashboard Recaudación</a>
+                        </div>
+                    </div>
+                    <ul class="topbar-menu d-flex align-items-center gap-1">
+                        <li class="d-none d-sm-inline-block"><div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" title="COLOR MODE"><i class="mdi mdi-brightness-4 mdi-24px"></i></div></li>
+                        <li class="d-none d-md-inline-block"><a class="nav-link" href="" data-toggle="fullscreen"><i class="mdi mdi-fullscreen mdi-24px"></i></a></li>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                <span class="account-user-avatar"><i class="mdi mdi-account-circle h2 icon-danger icon-circle icon-style-2 mdi-36px"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                                <a href="" class="dropdown-item"><i class="mdi mdi-account-edit me-1"></i>Modificar Usuario</a>
+                                <a href="" class="dropdown-item"><i class="mdi mdi-lock-outline me-1"></i>Cambiar Contraseña</a>
+                                <a href="index.html" class="dropdown-item"><i class="mdi mdi-logout me-1"></i>Cerrar Sesión</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Sidebar completa (con todos los enlaces) ========== -->
+    <div class="leftside-menu border-0 rounded-0">
+        <a class="logo logo-light m-0 p-0"><span class="logo-lg justify-content-center mt-3"><img src="assets/images/logo.png" alt="logo"></span><span class="logo-sm mt-0 mb-2"><img src="assets/images/logo-sm.png" alt="small logo"></span></a>
+        <a class="logo logo-dark m-0 p-0"><span class="logo-lg"><img src="assets/images/logo-dark.png" alt="logo"></span><span class="logo-sm"><img src="assets/images/logo-dark-sm.png" alt="small logo"></span></a>
+        <div class="button-sm-hover" data-bs-toggle="tooltip" title="Mantener Sidebar"><i class="ri-checkbox-blank-circle-line"></i></div>
+        <div class="button-close-fullsidebar"><i class="ri-close-fill"></i></div>
+        <div class="leftbar-user">
+            <a class="avatar-sm"><img src="assets/images/users/user-1.jpg" width="130" alt="user-image" class="avatar-img rounded-circle shadow-out"><span class="leftbar-user-name">John Sanders</span></a>
+            <div class="info"><a><span style="color:#faaec2"><div class="user-role">Gerencia General</div></span></a></div>
+        </div>
+        <div id="leftside-menu-container" data-simplebar="init" style="height: 66vh !important;">
+            <div class="simplebar-wrapper"><div class="simplebar-mask"><div class="simplebar-offset"><div class="simplebar-content-wrapper"><div class="simplebar-content">
+                <nav id="sidebarNav">
+                    <ul class="side-nav mt-2">
+                        <!-- Ítems del menú original del factoring integrados -->
+                        <li class="side-nav-item nav-item active"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-panel-general')"><i class="mdi mdi-view-dashboard"></i><span>Panel General</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_operaciones.html" class="side-nav-link" onclick="scrollToSection('view-operaciones')"><i class="mdi mdi-file-document-edit"></i><span>Operaciones</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-cartera')"><i class="mdi mdi-account-group"></i><span>Cartera</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_cobranza.html" class="side-nav-link" onclick="scrollToSection('view-cobranza')"><i class="mdi mdi-cash-100"></i><span>Cobranza</span><span class="nav-badge green">activo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_recaudacion.html" class="side-nav-link" onclick="scrollToSection('view-recaudacion')"><i class="mdi mdi-cash-multiple"></i><span>Recaudación</span><span class="nav-badge blue">nuevo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_prorroga.html" class="side-nav-link" onclick="scrollToSection('view-prorrogas')"><i class="mdi mdi-calendar-clock"></i><span>Prórrogas</span><span class="nav-badge orange">8</span></a></li>
+                        <li class="side-nav-title">Administración</li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-clientes')"><i class="mdi mdi-account-multiple"></i><span>Clientes y Deudores</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="factoring_taller_productos.html" class="side-nav-link"><i class="mdi mdi-toolbox-outline"></i><span>Taller de Productos</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-riesgo')"><i class="mdi mdi-shield-half-full"></i><span>Riesgo y Líneas</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-reportes')"><i class="mdi mdi-chart-line"></i><span>Reportes</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-config')"><i class="mdi mdi-cog"></i><span>Configuración</span></a></li>
+                    </ul>
+                </nav>
+            </div></div></div></div></div>
+        </div>
+        <ul class="side-nav fixed-bottom"><li class="side-nav-item nav-item m-0"><a class="side-nav-link h-100" onclick="logout()" data-bs-toggle="tooltip" title="Cerrar Sesión"><i class="mdi mdi-logout-variant mdi-24px"></i></a></li></ul>
+    </div>
+
+    <!-- ========== Contenido principal ========== -->
+    <div class="content-page p-0">
+          
+        <main class="dashboard-content" id="dashboardContent">
+            <div class="dashboard-view active">
+            
+                <div class="row g-3">
+                    <!-- Columna principal -->
+                    <div class="col-md-9">
+                        <!-- Criterio de búsqueda -->
+                        <div class="card-dim mb-3">
+                            <div class="card-header-dim py-2">
+                                <h3><i class="mdi mdi-filter-variant"></i> Criterio de Búsqueda</h3>
+                            </div>
+                            <div class="card-body-dim">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="checkCliente" checked>
+                                            <label class="form-check-label small fw-semibold" for="checkCliente">Cliente</label>
+                                        </div>
+                                        <div class="input-group input-group-sm mb-2">
+                                            <input type="text" class="form-control" placeholder="99.999.999" style="max-width: 130px;">
+                                            <input type="text" class="form-control" maxlength="1" style="max-width: 50px; text-align: center;">
+                                            <button class="btn btn-outline-secondary" type="button">⌕</button>
+                                            <input type="text" class="form-control" placeholder="Razón social" readonly>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="checkPagador">
+                                            <label class="form-check-label small fw-semibold" for="checkPagador">Pagador</label>
+                                        </div>
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" class="form-control" placeholder="99.999.999" style="max-width: 130px;" readonly>
+                                            <input type="text" class="form-control" maxlength="1" style="max-width: 50px; text-align: center;" readonly>
+                                            <button class="btn btn-outline-secondary" type="button">⌕</button>
+                                            <input type="text" class="form-control" placeholder="Razón social" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold text-muted">Pagador</label>
+                                        <div class="d-flex gap-3 pt-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pag" id="pagCliente" checked>
+                                                <label class="form-check-label small" for="pagCliente">Cliente</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pag" id="pagPagador">
+                                                <label class="form-check-label small" for="pagPagador">Pagador</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Parámetros -->
+                        <div class="card-dim mb-3">
+                            <div class="card-header-dim py-2">
+                                <h3><i class="mdi mdi-settings"></i> Parámetros</h3>
+                            </div>
+                            <div class="card-body-dim">
+                                <div class="d-flex flex-wrap gap-3 align-items-end mb-3">
+                                    <div style="min-width: 120px;">
+                                        <div class="input-group input-group-sm">
+                                        <label class="input-group-text small fw-semibold text-muted">Fecha Pago</label>
+                                            <input type="text" class="form-control" value="31/05/2026">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-danger btn-sm">Config. Tasa</button>
+                                    </div>
+                                    <div style="min-width: 80px;">
+                                        <div class="input-group input-group-sm">
+                                        <label class="input-group-text small fw-semibold text-muted">Días Dev. Inter.</label>
+                                            <input type="text" class="form-control" value="0" readonly>
+                                        </div>
+                                    </div>
+                                    <div style="min-width: 160px;">
+                                        <div class="input-group input-group-sm">
+                                        <label class="input-group-text small fw-semibold text-muted">Cobranza</label>
+                                        <select class="form-select form-select-sm">
+                                            <option>Seleccione plaza</option>
+                                            <option>Santiago</option>
+                                            <option>Regiones</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div style="min-width: 120px;">
+                                        <div class="input-group input-group-sm">
+                                        <label class="input-group-text small fw-semibold text-muted">Factor de cambio (US$)</label>
+                                            <input type="text" class="form-control" value="945,30" readonly>
+                                        </div>
+                                    </div>
+                                     <div  class="input-group input-group-sm w-50">
+                                    <label class="input-group-text small fw-semibold text-muted">Observación de Pago</label>
+                                    <textarea class="form-control form-control-sm" rows="2" readonly></textarea>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Panel de totales -->
+                    <div class="col-md-3">
+                        <div class="totales">
+                            <div class="tt">Datos Diarios</div>
+                            <div class="trow"><span>Fecha</span><span class="v">31/05/2026</span></div>
+                            <div class="trow"><span>US$</span><span class="v">945,30</span></div>
+                            <div class="trow"><span>TML</span><span class="v">0,42%</span></div>
+
+                            <div class="tt">Saldos</div>
+                            <div class="trow"><span>Total CxC</span><span class="v">1.602.000</span></div>
+                            <div class="trow"><span>Total Doctos.</span><span class="v">55.830.000</span></div>
+
+                            <div class="tt">Totales</div>
+                            <div class="trow"><span>Total Seleccionado</span><span class="v">55.830.000</span></div>
+                            <div class="trow"><span>Total Interés (+)</span><span class="v">1.230.000</span></div>
+                            <div class="trow"><span>Total Nota Crédito (−)</span><span class="v">0</span></div>
+                            <div class="trow"><span>Total Int. a Dev. (−)</span><span class="v">0</span></div>
+                            <div class="grand"><span class="lbl">Total a Cobrar</span><span class="v">57.060.000</span></div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Tabs -->
+                        <div class="card-dim">
+                            <div class="card-body-dim pt-2">
+                                <div class="nav-tabs2">
+                                    <button data-tab="forma">Forma Pago</button>
+                                    <button class="active"  data-tab="cxc">CXC</button>
+                                    <button data-tab="doc">Documentos</button>
+                                </div>
+                                <!-- Forma Pago -->
+                                <div class="tabpane " id="forma">
+                                    <div class="toolbar">
+                                        <button class="btn btn-info btn-sm"><i class="mdi mdi-link-variant me-1"></i>Asociar</button>
+                                        <button class="btn btn-info btn-sm"><i class="mdi mdi-file-multiple me-1"></i>Masivo Docto</button>
+                                        <button class="btn btn-info btn-sm"><i class="mdi mdi-account-multiple me-1"></i>Masivo CXC</button>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-3 align-items-end mb-3">
+                                        <div style="min-width: 90px;">
+                                            <label class="form-label small fw-semibold text-muted">Moneda</label>
+                                            <select class="form-select form-select-sm" disabled>
+                                                <option>CLP</option>
+                                            </select>
+                                        </div>
+                                        <div style="min-width: 140px;">
+                                            <label class="form-label small fw-semibold text-muted">Banco pago</label>
+                                            <select class="form-select form-select-sm" disabled>
+                                                <option>Banco de Chile</option>
+                                            </select>
+                                        </div>
+                                        <div style="min-width: 170px;">
+                                            <label class="form-label small fw-semibold text-muted">Forma de Pago</label>
+                                            <select class="form-select form-select-sm" disabled>
+                                                <option>Transferencia</option>
+                                                <option>Cheque</option>
+                                            </select>
+                                        </div>
+                                        <div style="min-width: 130px;">
+                                            <label class="form-label small fw-semibold text-muted">Monto del Pago</label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">$</span>
+                                                <input type="text" class="form-control" placeholder="0">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-danger btn-sm"><i class="mdi mdi-cash me-1"></i>Forma pago</button>
+                                        </div>
+                                    </div>
+                                    <div class="grid-scroll">
+                                        <table class="table-dim w-100">
+                                            <thead>
+                                                <tr><th>Tipo de Pago</th><th class="text-center">N° Docto.</th><th class="text-center">Moneda</th><th class="text-end">Mto. Recaudado</th><th class="text-center">Selección</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td>Transferencia</td><td class="text-center mono">0010045</td><td class="text-center">CLP</td><td class="text-end mono">12.500.000</td><td class="text-center"><i class="mdi mdi-checkbox-marked-circle-outline text-success"></i></td></tr>
+                                                <tr><td>Cheque</td><td class="text-center mono">0010046</td><td class="text-center">CLP</td><td class="text-end mono">8.300.000</td><td class="text-center"><i class="mdi mdi-checkbox-marked-circle-outline text-success"></i></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center gap-3 mt-3">
+                                        <span class="small fw-semibold text-muted">Total a Cancelar</span>
+                                        <div class="input-group input-group-sm" style="width: 150px;">
+                                            <span class="input-group-text bg-danger text-white">$</span>
+                                            <input type="text" value="20.800.000" readonly class="form-control text-end bg-danger bg-opacity-10 text-danger fw-bold">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CXC -->
+                                <div class="tabpane active" id="cxc">
+                                    <div class="grid-scroll" style="max-height: 280px;">
+                                        <table class="table-dim w-100">
+                                            <thead>
+                                                <tr><th class="text-end">N° Factura</th><th class="text-center">Tipo Cta.</th><th class="text-end">N° Cta.</th><th>Descripción</th><th class="text-center">Moneda</th><th class="text-end">Saldo</th><th class="text-end">Interés</th><th class="text-end">Monto Pagar</th><th class="text-center">Fec. Ult. Pag.</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td class="text-end mono">100245</td><td class="text-center">Excedente</td><td class="text-end mono">5521</td><td>Excedente operación</td><td class="text-center">CLP</td><td class="text-end mono">1.250.000</td><td class="text-end mono">0</td><td class="text-end mono">1.250.000</td><td class="text-center mono">02/05/2026</td></tr>
+                                                <tr><td class="text-end mono">100251</td><td class="text-center">Comisión</td><td class="text-end mono">5530</td><td>Comisión prórroga</td><td class="text-center">CLP</td><td class="text-end mono">340.000</td><td class="text-end mono">12.000</td><td class="text-end mono">352.000</td><td class="text-center mono">28/04/2026</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Documentos -->
+                                <div class="tabpane" id="doc">
+                                    <div class="grid-scroll" style="max-height: 280px;">
+                                        <table class="table-dim w-100">
+                                            <thead>
+                                                <tr><th>Identificación</th><th>Razón Social Pagador</th><th>T.D.</th><th class="text-end">N° Ope.</th><th class="text-end">N° Doc.</th><th>Cuo</th><th class="text-center">Fecha Vcto</th><th class="text-end">Saldo Cli.</th><th class="text-end">Saldo Pag.</th><th class="text-end">Tasa apl.</th><th class="text-end">Interés</th><th class="text-end">Monto a Pagar</th><th class="text-center">Moneda</th><th>Est. Cob.</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td class="mono">76.543.210-K</td><td>Comercial Andes SpA</td><td class="text-center">FC</td><td class="text-end mono">100245</td><td class="text-end mono">0001234</td><td class="text-center">1/1</td><td class="text-center mono">12/05/2026</td><td class="text-end mono">18.900.000</td><td class="text-end mono">18.900.000</td><td class="text-end mono">1,8%</td><td class="text-end mono">540.000</td><td class="text-end mono">19.440.000</td><td class="text-center">CLP</td><td class="text-center"><span class="pill red">En mora</span></td></tr>
+                                                <tr><td class="mono">77.111.222-3</td><td>Distribuidora Sur Ltda.</td><td class="text-center">FC</td><td class="text-end mono">100251</td><td class="text-end mono">0008876</td><td class="text-center">1/1</td><td class="text-center mono">14/05/2026</td><td class="text-end mono">24.500.000</td><td class="text-end mono">24.500.000</td><td class="text-end mono">1,8%</td><td class="text-end mono">690.000</td><td class="text-end mono">25.190.000</td><td class="text-center">CLP</td><td class="text-center"><span class="pill red">En mora</span></td></tr>
+                                                <tr><td class="mono">78.222.333-4</td><td>Inversiones Pacífico</td><td class="text-center">CH</td><td class="text-end mono">100247</td><td class="text-end mono">0004410</td><td class="text-center">2/3</td><td class="text-center mono">20/05/2026</td><td class="text-end mono">11.200.000</td><td class="text-end mono">11.200.000</td><td class="text-end mono">2,1%</td><td class="text-end mono">0</td><td class="text-end mono">11.200.000</td><td class="text-center">CLP</td><td class="text-center"><span class="pill g">Vigente</span></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer-dim p-3 border-top">
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <button class="btn btn-info btn-sm"><i class="mdi mdi-magnify me-1"></i>Buscar</button>
+                                    <button class="btn btn-danger btn-sm"><i class="mdi mdi-content-save me-1"></i>Guardar</button>
+                                    <button class="btn btn-secondary btn-sm"><i class="mdi mdi-broom me-1"></i>Limpiar</button>
+                                </div>
+                            </div>
+                        </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="dashboard-footer footer text-center d-flex justify-content-center">
+        <i class="mdi mdi-shield-check"></i> DIM-ONE · Motor de Evaluación de Riesgo · Confidencial — Uso Interno
+    </footer>
+</div>
+
+<!-- Scripts base -->
+<script src="assets/js/vendor.min.js"></script>
+<script src="assets/js/app.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    // Actualizar fecha/hora en topbar
+    (function updateDate() {
+        const M = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+        const n = new Date();
+        const el = document.getElementById('topbarDate');
+        if(el) el.textContent = String(n.getDate()).padStart(2,'0')+' '+M[n.getMonth()]+' '+n.getFullYear()+' · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+        setTimeout(updateDate, 30000);
+    })();
+    
+    // Función de logout
+    function logout() {
+        Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: 'Serás redirigido al inicio de sesión',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d21047',
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'index.html';
+            }
+        });
+    }
+    
+    // Tabs functionality
+    document.querySelectorAll('.nav-tabs2 button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.nav-tabs2 button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tabpane').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

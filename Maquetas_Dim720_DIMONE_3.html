@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIMONE</title>
+
+<!-- ============ IMPORTS CDN ============ -->
+<!-- Roboto (Google Fonts) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Bootstrap 5.3 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Icons 7.x -->
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
+<!-- DataTables para Bootstrap 5 -->
+<link href="https://cdn.datatables.net/v/bs5/dt-1.13.8/datatables.min.css" rel="stylesheet">
+
+<style>
+/* ============ VARIABLES ============ */
+:root{
+  --color-primary:    #d21047;   /* rojo corporativo DIM-ONE */
+  --color-secondary:  #0a345f;   /* azul oscuro */
+  --color-accent:     #10d29b;   /* verde */
+  --color-text:       #1a1a1a;
+  --color-bg:         #ffffff;
+  --color-bg-alt:     #f5f5f5;
+  --color-bg-soft:    #eeeeee;
+  --font-main:        'Roboto', sans-serif;
+  --font-size-base:   14px;
+
+  /* tokens del sistema real DIM-ONE observados en las capturas */
+  --dimone-topbar:    #eef2f7;   /* barra superior gris azulada */
+  --dimone-btn-blue:  #2f6db5;   /* azul botones (Buscar) */
+  --dimone-btn-dark:  #5b6b7d;   /* gris botones (Limpiar) */
+  --dimone-tab:       #7ea6cf;   /* pestañas activas/secundarias */
+  --dimone-label:     #6b7785;   /* color de labels */
+  --dimone-section:   #6b7785;   /* títulos de sección en gris */
+
+  /* semáforo Dim720 */
+  --risk-bajo:      #10d29b;
+  --risk-medio:     #f2a900;
+  --risk-alto:      #e8702a;
+  --risk-critico:   #d21047;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--font-main);
+  font-size:var(--font-size-base);
+  color:var(--color-text);
+  background:var(--color-bg-alt);
+}
+
+/* ============ NAV DE MAQUETAS (no es del sistema, es para navegar la demo) ============ */
+.demo-nav{
+  position:sticky; top:0; z-index:1050;
+  background:var(--color-secondary);
+  display:flex; align-items:center; flex-wrap:wrap;
+  padding:.4rem .8rem; gap:.3rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.demo-nav .brand{
+  color:#fff; font-weight:700; font-size:13px; letter-spacing:.5px;
+  margin-right:.8rem; display:flex; align-items:center; gap:.4rem;
+}
+.demo-nav .brand .tag{
+  background:var(--color-primary); color:#fff; font-size:10px;
+  padding:1px 6px; border-radius:3px; font-weight:700;
+}
+.demo-nav button{
+  background:transparent; border:1px solid rgba(255,255,255,.3);
+  color:#cdd9e6; font-size:12px; font-weight:500;
+  padding:.3rem .6rem; border-radius:4px; cursor:pointer;
+  transition:all .15s;
+}
+.demo-nav button:hover{background:rgba(255,255,255,.12); color:#fff;}
+.demo-nav button.active{background:var(--color-primary); color:#fff; border-color:var(--color-primary);}
+.demo-nav .new-flag{ font-size:9px; color:var(--color-accent); margin-left:3px; vertical-align:super;}
+
+/* ============ TOPBAR SISTEMA DIM-ONE ============ */
+.dimone-topbar{
+  background:var(--dimone-topbar);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.5rem 1.2rem; border-bottom:3px solid #c9d4e0;
+}
+.dimone-breadcrumb{
+  color:var(--color-primary); font-weight:700; font-size:20px;
+  letter-spacing:1px; display:flex; align-items:center; gap:.5rem;
+}
+.dimone-breadcrumb .chev{ color:var(--color-primary); opacity:.6;}
+.dimone-breadcrumb .sub{ font-weight:700;}
+.dimone-topbar-right{ display:flex; align-items:center; gap:.8rem;}
+.fx-widget{
+  background:#fff; border:1px solid #d8e0e9; border-radius:20px;
+  padding:.3rem .9rem; font-size:12px; font-weight:500; white-space:nowrap;
+  display:flex; align-items:center; gap:.4rem; box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+.fx-widget b{color:var(--color-secondary);}
+.fx-widget .val{color:var(--color-accent); font-weight:700;}
+.fx-widget .mdi{color:#9aa7b4;}
+.dimone-logo{ font-weight:700; font-size:22px; letter-spacing:1px; line-height:1;}
+.dimone-logo .dim{color:var(--color-primary);}
+.dimone-logo .one{color:var(--color-secondary);}
+.dimone-flags{font-size:11px; letter-spacing:1px;}
+.dimone-icons .mdi{color:#7a8794; font-size:18px; margin-left:.5rem; cursor:pointer;}
+
+/* ============ ÁREA DE CONTENIDO ============ */
+.screen{ display:none; padding:1.5rem; }
+.screen.active{ display:block; animation:fade .25s ease; }
+@keyframes fade{from{opacity:0; transform:translateY(4px);}to{opacity:1; transform:none;}}
+
+.dimone-card{
+  background:#fff; border:1px solid #e3e8ee; border-radius:8px;
+  padding:1.5rem 1.8rem; margin:0 auto 1.5rem; max-width:1320px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.dimone-tabs{ display:flex; justify-content:center; gap:.4rem; margin-bottom:1.5rem; flex-wrap:wrap;}
+.dimone-tab{
+  background:var(--dimone-tab); color:#fff; border:none;
+  padding:.45rem 1rem; border-radius:5px; font-size:13px; font-weight:500; cursor:pointer;
+}
+.dimone-tab.inactive{ background:#fff; color:var(--dimone-label); border:1px solid #cdd6df;}
+
+.section-title{
+  color:var(--dimone-section); font-weight:700; font-size:14px;
+  text-transform:uppercase; letter-spacing:.3px;
+  border-bottom:1px solid #e3e8ee; padding-bottom:.5rem; margin:1.5rem 0 1.2rem;
+}
+.field-label{ color:var(--dimone-label); font-size:13px; font-weight:500; }
+.form-control,.form-select{ font-size:13px; border-color:#cdd6df; }
+.form-control:focus,.form-select:focus{ border-color:var(--dimone-btn-blue); box-shadow:0 0 0 .15rem rgba(47,109,181,.15);}
+.form-control[readonly]{ background:var(--color-bg-soft); }
+
+.btn-dimone-blue{ background:var(--dimone-btn-blue); color:#fff; font-size:13px; font-weight:500; border:none;}
+.btn-dimone-blue:hover{ background:#255a99; color:#fff;}
+.btn-dimone-dark{ background:var(--dimone-btn-dark); color:#fff; font-size:13px; font-weight:500; border:none;}
+.btn-dimone-dark:hover{ background:#4a5867; color:#fff;}
+.btn-dimone-primary{ background:var(--color-primary); color:#fff; font-size:13px; font-weight:600; border:none;}
+.btn-dimone-primary:hover{ background:#b00d3c; color:#fff;}
+
+/* ============ CAPA NUEVA DIM720 (esquina superior derecha, destacada) ============ */
+.dim720-panel{
+  position:relative;
+  background:linear-gradient(180deg,#fff 0%,#fafcfe 100%);
+  border:1.5px solid var(--color-secondary);
+  border-radius:10px; padding:1rem 1.1rem;
+  box-shadow:0 3px 12px rgba(10,52,95,.10);
+}
+.dim720-panel::before{
+  content:"NUEVO · Dim720";
+  position:absolute; top:-10px; left:14px;
+  background:var(--color-primary); color:#fff;
+  font-size:10px; font-weight:700; letter-spacing:.5px;
+  padding:2px 8px; border-radius:4px;
+}
+.dim720-panel .d720-title{
+  font-size:11px; color:var(--dimone-label); text-transform:uppercase;
+  letter-spacing:.4px; font-weight:700; margin-bottom:.6rem;
+}
+.risk-badge{
+  display:inline-flex; align-items:center; gap:.45rem;
+  padding:.5rem .9rem; border-radius:8px; font-weight:700; font-size:15px;
+  color:#fff; width:100%; justify-content:center;
+}
+.risk-badge .mdi{font-size:20px;}
+.risk-bajo{background:var(--risk-bajo);}
+.risk-medio{background:var(--risk-medio);}
+.risk-alto{background:var(--risk-alto);}
+.risk-critico{background:var(--risk-critico);}
+.risk-score{ font-size:13px; text-align:center; margin-top:.5rem; color:var(--color-text);}
+.risk-score b{font-size:22px; color:var(--color-secondary);}
+.d720-actions{ display:flex; flex-direction:column; gap:.4rem; margin-top:.7rem;}
+.d720-actions .btn{ font-size:12px; }
+.eval-meta{ font-size:11px; color:#8a96a3; text-align:center; margin-top:.5rem;}
+
+/* badge pequeño inline para listas */
+.pill{ display:inline-flex; align-items:center; gap:.25rem; padding:.15rem .55rem; border-radius:20px; font-size:11px; font-weight:600; color:#fff;}
+.pill.bajo{background:var(--risk-bajo);} .pill.medio{background:var(--risk-medio);}
+.pill.alto{background:var(--risk-alto);} .pill.critico{background:var(--risk-critico);}
+.pill.gris{background:#94a3b1;}
+
+/* ============ INFORME DE RIESGO ============ */
+.report-head{
+  background:var(--color-secondary); color:#fff; border-radius:8px;
+  padding:1.2rem 1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+}
+.report-head h2{font-size:18px; font-weight:700; margin:0;}
+.report-head .sub{font-size:12px; opacity:.8;}
+.dim-bar-row{ display:flex; align-items:center; gap:.8rem; margin-bottom:.7rem;}
+.dim-bar-row .dname{ width:160px; font-size:13px; font-weight:500; color:var(--color-text);}
+.dim-bar-track{ flex:1; background:var(--color-bg-soft); border-radius:6px; height:22px; overflow:hidden;}
+.dim-bar-fill{ height:100%; border-radius:6px; display:flex; align-items:center; padding-left:8px; color:#fff; font-size:11px; font-weight:700;}
+.dim-bar-row .dscore{ width:70px; text-align:right; font-size:13px; font-weight:700; color:var(--color-secondary);}
+.ir-table td,.ir-table th{font-size:12px; vertical-align:middle;}
+
+/* ============ KPIs ANALISTA ============ */
+.kpi-card{ background:#fff; border:1px solid #e3e8ee; border-radius:8px; padding:1rem 1.2rem; height:100%;}
+.kpi-card .kpi-label{ font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--dimone-label); font-weight:700;}
+.kpi-card .kpi-value{ font-size:28px; font-weight:700; color:var(--color-secondary); line-height:1.1; margin-top:.2rem;}
+.kpi-card .kpi-foot{ font-size:11px; color:#8a96a3; margin-top:.2rem;}
+.kpi-card.alert{ border-left:4px solid var(--color-primary);}
+.kpi-card.alert .kpi-value{color:var(--color-primary);}
+
+table.dataTable thead th{ background:var(--color-secondary); color:#fff; font-weight:700; font-size:12px;}
+table.dataTable tbody td{font-size:12px;}
+
+@media(max-width:1100px){
+  #ceo > div > div[style*="grid-template-columns:1fr 1fr 1fr 1fr"]{ grid-template-columns:1fr 1fr !important; }
+}
+@media(max-width:680px){
+  #ceo > div > div[style*="grid-template-columns"]{ grid-template-columns:1fr !important; }
+}
+/* ============ RESUMEN VISUAL: RADAR + MOSAICO ============ */
+.viz-row{ display:flex; gap:1.5rem; flex-wrap:wrap; align-items:center; margin-bottom:1.2rem; }
+.viz-radar{ flex:0 0 300px; max-width:320px; }
+.viz-mosaic{ flex:1 1 380px; display:grid; grid-template-columns:repeat(3,1fr); gap:.7rem; min-width:300px; }
+.mtile{ border-radius:10px; padding:.8rem .7rem; color:#fff; position:relative; min-height:88px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer; transition:transform .12s, box-shadow .12s; }
+.mtile:hover{ transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,.15); }
+.mtile .mt-dim{ font-size:10px; font-weight:700; letter-spacing:.3px; opacity:.92; text-transform:uppercase; }
+.mtile .mt-name{ font-size:12px; font-weight:600; opacity:.95; }
+.mtile .mt-score{ font-size:26px; font-weight:700; line-height:1; }
+.mtile .mt-na{ font-size:11px; opacity:.85; font-weight:600; }
+.mtile .mt-ir{ position:absolute; top:.6rem; right:.7rem; font-size:10px; opacity:.8; }
+@media(max-width:600px){ .viz-mosaic{ grid-template-columns:repeat(2,1fr); } .viz-radar{flex:1 1 100%;} }
+.note{ max-width:1320px; margin:0 auto 1rem; font-size:12px; color:#8a96a3; font-style:italic;}
+
+/* ============ ACORDEÓN DE INDICADORES POR DIMENSIÓN ============ */
+.acc-dim{ border:1px solid #e3e8ee; border-radius:8px; margin-bottom:.6rem; overflow:hidden; background:#fff;}
+.acc-head{ display:flex; align-items:center; gap:1rem; padding:.7rem 1rem; cursor:pointer; user-select:none;}
+.acc-head:hover{ background:var(--color-bg-alt);}
+.acc-chev{ color:#9aa7b4; transition:transform .2s; font-size:18px;}
+.acc-dim.open .acc-chev{ transform:rotate(90deg);}
+.acc-dname{ font-weight:700; font-size:13px; color:var(--color-text); min-width:190px;}
+.acc-track{ flex:1; background:var(--color-bg-soft); border-radius:6px; height:20px; overflow:hidden; min-width:120px;}
+.acc-fill{ height:100%; border-radius:6px; display:flex; align-items:center; padding-left:8px; color:#fff; font-size:11px; font-weight:700;}
+.acc-score{ width:54px; text-align:right; font-size:14px; font-weight:700; color:var(--color-secondary);}
+.acc-count{ font-size:11px; color:#8a96a3; width:80px; text-align:right;}
+.acc-body{ display:none; padding:0 1rem 1rem;}
+.acc-dim.open .acc-body{ display:block;}
+.acc-body table{ width:100%; border-collapse:collapse; margin-top:.3rem;}
+.acc-body th{ background:#f0f3f7; color:var(--dimone-label); font-size:11px; text-transform:uppercase; letter-spacing:.3px; padding:.4rem .5rem; text-align:left; border-bottom:1px solid #e3e8ee;}
+.acc-body td{ font-size:12px; padding:.4rem .5rem; border-bottom:1px solid #f0f3f7;}
+.acc-body tr:last-child td{ border-bottom:none;}
+.tag-warn{ display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:4px; background:#fff7ec; color:#8a5a00; border:1px solid #f2c98a; margin-left:.3rem;}
+.tag-f2{ display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:4px; background:#eef2f7; color:#5b6b7d; border:1px solid #cdd6df; margin-left:.3rem;}
+.mini-bar{ display:inline-block; width:90px; height:8px; background:var(--color-bg-soft); border-radius:4px; overflow:hidden; vertical-align:middle; margin-right:6px;}
+.mini-bar span{ display:block; height:100%; border-radius:4px;}
+
+/* ============ RESPALDO BASE (si Bootstrap CDN no carga) ============ */
+.form-control,.form-select{ display:block; width:100%; padding:.375rem .6rem; border:1px solid #cdd6df; border-radius:5px; background:#fff; font-family:var(--font-main);}
+.btn{ display:inline-block; padding:.4rem .9rem; border-radius:5px; cursor:pointer; text-decoration:none; line-height:1.4; border:1px solid transparent;}
+.btn-sm{ padding:.25rem .5rem; font-size:12px;}
+.btn-light{ background:#fff; color:var(--color-secondary); border-color:#d8e0e9;}
+.w-100{width:100%;} .px-4{padding-left:1.2rem;padding-right:1.2rem;}
+.d-flex{display:flex;} .gap-1{gap:.25rem;} .gap-3{gap:1rem;} .align-items-center{align-items:center;}
+.flex-wrap{flex-wrap:wrap;} .ms-auto{margin-left:auto;} .ms-3{margin-left:1rem;} .mt-0{margin-top:0;}
+.mt-1{margin-top:.4rem;} .mt-2{margin-top:.5rem;} .mt-4{margin-top:1.5rem;} .mb-3{margin-bottom:1rem;}
+.text-center{text-align:center;} .text-muted{color:#8a96a3;} .fw-bold{font-weight:700;}
+.table{ width:100%; border-collapse:collapse; }
+.table th,.table td{ padding:.5rem .6rem; border:1px solid #dee2e6; text-align:left;}
+.table-striped tbody tr:nth-child(odd){ background:var(--color-bg-alt);}
+.table thead th{ background:var(--color-secondary); color:#fff;}
+.flex-row{ display:flex; flex-wrap:wrap; gap:1.5rem; }
+.flex-row > .col-form{ flex:1 1 0; min-width:300px; }
+.flex-row > .col-d720{ flex:0 0 340px; max-width:360px; }
+.kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; max-width:1320px; margin:0 auto 1.2rem; }
+.report-cols{ display:flex; flex-wrap:wrap; gap:2rem; }
+.report-cols > div{ flex:1 1 380px; min-width:320px; }
+.rel-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+.form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+.form-grid .full{ grid-column:1 / -1; }
+
+@media(max-width:992px){
+  .flex-row > .col-d720{ flex:1 1 100%; max-width:none; }
+  .kpi-grid{ grid-template-columns:repeat(2,1fr); }
+  .rel-grid{ grid-template-columns:1fr; }
+}
+@media(max-width:768px){
+  .dimone-breadcrumb{font-size:15px;}
+  .fx-widget{display:none;}
+  .dim720-panel{margin-top:1.5rem;}
+  .form-grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====================================================== -->
+<!-- NAV DE LA DEMO (herramienta de navegación, no del sistema) -->
+<!-- ====================================================== -->
+<nav class="demo-nav">
+  <span class="brand"><span class="tag">DIMONE</span> DIM-720</span>
+  <button data-screen="cliente" class="active">Creación Cliente</button>
+  <button data-screen="deudor">Creación Deudor</button>
+  <button data-screen="linea">Línea Financiamiento</button>
+  <button data-screen="ejecutivo">Eval. Ejecutivo<span class="new-flag">nueva</span></button>
+  <button data-screen="analista">Analista Riesgo<span class="new-flag">nueva</span></button>
+  <button data-screen="eval-cliente">Eval. Cliente<span class="new-flag">nueva</span></button>
+  <button data-screen="eval-deudor">Eval. Deudor<span class="new-flag">nueva</span></button>
+  <button data-screen="eval-conjunta">Eval. Conjunta<span class="new-flag">nueva</span></button>
+  <button data-screen="ceo">CEO Aprobación<span class="new-flag">nueva</span></button>
+</nav>
+
+<!-- ====================================================== -->
+<!-- PANTALLA 1: CREACIÓN DE CLIENTE (sobre captura real)    -->
+<!-- ====================================================== -->
+<section class="screen active" id="cliente">
+  <!-- Topbar replicada del sistema -->
+  <div class="dimone-topbar">
+    <div class="dimone-breadcrumb">FACTORING <span class="chev mdi mdi-chevron-right"></span> <span class="sub">CARPETA CLIENTE</span></div>
+    <div class="dimone-topbar-right">
+      <div class="fx-widget"><b>UF =</b><span class="val">CLP $40.798,57</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="fx-widget"><b>DÓLAR =</b><span class="val">CLP $900,6</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="dimone-logo"><span class="dim">DIM</span>-<span class="one">ONE</span></div>
+      <div class="dimone-icons"><span class="mdi mdi-weather-night"></span><span class="mdi mdi-fullscreen"></span><span class="mdi mdi-home"></span><span class="mdi mdi-account-circle"></span></div>
+    </div>
+  </div>
+
+  <div class="dimone-card">
+    <div class="dimone-tabs">
+      <button class="dimone-tab inactive">Cliente</button>
+      <button class="dimone-tab">Contactos</button>
+      <button class="dimone-tab">Banco</button>
+      <button class="dimone-tab">Empresas Relacionadas</button>
+      <button class="dimone-tab">Sucursal Digital</button>
+    </div>
+
+    <div class="flex-row">
+      <!-- Columna formulario (igual al sistema actual) -->
+      <div class="col-form">
+        <div class="form-grid">
+          <div>
+            <label class="field-label">RUT</label>
+            <div class="d-flex gap-1 align-items-center">
+              <input class="form-control" value="19.142.404" style="max-width:140px">
+              <input class="form-control" value="2" style="max-width:50px">
+              <button class="btn btn-dimone-blue btn-sm"><span class="mdi mdi-account-search"></span></button>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Acceso Web</label>
+            <div><input type="radio" name="aw"> Sí &nbsp; <input type="radio" name="aw" checked> No</div>
+          </div>
+          <div>
+            <label class="field-label">Nombre / Razón Social</label>
+            <input class="form-control" value="MATIAS ACUÑA PEÑALOZA">
+          </div>
+          <div>
+            <label class="field-label">Sector Económico</label>
+            <select class="form-select"><option>Comercio al por mayor</option></select>
+          </div>
+          <div>
+            <label class="field-label">Clasificación de Riesgo <span class="text-muted" style="font-size:10px">(interno DIM-ONE)</span></label>
+            <select class="form-select"><option>B — Normal</option></select>
+          </div>
+          <div>
+            <label class="field-label">Estado Cliente</label>
+            <select class="form-select"><option>ACTIVO</option></select>
+          </div>
+          <div class="full">
+            <label class="field-label">Observación</label>
+            <textarea class="form-control" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna NUEVA: capa Dim720 destacada arriba derecha -->
+      <div class="col-d720">
+        <div class="dim720-panel">
+          <div class="d720-title">Estado de Riesgo · Evaluación automática</div>
+          <div class="risk-badge risk-bajo"><span class="mdi mdi-shield-check"></span> APROBADO</div>
+          <div class="risk-score">Score cliente activo: <b>809</b> / 1000</div>
+          <div class="d720-actions">
+            <button class="btn btn-dimone-primary" onclick="show('eval-cliente')"><span class="mdi mdi-file-document-outline"></span> Ver Evaluación del Cliente</button>
+            <button class="btn btn-dimone-dark" onclick="solicitar('cliente')"><span class="mdi mdi-refresh"></span> Re-evaluar en Dim720</button>
+          </div>
+          <div class="eval-meta">Modelo SC-02 · evaluación 18-06-2026 14:32 · evaluacionId b3f…91a</div>
+        </div>
+        <p class="text-muted mt-2" style="font-size:11px">El semáforo Dim720 es independiente del campo «Clasificación de Riesgo» interno. No lo reemplaza: añade la evaluación automatizada multi-fuente.</p>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-dimone-blue px-4">Guardar</button>
+      <button class="btn btn-dimone-dark px-4">Limpiar</button>
+    </div>
+  </div>
+  <p class="note">Pantalla real DIM-ONE «Carpeta Cliente» + capa Dim720 (badge de estado siempre visible y acceso al informe, esquina superior derecha).</p>
+</section>
+
+<!-- ====================================================== -->
+<!-- PANTALLA 2: CREACIÓN DE DEUDOR                          -->
+<!-- ====================================================== -->
+<section class="screen" id="deudor">
+  <div class="dimone-topbar">
+    <div class="dimone-breadcrumb">FACTORING <span class="chev mdi mdi-chevron-right"></span> <span class="sub">CARPETA DEUDOR</span></div>
+    <div class="dimone-topbar-right">
+      <div class="fx-widget"><b>UF =</b><span class="val">CLP $40.798,57</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="fx-widget"><b>DÓLAR =</b><span class="val">CLP $900,6</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="dimone-logo"><span class="dim">DIM</span>-<span class="one">ONE</span></div>
+      <div class="dimone-icons"><span class="mdi mdi-weather-night"></span><span class="mdi mdi-fullscreen"></span><span class="mdi mdi-home"></span></div>
+    </div>
+  </div>
+
+  <div class="dimone-card">
+    <div class="dimone-tabs">
+      <button class="dimone-tab inactive">Deudor</button>
+      <button class="dimone-tab">Contacto</button>
+      <button class="dimone-tab">Modalidad</button>
+    </div>
+
+    <div class="flex-row">
+      <div class="col-form">
+        <div class="section-title mt-0">Información de Deudor</div>
+        <div class="form-grid">
+          <div>
+            <label class="field-label">RUT</label>
+            <div class="d-flex gap-1 align-items-center">
+              <input class="form-control" value="77.345.120" style="max-width:160px">
+              <input class="form-control" value="K" style="max-width:50px">
+              <button class="btn btn-dimone-blue btn-sm"><span class="mdi mdi-account-search"></span></button>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Razón Social</label>
+            <input class="form-control" value="COMERCIAL DEL SUR SPA">
+          </div>
+          <div>
+            <label class="field-label">Cat. Riesgo <span class="text-muted" style="font-size:10px">(interno DIM-ONE)</span></label>
+            <select class="form-select"><option>A01</option></select>
+          </div>
+          <div>
+            <label class="field-label">Sector</label>
+            <select class="form-select"><option>Retail</option></select>
+          </div>
+          <div>
+            <label class="field-label">Deudor Relacionado</label>
+            <div><input type="radio" name="dr"> Sí &nbsp; <input type="radio" name="dr" checked> No</div>
+          </div>
+          <div>
+            <label class="field-label">Tipo Cobranza</label>
+            <select class="form-select"><option>Normal</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-d720">
+        <div class="dim720-panel">
+          <div class="d720-title">Estado de Riesgo Deudor · Dim720</div>
+          <div class="risk-badge risk-medio"><span class="mdi mdi-shield-alert"></span> OBSERVADO</div>
+          <div class="risk-score">Score deudor: <b>673</b> / 1000</div>
+          <div class="d720-actions">
+            <button class="btn btn-dimone-primary" onclick="show('eval-deudor')"><span class="mdi mdi-file-document-outline"></span> Ver Evaluación del Deudor</button>
+            <button class="btn btn-dimone-dark" onclick="solicitar('deudor')"><span class="mdi mdi-refresh"></span> Re-evaluar en Dim720</button>
+          </div>
+          <div class="eval-meta">Modelo SC-04 (deudor activo) · 18-06-2026 · estado EST-D02</div>
+        </div>
+        <p class="text-muted mt-2" style="font-size:11px">El deudor usa el catálogo de estados propio (EST-D01 Aprobado / EST-D02 Observado / EST-D03 Bloqueado), distinto del cliente.</p>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-dimone-blue px-4">Guardar</button>
+      <button class="btn btn-dimone-dark px-4">Limpiar</button>
+    </div>
+  </div>
+  <p class="note">Pantalla real DIM-ONE «Carpeta Deudor» + capa Dim720. El bloqueo del deudor afecta el financiamiento de su factura, no al cliente.</p>
+</section>
+
+<!-- ====================================================== -->
+<!-- PANTALLA 3: LÍNEA DE FINANCIAMIENTO                     -->
+<!-- ====================================================== -->
+<section class="screen" id="linea">
+  <div class="dimone-topbar">
+    <div class="dimone-breadcrumb">FACTORING <span class="chev mdi mdi-chevron-right"></span> <span class="sub">LÍNEA</span></div>
+    <div class="dimone-topbar-right">
+      <div class="fx-widget"><b>UF =</b><span class="val">CLP $40.798,57</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="fx-widget"><b>DÓLAR =</b><span class="val">CLP $900,6</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="dimone-logo"><span class="dim">DIM</span>-<span class="one">ONE</span></div>
+      <div class="dimone-icons"><span class="mdi mdi-weather-night"></span><span class="mdi mdi-fullscreen"></span><span class="mdi mdi-home"></span><span class="mdi mdi-account-circle"></span></div>
+    </div>
+  </div>
+
+  <div class="dimone-card">
+    <div class="dimone-tabs">
+      <button class="dimone-tab inactive">Línea de crédito</button>
+      <button class="dimone-tab">SubLínea Producto</button>
+      <button class="dimone-tab">SubLínea Deudor</button>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+      <span class="field-label fw-bold">Cliente:</span>
+      <input class="form-control" value="19142404" style="max-width:120px">
+      <input class="form-control" value="2" style="max-width:50px">
+      <span class="field-label fw-bold ms-3">Razón Social:</span>
+      <span class="fw-bold">MATIAS ACUÑA PEÑALOZA</span>
+      <div class="ms-auto">
+        <button class="btn btn-dimone-blue">Buscar</button>
+        <button class="btn btn-dimone-dark">Limpiar</button>
+      </div>
+    </div>
+
+    <div class="flex-row">
+      <div class="col-form">
+        <div class="section-title mt-0">Datos Línea Principal (CLP)</div>
+        <div class="form-grid">
+          <div>
+            <label class="field-label">Fecha Solicitud</label>
+            <input class="form-control" value="17-06-2026">
+          </div>
+          <div>
+            <label class="field-label">Fecha Vencimiento</label>
+            <input class="form-control" value="30-06-2026">
+          </div>
+          <div>
+            <label class="field-label">Monto aprobado</label>
+            <input class="form-control" value="5.000.000">
+          </div>
+          <div>
+            <label class="field-label">Monto Disponible</label>
+            <input class="form-control" value="-5.700.000" readonly>
+          </div>
+          <div>
+            <label class="field-label">Estado Línea</label>
+            <div class="fw-bold" style="color:var(--color-secondary)">VIGENTE</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-d720">
+        <div class="dim720-panel">
+          <div class="d720-title">Riesgo del titular · Dim720</div>
+          <div class="risk-badge risk-bajo"><span class="mdi mdi-shield-check"></span> APROBADO</div>
+          <div class="risk-score">Score cliente: <b>809</b> / 1000</div>
+          <div class="d720-actions">
+            <button class="btn btn-dimone-primary" onclick="show('eval-cliente')"><span class="mdi mdi-file-document-outline"></span> Ver Evaluación del Cliente</button>
+          </div>
+          <div class="eval-meta">Evaluación vigente al otorgar / modificar la línea</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-dimone-blue px-4">Modificar Línea</button>
+      <button class="btn btn-dimone-dark px-4">Exportar</button>
+    </div>
+  </div>
+  <p class="note">Pantalla real DIM-ONE «Línea» + capa Dim720. El estado de riesgo del titular queda visible antes de aprobar o modificar la línea.</p>
+</section>
+
+<!-- ====================================================== -->
+<!-- PANTALLA 4: EVALUACIÓN DE RIESGO (EJECUTIVO) — NUEVA    -->
+<!-- ====================================================== -->
+<section class="screen" id="ejecutivo">
+  <div class="dimone-topbar">
+    <div class="dimone-breadcrumb">FACTORING <span class="chev mdi mdi-chevron-right"></span> <span class="sub">EVALUACIÓN DE RIESGO</span></div>
+    <div class="dimone-topbar-right">
+      <div class="fx-widget"><b>UF =</b><span class="val">CLP $40.798,57</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="fx-widget"><b>DÓLAR =</b><span class="val">CLP $900,6</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="dimone-logo"><span class="dim">DIM</span>-<span class="one">ONE</span></div>
+      <div class="dimone-icons"><span class="mdi mdi-weather-night"></span><span class="mdi mdi-fullscreen"></span><span class="mdi mdi-home"></span><span class="mdi mdi-account-circle"></span></div>
+    </div>
+  </div>
+
+  <div class="dimone-card">
+    <div class="section-title">Nueva solicitud de evaluación</div>
+    <div class="flex-row" style="align-items:flex-end;gap:1rem">
+      <div style="flex:1 1 200px">
+        <label class="field-label">Tipo de evaluación</label>
+        <select class="form-select" id="tipoEval" onchange="toggleEval()">
+          <option value="cliente">Cliente</option>
+          <option value="deudor">Deudor</option>
+          <option value="cd">Cliente – Deudor (operación)</option>
+        </select>
+      </div>
+      <div style="flex:1 1 200px" id="campoCliente">
+        <label class="field-label">RUT Cliente</label>
+        <input class="form-control" value="19.142.404-2">
+      </div>
+      <div style="flex:1 1 200px;display:none" id="campoDeudor">
+        <label class="field-label">RUT Deudor</label>
+        <input class="form-control" value="77.345.120-K">
+      </div>
+      <div style="flex:1 1 200px;display:none" id="campoMonto">
+        <label class="field-label">Monto operación (CLP)</label>
+        <input class="form-control" value="5.000.000">
+      </div>
+      <div style="flex:1 1 200px">
+        <button class="btn btn-dimone-primary w-100" onclick="solicitar('eval')"><span class="mdi mdi-send"></span> Solicitar evaluación</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dimone-card">
+    <div class="section-title">Informes de evaluación existentes</div>
+    <table id="tablaInformes" class="table table-striped table-bordered ir-table" style="width:100%">
+      <thead><tr>
+        <th>evaluacionId</th><th>Fecha</th><th>Tipo</th><th>RUT</th><th>Razón Social</th><th>Modelo</th><th>Score</th><th>Estado</th><th>Acción</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>b3f…91a</td><td>18-06-2026 14:32</td><td>Cliente</td><td>19.142.404-2</td><td>Matias Acuña Peñaloza</td><td>SC-02</td><td>809</td><td><span class="pill bajo">APROBADO</span></td><td><button class="btn btn-sm btn-dimone-blue" onclick="show('eval-cliente')">Abrir</button></td></tr>
+        <tr><td>c71…44d</td><td>18-06-2026 11:08</td><td>Deudor</td><td>77.345.120-K</td><td>Comercial del Sur SpA</td><td>SC-04</td><td>673</td><td><span class="pill medio">OBSERVADO</span></td><td><button class="btn btn-sm btn-dimone-blue" onclick="show('eval-deudor')">Abrir</button></td></tr>
+        <tr><td>a09…2e1</td><td>17-06-2026 16:50</td><td>Cliente-Deudor</td><td>19.142.404-2 / 77.345.120-K</td><td>Operación factura</td><td>SC-02 + SC-04</td><td>809 / 673</td><td><span class="pill medio">CONDICIONADO</span></td><td><button class="btn btn-sm btn-dimone-blue" onclick="show('eval-conjunta')">Abrir</button></td></tr>
+        <tr><td>f55…8b3</td><td>17-06-2026 09:14</td><td>Cliente</td><td>96.512.330-1</td><td>Inversiones Andinas Ltda</td><td>SC-01</td><td>372</td><td><span class="pill critico">BLOQUEADO</span></td><td><button class="btn btn-sm btn-dimone-blue" onclick="show('eval-cliente')">Abrir</button></td></tr>
+        <tr><td>d22…7c0</td><td>16-06-2026 18:20</td><td>Deudor</td><td>78.001.992-5</td><td>Distribuidora Norte SA</td><td>SC-03</td><td>805</td><td><span class="pill bajo">APROBADO</span></td><td><button class="btn btn-sm btn-dimone-blue" onclick="show('eval-deudor')">Abrir</button></td></tr>
+        <tr><td>e88…1f2</td><td>16-06-2026 10:05</td><td>Cliente-Deudor</td><td>60.221.778-9 / 78.456.001-2</td><td>Operación factura</td><td>SC-01 + SC-03</td><td>590 / 410</td><td><span class="pill alto">EN EVALUACIÓN</span></td><td><button class="btn btn-sm btn-dimone-blue" onclick="show('eval-conjunta')">Abrir</button></td></tr>
+        <tr><td>g14…9aa</td><td>15-06-2026 13:42</td><td>Cliente</td><td>52.118.443-6</td><td>Transportes Bravo EIRL</td><td>SC-02</td><td>910</td><td><span class="pill bajo">APROBADO</span></td><td><button class="btn btn-sm btn-dimone-blue" onclick="show('eval-cliente')">Abrir</button></td></tr>
+        <tr><td>h77…3cd</td><td>15-06-2026 08:30</td><td>Deudor</td><td>79.330.221-4</td><td>Mayorista Central SpA</td><td>SC-04</td><td>455</td><td><span class="pill alto">EN EVALUACIÓN</span></td><td><button class="btn btn-sm btn-dimone-blue" onclick="show('eval-deudor')">Abrir</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Pantalla NUEVA. Permite las 3 solicitudes (cliente, deudor, cliente-deudor con monto), lista los informes existentes y abre cada uno. La columna de score muestra ambos puntajes en cliente-deudor, porque son dos modelos distintos.</p>
+</section>
+
+<!-- ====================================================== -->
+<!-- PANTALLA 5: ANALISTA DE RIESGO — NUEVA                  -->
+<!-- ====================================================== -->
+<section class="screen" id="analista">
+  <div class="dimone-topbar">
+    <div class="dimone-breadcrumb">FACTORING <span class="chev mdi mdi-chevron-right"></span> <span class="sub">PANEL ANALISTA DE RIESGO</span></div>
+    <div class="dimone-topbar-right">
+      <div class="fx-widget"><b>UF =</b><span class="val">CLP $40.798,57</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="fx-widget"><b>DÓLAR =</b><span class="val">CLP $900,6</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="dimone-logo"><span class="dim">DIM</span>-<span class="one">ONE</span></div>
+      <div class="dimone-icons"><span class="mdi mdi-weather-night"></span><span class="mdi mdi-fullscreen"></span><span class="mdi mdi-home"></span><span class="mdi mdi-account-circle"></span></div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+      <div class="kpi-card alert"><div class="kpi-label">Alertas por gestionar</div><div class="kpi-value">7</div><div class="kpi-foot">control dual pendiente: 2</div></div>
+      <div class="kpi-card"><div class="kpi-label">Bloqueos automáticos hoy</div><div class="kpi-value">14</div><div class="kpi-foot">batch 01:30 hrs · CAPA_AUTO</div></div>
+      <div class="kpi-card"><div class="kpi-label">Evaluaciones 24h</div><div class="kpi-value">312</div><div class="kpi-foot">aprob. 78% · cond. 14% · bloq. 8%</div></div>
+      <div class="kpi-card"><div class="kpi-label">Escaladas a Riesgo</div><div class="kpi-value">3</div><div class="kpi-foot">SLA vencido · evaluacion.escalada</div></div>
+  </div>
+
+  <div class="dimone-card">
+    <div class="section-title">Alertas a gestionar</div>
+    <table id="tablaAlertas" class="table table-striped table-bordered ir-table" style="width:100%">
+      <thead><tr><th>Hora</th><th>RUT</th><th>Sujeto</th><th>Evento</th><th>Regla</th><th>Acción auto</th><th>Nivel</th><th>Gestión</th></tr></thead>
+      <tbody>
+        <tr><td>14:32</td><td>96.512.330-1</td><td>Inversiones Andinas</td><td>EVT-043 score_critico_nuevo</td><td>RL-047</td><td>AC-01 BLOQUEO_TOTAL</td><td><span class="pill critico">CRÍTICO</span></td><td><button class="btn btn-sm btn-dimone-dark" onclick="gestionar()">Revisar</button></td></tr>
+        <tr><td>13:10</td><td>79.330.221-4</td><td>Mayorista Central</td><td>EVT-046 deterioro_score</td><td>RL-049</td><td>AC-04 + AC-15</td><td><span class="pill alto">ALTO</span></td><td><button class="btn btn-sm btn-dimone-dark" onclick="gestionar()">Revisar</button></td></tr>
+        <tr><td>11:48</td><td>78.456.001-2</td><td>Distribuidora Sur</td><td>EVT-048 score_critico_deudor</td><td>RL-051</td><td>AC-01 (factura)</td><td><span class="pill critico">CRÍTICO</span></td><td><button class="btn btn-sm btn-dimone-dark" onclick="gestionar()">Revisar</button></td></tr>
+        <tr><td>10:22</td><td>52.990.114-8</td><td>Andes Logística</td><td>EVT-047 persistente_critico</td><td>RL-050</td><td>AC-01 BLOQUEO_TOTAL</td><td><span class="pill critico">CRÍTICO</span></td><td><button class="btn btn-sm btn-dimone-dark" onclick="gestionar()">Revisar</button></td></tr>
+        <tr><td>09:05</td><td>77.812.443-0</td><td>Comercial Pacífico</td><td>EVT-044 score_medio_nuevo</td><td>RL-048</td><td>AC-04 CONDICIONAR</td><td><span class="pill medio">MEDIO</span></td><td><button class="btn btn-sm btn-dimone-dark" onclick="gestionar()">Revisar</button></td></tr>
+        <tr><td>08:40</td><td>60.221.778-9</td><td>Inmobiliaria Roble</td><td>EVT-049 score_medio_deudor</td><td>RL-052</td><td>AC-06 + AC-07</td><td><span class="pill medio">MEDIO</span></td><td><button class="btn btn-sm btn-dimone-dark" onclick="gestionar()">Revisar</button></td></tr>
+        <tr><td>08:12</td><td>78.001.992-5</td><td>Distribuidora Norte</td><td>EVT-045 score_critico_activo</td><td>RL-050</td><td>AC-01 BLOQUEO_TOTAL</td><td><span class="pill critico">CRÍTICO</span></td><td><button class="btn btn-sm btn-dimone-dark" onclick="gestionar()">Revisar</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="dimone-card">
+    <div class="section-title">Últimas decisiones automáticas de riesgo</div>
+    <table id="tablaDecisiones" class="table table-striped table-bordered ir-table" style="width:100%">
+      <thead><tr><th>Fecha</th><th>RUT</th><th>Modelo</th><th>Score</th><th>Decisión</th><th>Acción ejecutada</th><th>Capa</th><th>EvidenceId</th></tr></thead>
+      <tbody>
+        <tr><td>18-06 01:30</td><td>96.512.330-1</td><td>SC-01</td><td>372</td><td><span class="pill critico">BLOQUEADO</span></td><td>AC-01 + AC-11</td><td>CAPA_AUTO</td><td>9f2…ab1</td></tr>
+        <tr><td>18-06 01:30</td><td>19.142.404-2</td><td>SC-02</td><td>809</td><td><span class="pill bajo">APROBADO</span></td><td>AC-11</td><td>CAPA_AUTO</td><td>7c0…d34</td></tr>
+        <tr><td>18-06 01:30</td><td>77.345.120-K</td><td>SC-04</td><td>673</td><td><span class="pill medio">CONDICIONADO</span></td><td>AC-06 + AC-07</td><td>CAPA_AUTO</td><td>3a1…e09</td></tr>
+        <tr><td>17-06 14:50</td><td>52.118.443-6</td><td>SC-02</td><td>910</td><td><span class="pill bajo">APROBADO</span></td><td>AC-11</td><td>CAPA_AUTO</td><td>b88…1f7</td></tr>
+        <tr><td>17-06 09:14</td><td>78.001.992-5</td><td>SC-03</td><td>805</td><td><span class="pill bajo">APROBADO</span></td><td>AC-11</td><td>CAPA_AUTO</td><td>e44…6cd</td></tr>
+        <tr><td>16-06 11:20</td><td>50.118.220-3</td><td>SC-02</td><td>455</td><td><span class="pill alto">EN EVALUACIÓN</span></td><td>AC-15 ESCALAR</td><td>CAPA_MANUAL</td><td>c19…7aa</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Pantalla NUEVA. KPIs + cola de alertas con su trazabilidad EVT→RL→AC, y registro de decisiones automáticas con capa (AUTO/MANUAL) y EvidenceId. «Revisar» abre la gestión manual con control dual.</p>
+</section>
+
+<!-- ====================================================== -->
+<!-- PANTALLA 6: INFORME DE RIESGO — NUEVA                   -->
+<!-- ====================================================== -->
+<!-- ====================================================== -->
+<!-- PANTALLA: EVALUACIÓN DEL CLIENTE — NUEVA                -->
+<!-- (destino de Creación Cliente y Renovación de Línea)    -->
+<!-- ====================================================== -->
+<section class="screen" id="eval-cliente">
+  <div class="dimone-topbar">
+    <div class="dimone-breadcrumb">FACTORING <span class="chev mdi mdi-chevron-right"></span> <span class="sub">EVALUACIÓN DEL CLIENTE</span></div>
+    <div class="dimone-topbar-right">
+      <div class="fx-widget"><b>UF =</b><span class="val">CLP $40.798,57</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="fx-widget"><b>DÓLAR =</b><span class="val">CLP $900,6</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="dimone-logo"><span class="dim">DIM</span>-<span class="one">ONE</span></div>
+      <div class="dimone-icons"><span class="mdi mdi-weather-night"></span><span class="mdi mdi-fullscreen"></span><span class="mdi mdi-home"></span></div>
+    </div>
+  </div>
+
+  <div class="dimone-card">
+    <div class="report-head">
+      <div>
+        <h2>Evaluación de Riesgo · Cliente</h2>
+        <div class="sub">evaluacionId b3f…91a · 18-06-2026 14:32 · Matias Acuña Peñaloza · 19.142.404-2</div>
+      </div>
+      <button class="btn btn-light"><span class="mdi mdi-file-pdf-box"></span> Exportar PDF</button>
+    </div>
+
+    <div class="d-flex align-items-center gap-3 mb-3 mt-1">
+      <div class="risk-badge risk-bajo" style="width:auto"><span class="mdi mdi-shield-check"></span> APROBADO · 809 / 1000</div>
+      <div style="font-size:13px;color:#6b7785">Modelo SC-02 (cliente activo) · 6 dimensiones evaluadas</div>
+    </div>
+
+    <div class="section-title">Indicadores de riesgo por dimensión</div>
+    <p class="text-muted" style="font-size:12px;margin-top:-.5rem">Resumen por dimensión (radar + mosaico). Haz clic en una dimensión para ver sus indicadores, fuente y dato real. Modelo SC-02 evalúa las 6 dimensiones.</p>
+    <div style="font-size:11px;margin-bottom:.6rem">Fuentes: <span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#0a345f;margin:0 3px">DimRepo</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#2f6db5;margin:0 3px">SII</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#10d29b;margin:0 3px">TGR</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#8a5a00;margin:0 3px">Sheriff</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#9b59b6;margin:0 3px">Dicom</span></div>
+    <div id="viz-cliente" class="viz-row"></div>
+    <div id="acc-cliente"></div>
+    <p class="text-muted" style="font-size:11px;margin-top:.8rem">Versión config SC-02 v15 · sub-scores por dimensión obligatorios · registrado en WORM con SHA-256. Valores derivados de los umbrales reales (Config v15) sobre un perfil ficticio — trazables vía columna «dato crudo».</p>
+  </div>
+  <p class="note">Pantalla NUEVA. Destino de «Creación de Cliente» y «Renovación de Línea». Evaluación de un solo sujeto (cliente).</p>
+</section>
+
+<!-- ====================================================== -->
+<!-- PANTALLA: EVALUACIÓN DEL DEUDOR — NUEVA                 -->
+<!-- (destino de Creación de Deudor)                        -->
+<!-- ====================================================== -->
+<section class="screen" id="eval-deudor">
+  <div class="dimone-topbar">
+    <div class="dimone-breadcrumb">FACTORING <span class="chev mdi mdi-chevron-right"></span> <span class="sub">EVALUACIÓN DEL DEUDOR</span></div>
+    <div class="dimone-topbar-right">
+      <div class="fx-widget"><b>UF =</b><span class="val">CLP $40.798,57</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="fx-widget"><b>DÓLAR =</b><span class="val">CLP $900,6</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="dimone-logo"><span class="dim">DIM</span>-<span class="one">ONE</span></div>
+      <div class="dimone-icons"><span class="mdi mdi-weather-night"></span><span class="mdi mdi-fullscreen"></span><span class="mdi mdi-home"></span></div>
+    </div>
+  </div>
+
+  <div class="dimone-card">
+    <div class="report-head">
+      <div>
+        <h2>Evaluación de Riesgo · Deudor</h2>
+        <div class="sub">evaluacionId c71…44d · 18-06-2026 11:08 · Comercial del Sur SpA · 77.345.120-K</div>
+      </div>
+      <button class="btn btn-light"><span class="mdi mdi-file-pdf-box"></span> Exportar PDF</button>
+    </div>
+
+    <div class="d-flex align-items-center gap-3 mb-3 mt-1">
+      <div class="risk-badge risk-medio" style="width:auto"><span class="mdi mdi-shield-alert"></span> OBSERVADO · 673 / 1000</div>
+      <div style="font-size:13px;color:#6b7785">Modelo SC-04 (deudor activo) · estado EST-D02 · el bloqueo afecta la factura, no al cliente</div>
+    </div>
+
+    <div class="section-title">Indicadores de riesgo por dimensión</div>
+    <p class="text-muted" style="font-size:12px;margin-top:-.5rem">Resumen por dimensión (radar + mosaico). Haz clic en una dimensión para ver sus indicadores, fuente y dato real. Modelo SC-04 evalúa las 6 dimensiones.</p>
+    <div style="font-size:11px;margin-bottom:.6rem">Fuentes: <span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#0a345f;margin:0 3px">DimRepo</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#2f6db5;margin:0 3px">SII</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#10d29b;margin:0 3px">TGR</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#8a5a00;margin:0 3px">Sheriff</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#9b59b6;margin:0 3px">Dicom</span></div>
+    <div id="viz-deudor" class="viz-row"></div>
+    <div id="acc-deudor"></div>
+    <p class="text-muted" style="font-size:11px;margin-top:.8rem">Versión config SC-04 v15 · sub-scores por dimensión obligatorios · registrado en WORM con SHA-256. Valores derivados de los umbrales reales (Config v15) sobre un perfil ficticio — trazables vía columna «dato crudo».</p>
+  </div>
+  <p class="note">Pantalla NUEVA. Destino de «Creación de Deudor». Evaluación de un solo sujeto (deudor), con su propio catálogo de estados EST-D0x.</p>
+</section>
+
+<!-- ====================================================== -->
+<!-- PANTALLA: EVALUACIÓN CONJUNTA — NUEVA                   -->
+<!-- (destino de la Pantalla del Ejecutivo)                 -->
+<!-- ====================================================== -->
+<section class="screen" id="eval-conjunta">
+  <div class="dimone-topbar">
+    <div class="dimone-breadcrumb">FACTORING <span class="chev mdi mdi-chevron-right"></span> <span class="sub">EVALUACIÓN CONJUNTA CLIENTE – DEUDOR</span></div>
+    <div class="dimone-topbar-right">
+      <div class="fx-widget"><b>UF =</b><span class="val">CLP $40.798,57</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="fx-widget"><b>DÓLAR =</b><span class="val">CLP $900,6</span><span class="mdi mdi-eye-outline"></span></div>
+      <div class="dimone-logo"><span class="dim">DIM</span>-<span class="one">ONE</span></div>
+      <div class="dimone-icons"><span class="mdi mdi-weather-night"></span><span class="mdi mdi-fullscreen"></span><span class="mdi mdi-home"></span></div>
+    </div>
+  </div>
+
+  <div class="dimone-card">
+    <div class="report-head">
+      <div>
+        <h2>Evaluación Conjunta · Operación Cliente – Deudor</h2>
+        <div class="sub">evaluacionId a09…2e1 · 17-06-2026 16:50 · monto operación CLP $5.000.000</div>
+      </div>
+      <button class="btn btn-light"><span class="mdi mdi-file-pdf-box"></span> Exportar PDF</button>
+    </div>
+
+    <!-- BLOQUE 1: CLIENTE (acordeón completo) -->
+    <div class="section-title mt-1">Bloque 1 · Evaluación Cliente · SC-02</div>
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div class="risk-badge risk-bajo" style="width:auto"><span class="mdi mdi-shield-check"></span> APROBADO · 809 / 1000</div>
+      <div style="font-size:12px;color:#6b7785">Matias Acuña Peñaloza · 19.142.404-2</div>
+    </div>
+    <div id="viz-conj-cliente" class="viz-row"></div>
+    <div id="acc-conj-cliente"></div>
+
+    <!-- BLOQUE 2: DEUDOR (acordeón completo) -->
+    <div class="section-title">Bloque 2 · Evaluación Deudor · SC-04</div>
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div class="risk-badge risk-medio" style="width:auto"><span class="mdi mdi-shield-alert"></span> OBSERVADO · 673 / 1000</div>
+      <div style="font-size:12px;color:#6b7785">Comercial del Sur SpA · 77.345.120-K · estado EST-D02</div>
+    </div>
+    <div id="viz-conj-deudor" class="viz-row"></div>
+    <div id="acc-conj-deudor"></div>
+
+    <div style="font-size:11px;margin:.4rem 0 .2rem">Fuentes: <span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#0a345f;margin:0 3px">DimRepo</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#2f6db5;margin:0 3px">SII</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#10d29b;margin:0 3px">TGR</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#8a5a00;margin:0 3px">Sheriff</span><span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:#9b59b6;margin:0 3px">Dicom</span></div>
+
+    <!-- BLOQUE 3: INDICADORES CONJUNTOS -->
+    <div class="section-title">Bloque 3 · Indicadores en conjunto (Cliente – Deudor)</div>
+    <div class="rel-grid">
+      <div class="kpi-card"><div class="kpi-label">IR-02 vínculo cliente-deudor</div><div class="kpi-value" style="font-size:20px">Sin vínculo societario</div><div class="kpi-foot">único IR calculable solo en EVALUAR_CLIENTE_DEUDOR</div></div>
+      <div class="kpi-card"><div class="kpi-label">Monto agregado operación</div><div class="kpi-value" style="font-size:20px">$5.000.000</div><div class="kpi-foot">alimenta indicadores de concentración (IR-37)</div></div>
+      <div class="kpi-card"><div class="kpi-label">IR-37 concentración deudor</div><div class="kpi-value" style="font-size:20px;color:var(--risk-critico)">0</div><div class="kpi-foot">34% cartera en 1 deudor — supera umbral 30%</div></div>
+    </div>
+
+    <table class="table table-striped table-bordered ir-table" style="margin-top:1rem">
+      <thead><tr><th>IR</th><th>Indicador en conjunto</th><th>Dimensión</th><th>Valor norm.</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td>IR-02</td><td>vinculo_cliente_deudor</td><td>Estructura</td><td>1000</td><td><span class="pill bajo">OK</span></td></tr>
+        <tr><td>IR-37</td><td>concentracion_deudor (con monto operación)</td><td>Operacional</td><td>0</td><td><span class="pill critico">Crítico</span></td></tr>
+        <tr><td>IR-38</td><td>dependencia_ventas_deudor</td><td>Operacional</td><td>200</td><td><span class="pill alto">Alerta</span></td></tr>
+      </tbody>
+    </table>
+
+    <!-- VEREDICTO CONSOLIDADO — PROVISIONAL -->
+    <div class="section-title">Veredicto de la operación</div>
+    <div class="dim720-panel" style="border-color:var(--risk-medio);max-width:none">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="risk-badge risk-medio" style="width:auto"><span class="mdi mdi-shield-alert"></span> CONDICIONADO</div>
+        <div style="flex:1;min-width:240px;font-size:13px;color:#6b7785">La operación queda limitada por el riesgo del deudor (OBSERVADO), aunque el cliente esté APROBADO.</div>
+      </div>
+      <div style="margin-top:.7rem;padding:.6rem .8rem;background:#fff7ec;border:1px solid #f2c98a;border-radius:6px;font-size:12px;color:#8a5a00">
+        <span class="mdi mdi-alert-outline"></span> <b>Criterio demo — pendiente definición de Riesgo.</b> No existe en la documentación v15 una regla de consolidación cliente-deudor ni un score único de operación. Este veredicto usa un criterio provisional («manda el peor de los dos») solo para la maqueta.
+      </div>
+    </div>
+    <p class="text-muted" style="font-size:11px;margin-top:.6rem">Versión config SC-02 v15 / SC-04 v15 · cada bloque conserva su propio score y veredicto · registrado en WORM con SHA-256.</p>
+  </div>
+  <p class="note">Pantalla NUEVA. Destino de la «Pantalla del Ejecutivo». Tres bloques: evaluación cliente + evaluación deudor + indicadores en conjunto. El veredicto consolidado está marcado como provisional.</p>
+</section>
+
+<!-- ====================================================== -->
+<!-- PANTALLA: CEO — APROBACIÓN DE NEGOCIO (módulo Workflow) -->
+<!-- ====================================================== -->
+<section class="screen" id="ceo">
+  <!-- topbar del módulo CEO: header claro, distinto a Factoring -->
+  <div style="background:#fff;border-bottom:1px solid #e3e8ee;display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.4rem">
+    <div style="display:flex;align-items:center;gap:.8rem">
+      <span class="mdi mdi-menu" style="color:#7a8794;font-size:20px"></span>
+      <span style="color:#7a8794;font-weight:500;font-size:14px">CEO</span>
+      <span class="mdi mdi-chevron-right" style="color:#c2ccd6"></span>
+      <span style="color:var(--color-secondary);font-weight:700;font-size:14px;letter-spacing:.3px">APROBACIÓN DE NEGOCIO FACTORING</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <div style="text-align:center;font-size:11px"><div style="color:#7a8794">UF</div><div style="color:var(--color-secondary);font-weight:700">CLP 40.307,26</div></div>
+      <div style="text-align:center;font-size:11px"><div style="color:#7a8794">Dólar</div><div style="color:var(--color-secondary);font-weight:700">CLP 889,91</div></div>
+      <span style="background:var(--risk-bajo);color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px">En línea</span>
+    </div>
+  </div>
+
+  <div style="padding:1.2rem 1.4rem;max-width:1500px;margin:0 auto">
+    <!-- cabecera cliente + alertas + puntaje -->
+    <div class="dimone-card" style="padding:1.1rem 1.4rem;margin-bottom:1rem">
+      <div style="display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:12px;color:#7a8794">Cliente <span style="color:var(--risk-bajo);font-weight:600">✓ Antiguo</span></div>
+          <div style="font-size:17px;font-weight:700;color:var(--color-text)">RICARDO ESPINOZA E HIJOS LIMITADA</div>
+          <div style="font-size:12px;color:#7a8794;margin-top:.2rem">Operación N° 22602 · Sector: OTRAS INDUSTRIAS MANUFACTURERAS · Ejecutivo: Bernardino Eje</div>
+          <div style="font-size:12px;margin-top:.3rem"><span class="mdi mdi-alert" style="color:var(--risk-medio)"></span> Riesgo Económico: <b>2 - RIESGO MEDIO</b></div>
+        </div>
+        <div style="display:flex;gap:1.5rem;align-items:center">
+          <div>
+            <div style="font-size:11px;color:#7a8794;font-weight:700;margin-bottom:.3rem">ALERTAS DE VERIFICACIÓN</div>
+            <div style="font-size:12px;color:#7a8794">No verificadas: <b style="color:var(--color-primary)">1</b> · Total críticas: <b style="color:var(--color-primary)">1</b></div>
+          </div>
+          <!-- puntaje circular Dim-One (existente) -->
+          <div style="width:90px;height:90px;border-radius:50%;border:5px solid var(--risk-bajo);display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <div style="font-size:10px;color:#7a8794">Puntaje</div>
+            <div style="font-size:24px;font-weight:700;color:var(--color-secondary)">999</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- tabs -->
+    <div style="display:flex;gap:1.5rem;border-bottom:2px solid #e3e8ee;margin-bottom:1.2rem;padding-left:.3rem">
+      <span style="padding:.5rem 0;border-bottom:2px solid var(--dimone-btn-blue);color:var(--dimone-btn-blue);font-weight:600;font-size:13px;margin-bottom:-2px"><span class="mdi mdi-clipboard-text-outline"></span> Línea y detalle operación</span>
+      <span style="padding:.5rem 0;color:#7a8794;font-size:13px"><span class="mdi mdi-chart-line"></span> Resumen Financiero y Operativo</span>
+      <span style="padding:.5rem 0;color:#7a8794;font-size:13px"><span class="mdi mdi-map-marker-path"></span> Seguimiento</span>
+    </div>
+
+    <!-- cuerpo: 4 columnas réplica + Dim720 en col 1 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;align-items:start">
+
+      <!-- COLUMNA 1: Línea del Cliente + Dim720 -->
+      <div>
+        <div class="dimone-card" style="padding:1rem 1.2rem;margin-bottom:1rem">
+          <div class="section-title mt-0" style="font-size:13px">Línea del Cliente</div>
+          <table style="width:100%;font-size:12px">
+            <tr><td style="color:#7a8794;padding:.35rem 0">Monto Línea</td><td style="text-align:right;font-weight:600">150.000.000</td></tr>
+            <tr><td style="color:#7a8794;padding:.35rem 0">Monto Utilizado (Operación Curse)</td><td style="text-align:right;font-weight:600">22.933.904</td></tr>
+            <tr><td style="color:#7a8794;padding:.35rem 0">Monto Disponible</td><td style="text-align:right;font-weight:600">3.279.180</td></tr>
+            <tr><td style="color:#7a8794;padding:.35rem 0">Fecha Vencimiento</td><td style="text-align:right;font-weight:600;color:var(--risk-bajo)">31/12/2027</td></tr>
+          </table>
+        </div>
+        <!-- PANEL DIM720 (esquina inferior izquierda) -->
+        <div class="dim720-panel">
+          <div class="d720-title">Evaluación de Riesgo Dim720 · Operación</div>
+          <div style="display:flex;gap:.5rem;margin-bottom:.6rem">
+            <div style="flex:1;text-align:center;padding:.45rem;background:#f0fbf7;border:1px solid #b9ecdb;border-radius:6px">
+              <div style="font-size:9px;color:#7a8794">CLIENTE · SC-02</div>
+              <div style="font-weight:700;color:var(--risk-bajo);font-size:16px">809</div>
+              <div style="font-size:9px;color:var(--risk-bajo);font-weight:600">APROBADO</div>
+            </div>
+            <div style="flex:1;text-align:center;padding:.45rem;background:#fff8ec;border:1px solid #f5d99a;border-radius:6px">
+              <div style="font-size:9px;color:#7a8794">DEUDOR · SC-04</div>
+              <div style="font-weight:700;color:var(--risk-medio);font-size:16px">673</div>
+              <div style="font-size:9px;color:var(--risk-medio);font-weight:600">OBSERVADO</div>
+            </div>
+          </div>
+          <div style="text-align:center;padding:.45rem;background:#fff7ec;border:1px solid #f2c98a;border-radius:6px;margin-bottom:.7rem">
+            <div style="font-size:9px;color:#8a5a00">VEREDICTO OPERACIÓN <span class="tag-warn">criterio demo</span></div>
+            <div style="font-weight:700;color:var(--risk-medio);font-size:14px">CONDICIONADO</div>
+          </div>
+          <div class="d720-actions">
+            <button class="btn btn-dimone-primary" style="font-size:11px" onclick="show('eval-conjunta')"><span class="mdi mdi-file-document-outline"></span> Ver evaluación cliente-deudor</button>
+            <button class="btn btn-dimone-dark" style="font-size:11px" onclick="solicitarCeo()"><span class="mdi mdi-refresh"></span> Solicitar nueva evaluación</button>
+          </div>
+          <div class="eval-meta">evaluacionId a09…2e1 · vigente al aprobar</div>
+        </div>
+      </div>
+
+      <!-- COLUMNA 2: Comparativo + Documentos + Comportamiento de Pago -->
+      <div>
+        <div class="dimone-card" style="padding:1rem 1.2rem;margin-bottom:1rem">
+          <div class="section-title mt-0" style="font-size:13px">Comparativo</div>
+          <table style="width:100%;font-size:11px;border-collapse:collapse">
+            <thead><tr style="background:var(--color-secondary);color:#fff">
+              <th style="padding:.35rem .4rem;text-align:left">Parámetros</th><th style="padding:.35rem .4rem;text-align:center">Línea</th><th style="padding:.35rem .4rem;text-align:center">Ult. Op.</th><th style="padding:.35rem .4rem;text-align:center">Operación</th>
+            </tr></thead>
+            <tbody>
+              <tr><td style="padding:.3rem .4rem">TASA</td><td style="text-align:center">0%</td><td style="text-align:center">2,65%</td><td style="text-align:center">2,65%</td></tr>
+              <tr style="background:#f5f5f5"><td style="padding:.3rem .4rem">CONTRIBUCIÓN</td><td style="text-align:center">0%</td><td style="text-align:center">4,29%</td><td style="text-align:center">3,31%</td></tr>
+              <tr><td style="padding:.3rem .4rem">SPREAD</td><td style="text-align:center">0%</td><td style="text-align:center">1,35%</td><td style="text-align:center">1,35%</td></tr>
+              <tr style="background:#f5f5f5"><td style="padding:.3rem .4rem">COMISIÓN</td><td style="text-align:center">0%</td><td style="text-align:center">0%</td><td style="text-align:center">0%</td></tr>
+              <tr><td style="padding:.3rem .4rem">ANTICIPO</td><td style="text-align:center">98%</td><td style="text-align:center">98%</td><td style="text-align:center">98%</td></tr>
+              <tr style="background:#f5f5f5"><td style="padding:.3rem .4rem">GASTOS</td><td style="text-align:center">0</td><td style="text-align:center">25.000</td><td style="text-align:center">35.105</td></tr>
+            </tbody>
+          </table>
+          <button class="btn btn-dimone-blue w-100" style="margin-top:.8rem"><span class="mdi mdi-file-document-multiple-outline"></span> Documentos de la operación</button>
+        </div>
+        <div class="dimone-card" style="padding:1rem 1.2rem">
+          <div class="section-title mt-0" style="font-size:13px">Comportamiento de Pago Últimos 12 Meses</div>
+          <table style="width:100%;font-size:12px">
+            <tr><td style="color:#7a8794;padding:.35rem 0">Pagado Por Cliente</td><td style="text-align:right;font-weight:600">0</td></tr>
+            <tr><td style="color:#7a8794;padding:.35rem 0">Pagado Por Deudor</td><td style="text-align:right;font-weight:600">0</td></tr>
+            <tr><td style="color:#7a8794;padding:.35rem 0;border-top:1px solid #e3e8ee">Total</td><td style="text-align:right;font-weight:700;border-top:1px solid #e3e8ee">0</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- COLUMNA 3: Detalle de la Operación -->
+      <div>
+        <div class="dimone-card" style="padding:1rem 1.2rem">
+          <div class="section-title mt-0" style="font-size:13px">Detalle de la Operación</div>
+          <table style="width:100%;font-size:12px">
+            <tr><td style="color:#7a8794;padding:.32rem 0">Número de Operación</td><td style="text-align:right;font-weight:600">22.602</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Secuencia Fase</td><td style="text-align:right;font-weight:600">0</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Tipo Documento</td><td style="text-align:right;font-weight:600">FE</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Cantidad Documentos</td><td style="text-align:right;font-weight:600">1</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Cantidad Docs + 90 días</td><td style="text-align:right;font-weight:600">0</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Monto Docs + 90 días</td><td style="text-align:right;font-weight:600">0</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Último Vencimiento</td><td style="text-align:right;font-weight:600;color:var(--dimone-btn-blue)">01/07/2026</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Plazo Promedio</td><td style="text-align:right;font-weight:600">14</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Moneda</td><td style="text-align:right;font-weight:600">CLP</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Tipo de Cambio</td><td style="text-align:right;font-weight:600">1</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Contribución</td><td style="text-align:right;font-weight:600">3,31</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- COLUMNA 4: montos -->
+      <div>
+        <div class="dimone-card" style="padding:1rem 1.2rem">
+          <div class="section-title mt-0" style="font-size:13px">Montos de la Operación</div>
+          <table style="width:100%;font-size:12px">
+            <tr><td style="color:#7a8794;padding:.32rem 0">Fecha</td><td style="text-align:right;font-weight:600;color:var(--dimone-btn-blue)">17/06/2026</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Monto Documentos</td><td style="text-align:right;font-weight:600">11.582.780</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Monto Anticipado</td><td style="text-align:right;font-weight:600">11.351.124</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Retención</td><td style="text-align:right;font-weight:600">231.656</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Dif. Precio</td><td style="text-align:right;font-weight:600">140.375,57</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Servicios de Factoring</td><td style="text-align:right;font-weight:600">0</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Servicios Administrativos</td><td style="text-align:right;font-weight:600">35.105</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">IVA</td><td style="text-align:right;font-weight:600">0</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Cuentas por Cobrar</td><td style="text-align:right;font-weight:600">800.000</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Aplicaciones a Cartera</td><td style="text-align:right;font-weight:600">0</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0">Anticipo</td><td style="text-align:right;font-weight:600">0</td></tr>
+            <tr><td style="color:#7a8794;padding:.32rem 0;border-top:2px solid #e3e8ee">Líquido a Pagar</td><td style="text-align:right;font-weight:700;font-size:15px;color:var(--risk-bajo);border-top:2px solid #e3e8ee">10.375.643</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- barra de acciones (réplica del workflow) -->
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.2rem;padding-top:1rem;border-top:1px solid #e3e8ee">
+      <button class="btn" style="background:var(--risk-bajo);color:#fff;font-weight:600;padding:.6rem 1.8rem">Aprobar</button>
+      <button class="btn" style="background:var(--color-primary);color:#fff;font-weight:600;padding:.6rem 1.8rem">Rechazar</button>
+      <button class="btn btn-dimone-blue" style="padding:.6rem 1.8rem">Modificar</button>
+      <button class="btn btn-light" style="padding:.6rem 1.4rem">Detener</button>
+      <button class="btn btn-light" style="padding:.6rem 1.4rem">Imprimir</button>
+      <button class="btn btn-light" style="padding:.6rem 1.4rem">Niveles Atribución</button>
+      <button class="btn btn-light" style="padding:.6rem 1.4rem">Ver Det. Simulación</button>
+      <button class="btn btn-dimone-dark" style="padding:.6rem 1.4rem">Volver a Pizarra</button>
+    </div>
+  </div>
+  <p class="note">Pantalla NUEVA. Réplica del módulo «Aprobación de Negocio Factoring» (Workflow CEO) + acceso Dim720: ver la evaluación cliente-deudor y solicitar una nueva, antes de aprobar la operación.</p>
+</section>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-1.13.8/datatables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+let dtReady = {};
+
+// Navegación entre maquetas
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.demo-nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const btn=document.querySelector('.demo-nav button[data-screen="'+id+'"]');
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  initTables(id);
+}
+document.querySelectorAll('.demo-nav button').forEach(b=>{
+  b.addEventListener('click',()=>show(b.dataset.screen));
+});
+
+// DataTables (init perezoso al mostrar cada pantalla)
+function initTables(id){
+  const cfg={ language:{url:'//cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'}, pageLength:5, order:[[0,'asc']], responsive:true };
+  if(id==='ejecutivo' && !dtReady.inf){ new DataTable('#tablaInformes',{...cfg,order:[[1,'desc']]}); dtReady.inf=1; }
+  if(id==='analista' && !dtReady.al){
+    new DataTable('#tablaAlertas',{...cfg,order:[[0,'desc']]}); 
+    new DataTable('#tablaDecisiones',{...cfg,order:[[0,'desc']]}); 
+    dtReady.al=1;
+  }
+}
+
+// Cambia campos visibles según tipo de evaluación
+function toggleEval(){
+  const t=document.getElementById('tipoEval').value;
+  document.getElementById('campoCliente').style.display = (t==='deudor')?'none':'block';
+  document.getElementById('campoDeudor').style.display  = (t==='cliente')?'none':'block';
+  document.getElementById('campoMonto').style.display   = (t!=='cd')?'none':'block';
+}
+
+// Alertas SweetAlert2
+function solicitarCeo(){
+  Swal.fire({icon:'success',title:'Evaluación solicitada a Dim720',html:'Se solicitó una nueva evaluación cliente-deudor para esta operación.<br><small>evaluacionId asignado · esperando processing.externo + processing.interno</small>',confirmButtonColor:'#d21047'});
+}
+function solicitar(ctx){
+  Swal.fire({
+    icon:'success',
+    title:'Solicitud enviada a Dim720',
+    html:'La evaluación se está procesando.<br><small>evaluacionId asignado · esperando processing.externo + processing.interno</small>',
+    confirmButtonColor:'#d21047'
+  });
+}
+function gestionar(){
+  Swal.fire({
+    title:'Gestión manual de bloqueo',
+    html:'Esta acción requiere <b>control dual</b>: un segundo usuario con atributos suficientes debe autorizar.',
+    icon:'warning',
+    showCancelButton:true,
+    confirmButtonColor:'#d21047',
+    cancelButtonColor:'#0a345f',
+    confirmButtonText:'Solicitar autorización',
+    cancelButtonText:'Cancelar'
+  });
+}
+
+// ============ INDICADORES POR DIMENSIÓN (acordeón) ============
+// nombres de dimensión
+const DIMS=[
+  {c:'DIM-01',n:'Liquidez'},{c:'DIM-02',n:'Legal'},{c:'DIM-03',n:'AML / Compliance'},
+  {c:'DIM-04',n:'Estructura'},{c:'DIM-05',n:'Comportamiento'},{c:'DIM-06',n:'Operacional'}
+];
+// estado por valor
+function estPill(v){
+  if(v>=800) return '<span class="pill bajo">OK</span>';
+  if(v>=600) return '<span class="pill medio">Observar</span>';
+  if(v>=400) return '<span class="pill alto">Alerta</span>';
+  return '<span class="pill critico">Crítico</span>';
+}
+function barColor(v){ return v>=800?'#10d29b':v>=600?'#f2a900':v>=400?'#e8702a':'#d21047'; }
+
+// dataset CLIENTE — [id, nombre, dato_crudo, valor_normalizado, flag]. Valores derivados de umbrales reales (Config v15) sobre un cliente ficticio.
+const IR_CLIENTE={"DIM-01": [["IR-11", "venta_neta_12m", "Ventas netas 12m: $1.840 MM", "Percentil 78 de cartera → 780", 780], ["IR-12", "cpt_patrimonio", "CPT $620 MM · cupo $161 MM (26%)", "Cupo ≤ 30% del CPT → 850", 850], ["IR-14", "carga_iva", "1 mes con IVA crédito > débito", "Umbral 3 meses → 667", 667], ["IR-19", "rli_utilidad", "RLI positiva: $84 MM", "Percentil 84 → 840", 840], ["IR-20", "margen_operativo", "Margen operativo 6%", "Mín. aceptable 2% → 750", 750], ["IR-28", "score_sheriff_cliente", "riskScore Sheriff 86/100", "Mapeo directo 0–1000 → 860", 860], ["IR-45", "morosidad_financiera_vigente", "Sin dato (Dicom Fase 2)", "Dicom directo — Fase 2", null, "f2"], ["IR-46", "monto_deuda_sistema_financiero", "Sin dato (Dicom Fase 2)", "Dicom directo — Fase 2", null, "f2"], ["IR-47", "consultas_crediticias_recientes", "Sin dato (Dicom Fase 2)", "Dicom directo — Fase 2", null, "f2"], ["IR-48", "evolucion_deuda_financiera", "Sin dato (Dicom Fase 2)", "Dicom directo — Fase 2", null, "f2"]], "DIM-02": [["IR-15", "continuidad_declaraciones_iva", "12/12 meses declarados (sin lagunas)", "Booleano favorable → 1000", 1000], ["IR-16", "flag_postergacion_iva", "0 postergaciones IVA", "Booleano favorable → 1000", 1000], ["IR-17", "flag_rectificacion_iva", "Sin rectificaciones IVA relevantes", "Booleano favorable → 1000", 1000], ["IR-18", "deuda_tributaria_tgr", "Deuda fiscal TGR: $0", "Sin deuda → 1000", 1000], ["IR-21", "deuda_previsional", "2 meses cotiz. impagas · $1.180.000", "Umbral 3 meses → 333", 333], ["IR-22", "juicios_vigentes", "1 juicio civil menor · cuantía $2,1 MM", "Penalización menor → 820", 820], ["IR-41", "flag_letra_protestada_cliente", "0 letras protestadas", "Booleano favorable → 1000", 1000], ["IR-06", "flag_cobranza_judicial_otro_factoring", "Sin cobranza judicial en otro factoring", "Booleano favorable → 1000", 1000], ["IR-07", "subtipo_juicio_concursal", "Sin juicio concursal vigente", "Booleano favorable → 1000", 1000]], "DIM-03": [["IR-23", "flag_poder_representacion", "Poder de representación verificado", "Booleano favorable → 1000", 1000], ["IR-25", "flag_pep_sanciones_cliente", "No PEP · 0 listas OFAC/ONU", "Booleano favorable → 1000", 1000], ["IR-26", "beneficiario_final_verificado", "Beneficiario final declarado y verificado", "Booleano favorable → 1000", 1000]], "DIM-04": [["IR-10", "antiguedad_giro", "Giro iniciado hace 84 meses (7 años)", "Mín. 6 meses → 1000", 1000], ["IR-13", "tasa_anulacion", "Notas de crédito 13% sobre facturado 12m", "Umbral 15% → 133", 133], ["IR-24", "sustancia_economica", "Sustancia económica suficiente", "Score Sheriff → 790", 790], ["IR-27", "semaforo_industria", "Industria: Verde", "Categórico V/A/R → 1000", 1000], ["IR-02", "vinculo_cliente_deudor", "Sin vínculo societario con el deudor", "Booleano favorable → 1000", 1000, "cd"]], "DIM-05": [["IR-29", "ddp_dias_desvio_pago", "Atraso promedio: 5 días", "Umbral 15 días → 667", 667], ["IR-30", "tasa_recompra", "Recompra 3% del monto financiado 6m", "Umbral 10% → 700", 700]], "DIM-06": [["IR-04", "inactividad_cliente_dias", "45 días desde última operación", "Umbral 365 días → 877", 877], ["IR-05", "estado_linea_credito", "Línea de crédito: VIGENTE", "Estado operativo → 1000", 1000], ["IR-08", "ubicacion_convenio", "Sin convenio en ubicación adversa", "Operativo → 900", 900], ["IR-09", "tipo_convenio", "Convenio tipo estándar", "Operativo → 900", 900], ["IR-37", "concentracion_deudor", "34% de cartera en 1 deudor · $625 MM", "Umbral 30% (supera) → 0", 0], ["IR-38", "dependencia_ventas_deudor", "48% de ventas a 1 deudor", "Umbral 60% → 200", 200], ["IR-36", "exposicion_incremental", "Sin definir (P-06)", "Pendiente redefinición P-06", null, "p6"], ["IR-39", "anomalia_volumen_factura", "Sin definir (P-06)", "Pendiente redefinición P-06", null, "p6"], ["IR-03", "flag_rut_es_aval", "No figura como aval en ninguna operación", "Booleano favorable → 1000", 1000]]};
+// dataset DEUDOR
+const IR_DEUDOR={"DIM-01": [["IR-31", "score_sheriff_deudor", "riskScore Sheriff deudor 64/100", "Mapeo directo → 640", 640], ["IR-45", "morosidad_financiera_vigente", "Sin dato (Dicom Fase 2)", "Dicom directo — Fase 2", null, "f2"], ["IR-46", "monto_deuda_sistema_financiero", "Sin dato (Dicom Fase 2)", "Dicom directo — Fase 2", null, "f2"], ["IR-47", "consultas_crediticias_recientes", "Sin dato (Dicom Fase 2)", "Dicom directo — Fase 2", null, "f2"], ["IR-48", "evolucion_deuda_financiera", "Sin dato (Dicom Fase 2)", "Dicom directo — Fase 2", null, "f2"]], "DIM-02": [["IR-01", "protestos_morosidad_deudor", "2 protestos vigentes · $1.240.000", "Existe protesto → 0", 0, "chk"], ["IR-06", "flag_cobranza_judicial_otro_factoring", "1 cobranza en otro factoring · $4,8 MM", "Existe cobranza → 0", 0], ["IR-07", "subtipo_juicio_concursal", "Sin juicio concursal vigente", "Booleano favorable → 1000", 1000]], "DIM-03": [["IR-34", "flag_pep_sanciones_deudor", "No PEP · 0 listas OFAC/ONU", "Booleano favorable → 1000", 1000], ["IR-35", "noticias_adversas_deudor", "1 nota de prensa adversa (jun-2026)", "Penalización menor → 700", 700]], "DIM-04": [["IR-32", "existencia_giro_deudor", "Giro activo y vigente en SII", "Existe → 900", 900], ["IR-02", "vinculo_cliente_deudor", "Sin vínculo societario con el cliente", "Booleano favorable → 1000", 1000, "cd"]], "DIM-05": [["IR-33", "conducta_pago_historico_deudor", "Mora histórica: 22 días · $3.450.000", "Umbral 30 días → 267", 267]], "DIM-06": [["IR-42", "flag_deudor_confirming", "No opera en confirming", "Booleano favorable → 1000", 1000], ["IR-03", "flag_rut_es_aval", "No figura como aval", "Booleano favorable → 1000", 1000]]};
+// sub-score por dimensión = promedio de IR con valor (derivado, no inventado)
+const SUB_CLIENTE={'DIM-01':791,'DIM-02':895,'DIM-03':1000,'DIM-04':785,'DIM-05':684,'DIM-06':697};
+const SUB_DEUDOR ={'DIM-01':640,'DIM-02':333,'DIM-03':850,'DIM-04':950,'DIM-05':267,'DIM-06':1000};
+
+// fuente agrupada por IR (catálogo v17 — fuente de verdad)
+const IR_FUENTE={"IR-01":"DimRepo","IR-02":"DimRepo","IR-03":"DimRepo","IR-04":"DimRepo","IR-05":"DimRepo","IR-06":"DimRepo","IR-07":"DimRepo","IR-08":"DimRepo","IR-09":"DimRepo","IR-10":"SII / Sheriff","IR-11":"SII","IR-12":"SII","IR-13":"SII","IR-14":"SII","IR-15":"SII","IR-16":"SII / TGR","IR-17":"SII","IR-18":"TGR","IR-19":"SII","IR-20":"SII","IR-21":"Sheriff","IR-22":"Sheriff","IR-23":"SII","IR-24":"Sheriff","IR-25":"Sheriff","IR-26":"Sheriff","IR-27":"DimRepo","IR-28":"Sheriff","IR-29":"DimRepo","IR-30":"DimRepo","IR-31":"Sheriff","IR-32":"Sheriff","IR-33":"DimRepo","IR-34":"Sheriff","IR-35":"Sheriff","IR-36":"DimRepo","IR-37":"DimRepo","IR-38":"SII","IR-39":"SII","IR-41":"Dicom / Sheriff","IR-42":"DimRepo","IR-45":"Dicom","IR-46":"Dicom","IR-47":"Dicom","IR-48":"Dicom"};
+// color por fuente
+const FUENTE_COLOR={'DimRepo':'#0a345f','SII':'#2f6db5','TGR':'#10d29b','Sheriff':'#8a5a00','Dicom':'#9b59b6'};
+function fuenteTag(id){
+  const f=IR_FUENTE[id]||'?';
+  // múltiples fuentes separadas por /
+  return f.split(' / ').map(x=>{
+    const c=FUENTE_COLOR[x.trim()]||'#94a3b1';
+    return '<span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;color:#fff;background:'+c+';margin-right:3px">'+x.trim()+'</span>';
+  }).join('');
+}
+function flagTag(f){
+  if(f==='p6') return '<span class="tag-warn">pendiente P-06</span>';
+  if(f==='f2') return '<span class="tag-f2">Fase 2</span>';
+  if(f==='cd') return '<span class="tag-f2">solo cliente-deudor</span>';
+  if(f==='chk') return '<span class="tag-warn">verificar mapeo</span>';
+  return '';
+}
+// ============ RADAR + MOSAICO (resumen visual) ============
+function bandLabel(v){ return v>=800?'BAJO':v>=600?'MEDIO':v>=400?'ALTO':'CRÍTICO'; }
+function buildRadar(sub, color){
+  // 6 ejes en hexágono. valor 0–1000 -> radio.
+  const cx=150, cy=140, R=100;
+  const dims=DIMS.map(d=>d.c);
+  const labels={'DIM-01':'Liquidez','DIM-02':'Legal','DIM-03':'AML','DIM-04':'Estruct.','DIM-05':'Comport.','DIM-06':'Operac.'};
+  const ang=i=> (-90 + i*60) * Math.PI/180;
+  // grilla (anillos)
+  let grid='';
+  [0.25,0.5,0.75,1].forEach(f=>{
+    let pts=dims.map((_,i)=>{const a=ang(i);return (cx+Math.cos(a)*R*f).toFixed(1)+','+(cy+Math.sin(a)*R*f).toFixed(1);}).join(' ');
+    grid+='<polygon points="'+pts+'" fill="none" stroke="#e3e8ee" stroke-width="1"/>';
+  });
+  // ejes + etiquetas
+  let axes='', labs='';
+  dims.forEach((d,i)=>{
+    const a=ang(i);
+    const x=cx+Math.cos(a)*R, y=cy+Math.sin(a)*R;
+    axes+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="#e3e8ee" stroke-width="1"/>';
+    const lx=cx+Math.cos(a)*(R+22), ly=cy+Math.sin(a)*(R+16);
+    const anchor = Math.abs(Math.cos(a))<0.3?'middle':(Math.cos(a)>0?'start':'end');
+    labs+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" font-size="10" fill="#6b7785" text-anchor="'+anchor+'" dominant-baseline="middle">'+labels[d]+'</text>';
+  });
+  // polígono de datos
+  let pts=dims.map((d,i)=>{const a=ang(i);const f=(sub[d]||0)/1000;return (cx+Math.cos(a)*R*f).toFixed(1)+','+(cy+Math.sin(a)*R*f).toFixed(1);}).join(' ');
+  let dots=dims.map((d,i)=>{const a=ang(i);const f=(sub[d]||0)/1000;return '<circle cx="'+(cx+Math.cos(a)*R*f).toFixed(1)+'" cy="'+(cy+Math.sin(a)*R*f).toFixed(1)+'" r="3" fill="'+color+'"/>';}).join('');
+  return '<svg viewBox="0 0 300 280" style="width:100%;height:auto">'+grid+axes+labs+
+    '<polygon points="'+pts+'" fill="'+color+'33" stroke="'+color+'" stroke-width="2"/>'+dots+'</svg>';
+}
+function buildMosaic(sub, accPrefix){
+  return DIMS.map((d,i)=>{
+    const sc=sub[d.c]; const col=barColor(sc);
+    return '<div class="mtile" style="background:'+col+'" onclick="openAcc(\''+accPrefix+'\','+i+')">'+
+      '<div><div class="mt-dim">'+d.c+'</div><div class="mt-name">'+d.n+'</div></div>'+
+      '<div><div class="mt-score">'+sc+'</div><div class="mt-na">'+bandLabel(sc)+'</div></div></div>';
+  }).join('');
+}
+function renderViz(containerId, sub, color, accPrefix){
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML='<div class="viz-radar">'+buildRadar(sub,color)+'</div>'+
+               '<div class="viz-mosaic">'+buildMosaic(sub,accPrefix)+'</div>';
+}
+// abrir una dimensión del acordeón al clicar su tile y hacer scroll
+function openAcc(prefix, idx){
+  const heads=document.querySelectorAll('#'+prefix+' .acc-head');
+  if(heads[idx]){
+    const dim=heads[idx].parentNode;
+    if(!dim.classList.contains('open')) dim.classList.add('open');
+    dim.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+}
+
+function renderAcc(containerId, data, sub){
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  let html='';
+  DIMS.forEach(d=>{
+    const irs=data[d.c]||[];
+    const sc=sub[d.c];
+    const col=barColor(sc);
+    let rows='';
+    irs.forEach(([id,nom,real,umbral,val,flag])=>{
+      const v=(val===null||val===undefined);
+      const valTxt = v ? '<span style="color:#9aa7b4">—</span>'
+        : '<span class="mini-bar"><span style="width:'+(val/10)+'%;background:'+barColor(val)+'"></span></span>'+val;
+      const estTxt = v ? flagTag(flag) : estPill(val)+flagTag(flag);
+      rows+='<tr><td style="font-weight:600">'+id+'</td><td>'+nom+'</td><td>'+fuenteTag(id)+'</td>'+
+            '<td style="color:#1a1a1a;font-size:11px">'+real+'</td>'+
+            '<td style="color:#8a96a3;font-size:11px">'+umbral+'</td>'+
+            '<td>'+valTxt+'</td><td>'+estTxt+'</td></tr>';
+    });
+    html+='<div class="acc-dim"><div class="acc-head" onclick="this.parentNode.classList.toggle(\'open\')">'+
+      '<span class="acc-chev mdi mdi-chevron-right"></span>'+
+      '<span class="acc-dname">'+d.n+' ('+d.c+')</span>'+
+      '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+col+';margin-right:6px"></span>'+
+      '<span style="font-size:12px;font-weight:700;color:'+col+'">'+sc+'</span>'+
+      '<span style="flex:1"></span>'+
+      '<span class="acc-count">'+irs.length+' IR</span>'+
+      '<span style="font-size:11px;color:#8a96a3;margin-left:.6rem">ver detalle</span></div>'+
+      '<div class="acc-body"><table><thead><tr><th>IR</th><th>Indicador</th><th>Fuente</th><th>Dato real (ejemplo)</th><th>Umbral / norma</th><th>Valor 0–1000</th><th>Estado</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+  });
+  el.innerHTML=html;
+}
+renderAcc('acc-cliente', IR_CLIENTE, SUB_CLIENTE);
+renderAcc('acc-deudor', IR_DEUDOR, SUB_DEUDOR);
+renderAcc('acc-conj-cliente', IR_CLIENTE, SUB_CLIENTE);
+renderAcc('acc-conj-deudor', IR_DEUDOR, SUB_DEUDOR);
+renderViz('viz-cliente', SUB_CLIENTE, '#10d29b', 'acc-cliente');
+renderViz('viz-deudor', SUB_DEUDOR, '#f2a900', 'acc-deudor');
+renderViz('viz-conj-cliente', SUB_CLIENTE, '#10d29b', 'acc-conj-cliente');
+renderViz('viz-conj-deudor', SUB_DEUDOR, '#f2a900', 'acc-conj-deudor');
+
+// init inicial
+initTables('cliente');
+</script>
+</body>
+</html>

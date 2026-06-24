@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIM-ONE · Solicitud de Prórroga</title>
+    <link rel="shortcut icon" href="assets/img/icono.ico" type="image/x-icon">
+    <script src="assets/js/hyper-config2.js"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="assets/css/app-dim.min.css" class="app-style" rel="stylesheet">
+    <link href="assets/css/style-2.css" rel="stylesheet">
+    <!-- MDI Icons -->
+    <link rel="stylesheet" href="assets/css/icons.min.css">
+    <!-- Google Fonts -->
+    <link href="assets/css/fonts.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para Solicitud de Prórroga */
+        .grid-scroll {
+            overflow: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            max-height: 280px;
+        }
+        .gridbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0.5rem 0;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .gridbar .pager {
+            display: flex;
+            gap: 0.25rem;
+        }
+        .gridbar .pager button {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            border-radius: var(--btn-radius);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .gridbar .pager button:hover {
+            border-color: var(--dim-red);
+            color: var(--dim-red);
+        }
+        .btn-mora {
+            background: var(--dim-teal);
+            color: var(--gray-900);
+            border: none;
+            border-radius: var(--btn-radius);
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .btn-mora:hover {
+            background: var(--dim-teal-dark);
+            transform: translateY(-2px);
+        }
+    </style>
+        <!-- Custom CSS DIM-ONE -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="wrapper">
+    <!-- ========== Topbar (idéntica Dim720) ========== -->
+    <div class="rd-navbar context rd-navbar-original rd-navbar-fullwidth">
+        <div class="navbar-container fixed-top">
+            <div class="navbar-custom">
+                <div class="topbar">
+                    <div class="d-flex align-items-center gap-lg-1 gap-1">
+                        <div class="logo-topbar">
+                            <a class="logo-light"><span class="logo-lg"><img src="assets/img/logo.png" alt="logo"></span><span class="logo-sm"><img src="assets/img/logo-sm.png" alt="small logo"></span></a>
+                            <a class="logo-dark"><span class="logo-lg"><img src="assets/img/logo-dark.png" alt="dark logo"></span><span class="logo-sm"><img src="assets/img/logo-dark-sm.png" alt="small logo"></span></a>
+                        </div>
+                        <button class="button-toggle-menu"><i class="mdi mdi-menu"></i></button>
+                        <button class="navbar-toggle" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content"><div class="lines"><span></span><span></span><span></span></div></button>
+                        <div class="topbar-title"><i class="mdi mdi-calendar-clock"></i> SOLICITUD DE PRÓRROGA</div>
+                    </div>
+                    <div class="topbar-right">
+                        <div class="live-indicator"><div class="live-dot"></div>EN VIVO</div>
+                        <div class="topbar-date" id="topbarDate">22 MAY 2026 · 10:24</div>
+                         <div class="d-flex gap-2 ms-3">
+                            <a href="panel_general.html" class="btn btn-secondary btn-sm"><i class="mdi mdi-view-dashboard me-1"></i>Panel General</a>
+                            <a href="dashboard_prorrogas.html" class="btn btn-danger btn-sm"><i class="mdi mdi-plus me-1"></i>Dashboard Prórroga</a>
+                        </div>
+                    </div>
+                    <ul class="topbar-menu d-flex align-items-center gap-1">
+                        <li class="d-none d-sm-inline-block"><div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" title="COLOR MODE"><i class="mdi mdi-brightness-4 mdi-24px"></i></div></li>
+                        <li class="d-none d-md-inline-block"><a class="nav-link" href="" data-toggle="fullscreen"><i class="mdi mdi-fullscreen mdi-24px"></i></a></li>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                <span class="account-user-avatar"><i class="mdi mdi-account-circle h2 icon-danger icon-circle icon-style-2 mdi-36px"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                                <a href="" class="dropdown-item"><i class="mdi mdi-account-edit me-1"></i>Modificar Usuario</a>
+                                <a href="" class="dropdown-item"><i class="mdi mdi-lock-outline me-1"></i>Cambiar Contraseña</a>
+                                <a href="index.html" class="dropdown-item"><i class="mdi mdi-logout me-1"></i>Cerrar Sesión</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Sidebar completa (con todos los enlaces) ========== -->
+    <div class="leftside-menu border-0 rounded-0">
+        <a class="logo logo-light m-0 p-0"><span class="logo-lg justify-content-center mt-3"><img src="assets/images/logo.png" alt="logo"></span><span class="logo-sm mt-0 mb-2"><img src="assets/images/logo-sm.png" alt="small logo"></span></a>
+        <a class="logo logo-dark m-0 p-0"><span class="logo-lg"><img src="assets/images/logo-dark.png" alt="logo"></span><span class="logo-sm"><img src="assets/images/logo-dark-sm.png" alt="small logo"></span></a>
+        <div class="button-sm-hover" data-bs-toggle="tooltip" title="Mantener Sidebar"><i class="ri-checkbox-blank-circle-line"></i></div>
+        <div class="button-close-fullsidebar"><i class="ri-close-fill"></i></div>
+        <div class="leftbar-user">
+            <a class="avatar-sm"><img src="assets/images/users/user-1.jpg" width="130" alt="user-image" class="avatar-img rounded-circle shadow-out"><span class="leftbar-user-name">John Sanders</span></a>
+            <div class="info"><a><span style="color:#faaec2"><div class="user-role">Gerencia General</div></span></a></div>
+        </div>
+        <div id="leftside-menu-container" data-simplebar="init" style="height: 66vh !important;">
+            <div class="simplebar-wrapper"><div class="simplebar-mask"><div class="simplebar-offset"><div class="simplebar-content-wrapper"><div class="simplebar-content">
+                <nav id="sidebarNav">
+                    <ul class="side-nav mt-2">
+                         <!-- Ítems del menú original del factoring integrados -->
+                        <li class="side-nav-item nav-item active"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-panel-general')"><i class="mdi mdi-view-dashboard"></i><span>Panel General</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_operaciones.html" class="side-nav-link" onclick="scrollToSection('view-operaciones')"><i class="mdi mdi-file-document-edit"></i><span>Operaciones</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-cartera')"><i class="mdi mdi-account-group"></i><span>Cartera</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_cobranza.html" class="side-nav-link" onclick="scrollToSection('view-cobranza')"><i class="mdi mdi-cash-100"></i><span>Cobranza</span><span class="nav-badge green">activo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_recaudacion.html" class="side-nav-link" onclick="scrollToSection('view-recaudacion')"><i class="mdi mdi-cash-multiple"></i><span>Recaudación</span><span class="nav-badge blue">nuevo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_prorroga.html" class="side-nav-link" onclick="scrollToSection('view-prorrogas')"><i class="mdi mdi-calendar-clock"></i><span>Prórrogas</span><span class="nav-badge orange">8</span></a></li>
+                        <li class="side-nav-title">Administración</li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-clientes')"><i class="mdi mdi-account-multiple"></i><span>Clientes y Deudores</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="factoring_taller_productos.html" class="side-nav-link"><i class="mdi mdi-toolbox-outline"></i><span>Taller de Productos</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-riesgo')"><i class="mdi mdi-shield-half-full"></i><span>Riesgo y Líneas</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-reportes')"><i class="mdi mdi-chart-line"></i><span>Reportes</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-config')"><i class="mdi mdi-cog"></i><span>Configuración</span></a></li>
+                    </ul>
+                </nav>
+            </div></div></div></div></div>
+        </div>
+        <ul class="side-nav fixed-bottom"><li class="side-nav-item nav-item m-0"><a class="side-nav-link h-100" onclick="logout()" data-bs-toggle="tooltip" title="Cerrar Sesión"><i class="mdi mdi-logout-variant mdi-24px"></i></a></li></ul>
+    </div>
+
+    <!-- ========== Contenido principal ========== -->
+    <div class="content-page p-0">
+        <main class="dashboard-content" id="dashboardContent">
+            <div class="dashboard-view active">
+                <!-- Criterios de búsqueda -->
+                <div class="card-dim mb-3">
+                    <div class="card-header-dim py-2">
+                        <h3><i class="mdi mdi-filter-variant"></i> Criterios de Búsqueda</h3>
+                    </div>
+                    <div class="card-body-dim">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="card-dim">
+                                    <div class="card-header-dim py-2">
+                                        <h3 class="small">Cliente</h3>
+                                    </div>
+                                    <div class="card-body-dim">
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold text-muted">Identificación</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control" placeholder="99.999.999">
+                                                <input type="text" class="form-control" maxlength="1" style="max-width: 50px; text-align: center;" placeholder="K">
+                                                <button class="btn btn-outline-secondary" type="button">⌕</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold text-muted">Razón Social</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold text-muted">Sucursal</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold text-muted">Ejecutivo</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="card-dim">
+                                    <div class="card-header-dim py-2">
+                                        <h3 class="small">Pagador y Fecha de Vencimiento</h3>
+                                    </div>
+                                    <div class="card-body-dim">
+                                        <div class="row g-2">
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold text-muted">Identificación</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control" placeholder="99.999.999">
+                                                    <input type="text" class="form-control" maxlength="1" style="max-width: 45px; text-align: center;">
+                                                    <button class="btn btn-outline-secondary" type="button">⌕</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold text-muted">Razón Social</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold text-muted">Desde</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control" placeholder="dd/mm/aaaa">
+                                                </div>
+                                            </div>
+                                          
+                                        </div>
+                                        <div class="row g-2 mt-1">
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold text-muted">Hasta</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control" placeholder="dd/mm/aaaa">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold text-muted">Nro. Operación</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold text-muted">Nro. Docto.</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2 mt-1">
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold text-muted">Tipo Docto.</label>
+                                                <select class="form-select form-select-sm">
+                                                    <option>Todos</option>
+                                                    <option>Factura</option>
+                                                    <option>Cheque</option>
+                                                    <option>Letra</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold text-muted">Moneda</label>
+                                                <select class="form-select form-select-sm">
+                                                    <option>CLP</option>
+                                                    <option>USD</option>
+                                                    <option>UF</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                              <div class="col-md-3">
+                        <div class="card-dim h-100">
+                            <div class="card-header-dim py-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="cargaMasiva">
+                                    <label class="form-check-label small fw-semibold" for="cargaMasiva">Carga masiva</label>
+                                </div>
+                            </div>
+                            <div class="card-body-dim">
+                                <label class="form-label small fw-semibold text-muted">Archivo</label>
+                                <div class="d-flex gap-2">
+                                    <input type="file" class="form-control form-control-sm  w-75" style="font-size: 0.75rem;">
+                                    <button class="btn btn-danger btn-sm">Cargar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carga masiva + Documentos a prorrogar -->
+                <div class="row g-3 mb-3">
+                  
+                    <div class="col-md-12">
+                        <div class="card-dim">
+                            <div class="card-header-dim py-2">
+                                <h3><i class="mdi mdi-file-document-multiple"></i> Documentos a Prorrogar</h3>
+                            </div>
+                            <div class="card-body-dim p-2">
+                                <div class="grid-scroll">
+                                    <table class="table-dim w-100">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center"></th><th class="text-center"></th><th>Identificación</th><th>Razón Social Pagador</th><th class="text-end">Nº Ope.</th><th>T.D.</th><th>Moneda</th>
+                                                <th class="text-end">Nro. Docto.</th><th>Cuota</th><th class="text-end">Nº Pro.</th><th class="text-center">Fec. Vcto</th><th class="text-end">Mto Docto.</th><th class="text-end">Sdo. Cli</th>
+                                                <th>Estado Cob.</th><th class="text-end">Días Mora</th><th class="text-end">Tasa Neg.</th><th>Afecta/Exenta</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td>
+                                                <td class="text-center"><input type="checkbox" class="doc-check"></td>
+                                                <td class="mono">76.543.210-K</td>
+                                                <td>Comercial Andes SpA</td>
+                                                <td class="text-end mono">100245</td>
+                                                <td class="text-center">FC</td>
+                                                <td class="text-center">CLP</td>
+                                                <td class="text-end mono">0001234</td>
+                                                <td class="text-center">1/1</td>
+                                                <td class="text-end">0</td>
+                                                <td class="text-center mono">12/05/2026</td>
+                                                <td class="text-end mono">18.900.000</td>
+                                                <td class="text-end mono">18.900.000</td>
+                                                <td class="text-center"><span class="pill red">En mora</span></td>
+                                                <td class="text-end mono">19</td>
+                                                <td class="text-end mono">1,8%</td>
+                                                <td class="text-center">Afecta</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td>
+                                                <td class="text-center"><input type="checkbox" class="doc-check"></td>
+                                                <td class="mono">77.111.222-3</td>
+                                                <td>Distribuidora Sur Ltda.</td>
+                                                <td class="text-end mono">100251</td>
+                                                <td class="text-center">FC</td>
+                                                <td class="text-center">CLP</td>
+                                                <td class="text-end mono">0008876</td>
+                                                <td class="text-center">1/1</td>
+                                                <td class="text-end">0</td>
+                                                <td class="text-center mono">14/05/2026</td>
+                                                <td class="text-end mono">24.500.000</td>
+                                                <td class="text-end mono">24.500.000</td>
+                                                <td class="text-center"><span class="pill red">En mora</span></td>
+                                                <td class="text-end mono">17</td>
+                                                <td class="text-end mono">1,8%</td>
+                                                <td class="text-center">Afecta</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td>
+                                                <td class="text-center"><input type="checkbox" class="doc-check"></td>
+                                                <td class="mono">78.222.333-4</td>
+                                                <td>Inversiones Pacífico</td>
+                                                <td class="text-end mono">100247</td>
+                                                <td class="text-center">CH</td>
+                                                <td class="text-center">CLP</td>
+                                                <td class="text-end mono">0004410</td>
+                                                <td class="text-center">2/3</td>
+                                                <td class="text-end">1</td>
+                                                <td class="text-center mono">20/05/2026</td>
+                                                <td class="text-end mono">11.200.000</td>
+                                                <td class="text-end mono">11.200.000</td>
+                                                <td class="text-center"><span class="pill g">Vigente</span></td>
+                                                <td class="text-end mono">0</td>
+                                                <td class="text-end mono">2,1%</td>
+                                                <td class="text-center">Exenta</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td>
+                                                <td class="text-center"><input type="checkbox" class="doc-check"></td>
+                                                <td class="mono">79.333.444-5</td>
+                                                <td>Maderas del Maule</td>
+                                                <td class="text-end mono">100271</td>
+                                                <td class="text-center">FC</td>
+                                                <td class="text-center">CLP</td>
+                                                <td class="text-end mono">0003302</td>
+                                                <td class="text-center">1/1</td>
+                                                <td class="text-end">0</td>
+                                                <td class="text-center mono">22/05/2026</td>
+                                                <td class="text-end mono">30.700.000</td>
+                                                <td class="text-end mono">30.700.000</td>
+                                                <td class="text-center"><span class="pill g">Vigente</span></td>
+                                                <td class="text-end mono">0</td>
+                                                <td class="text-end mono">2,1%</td>
+                                                <td class="text-center">Afecta</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="gridbar">
+                                    <span>Documentos seleccionados: <b class="mono" id="selectedCount">0</b></span>
+                                    <span class="pager">
+                                        <button type="button"><i class="mdi mdi-chevron-left"></i></button>
+                                        <button type="button"><i class="mdi mdi-chevron-right"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Creación de cuentas por cobrar -->
+                <div class="card-dim mb-3">
+                    <div class="card-header-dim py-2">
+                        <h3><i class="mdi mdi-account-cash"></i> Creación de Cuentas Por Cobrar</h3>
+                    </div>
+                    <div class="card-body-dim">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">Fecha Solicitud</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" value="31/05/2026" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">Comisión Por Prórroga</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">$</span>
+                                    <input type="text" class="form-control" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold text-muted">Observación</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-check mt-4 pt-1">
+                                    <input class="form-check-input" type="checkbox" id="tasaUnica">
+                                    <label class="form-check-label small" for="tasaUnica">Tasa Única</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">% Adicional a Tasa</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" placeholder="0,00">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">Nva. Fecha Vcto.</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" placeholder="dd/mm/aaaa">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">Mod. Cálc.</label>
+                                <div class="d-flex gap-3 pt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="modcal" id="modLineal" checked>
+                                        <label class="form-check-label small" for="modLineal">Lineal</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="modcal" id="modExponencial">
+                                        <label class="form-check-label small" for="modExponencial">Exponencial</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">Nva. Fecha Vcto. Real</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">Tip. Interés</label>
+                                <div class="d-flex gap-3 pt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="tipint" id="tipMensual" checked>
+                                        <label class="form-check-label small" for="tipMensual">Mensual</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="tipint" id="tipAnual">
+                                        <label class="form-check-label small" for="tipAnual">Anual</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="pt-3">
+                                    <button class="btn btn-mora" type="button"><i class="mdi mdi-percent me-1"></i>Config. Tasa</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer-dim p-3 border-top">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-danger btn-sm"><i class="mdi mdi-magnify me-1"></i>Buscar</button>
+                            <button class="btn btn-danger btn-sm"><i class="mdi mdi-content-save me-1"></i>Guardar</button>
+                            <button class="btn btn-secondary btn-sm"><i class="mdi mdi-broom me-1"></i>Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="dashboard-footer footer text-center d-flex justify-content-center">
+        <i class="mdi mdi-shield-check"></i> DIM-ONE · Motor de Evaluación de Riesgo · Confidencial — Uso Interno
+    </footer>
+</div>
+
+<!-- Scripts base -->
+<script src="assets/js/vendor.min.js"></script>
+<script src="assets/js/app.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    // Actualizar fecha/hora en topbar
+    (function updateDate() {
+        const M = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+        const n = new Date();
+        const el = document.getElementById('topbarDate');
+        if(el) el.textContent = String(n.getDate()).padStart(2,'0')+' '+M[n.getMonth()]+' '+n.getFullYear()+' · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+        setTimeout(updateDate, 30000);
+    })();
+    
+    // Función de logout
+    function logout() {
+        Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: 'Serás redirigido al inicio de sesión',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d21047',
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'index.html';
+            }
+        });
+    }
+    
+    // Contar documentos seleccionados
+    const docChecks = document.querySelectorAll('.doc-check');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    
+    function updateSelectedCount() {
+        const count = document.querySelectorAll('.doc-check:checked').length;
+        if (selectedCountSpan) selectedCountSpan.textContent = count;
+    }
+    
+    docChecks.forEach(cb => {
+        cb.addEventListener('change', updateSelectedCount);
+    });
+    
+    updateSelectedCount();
+</script>
+</body>
+</html>

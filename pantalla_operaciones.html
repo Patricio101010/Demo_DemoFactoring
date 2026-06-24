@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIM-ONE · Operaciones · Factoring</title>
+    <link rel="shortcut icon" href="assets/img/icono.ico" type="image/x-icon">
+    <script src="assets/js/hyper-config2.js"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="assets/css/app-dim.min.css" class="app-style" rel="stylesheet">
+    <link href="assets/css/style-2.css" rel="stylesheet">
+    <!-- MDI Icons -->
+    <link rel="stylesheet" href="assets/css/icons.min.css">
+    <!-- Google Fonts -->
+    <link href="assets/css/fonts.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    
+    <style>
+        /* Estilos específicos para el módulo de Operaciones */
+        .card-operaciones {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow-card);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        .card-header-operaciones {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            background: rgba(0,0,0,0.01);
+            font-weight: 600;
+        }
+        .card-header-operaciones h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card-header-operaciones h3 i {
+            color: var(--dim-red);
+            font-size: 1.1rem;
+        }
+        .card-body-operaciones {
+            padding: 1.25rem;
+        }
+        .card-footer-operaciones {
+            padding: 0.75rem 1.25rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background: rgba(0,0,0,0.01);
+        }
+        .list-search input {
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+        }
+        .pager a {
+            margin: 0 0.3rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-secondary);
+        }
+        .pager a.active {
+            background: var(--dim-red);
+            color: white;
+        }
+        .actionbar {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        .topbar-operaciones {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .rate-list {
+            display: flex;
+            gap: 1rem;
+            background: rgba(0,0,0,0.03);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+        }
+        .rate {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        .rate b { color: var(--text-secondary); margin-right: 0.3rem; }
+        .rate .v { font-family: var(--font-mono); font-weight: 600; color: var(--text-primary); }
+        .pill {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .pill.prev { background: #e2e3e5; color: #383d41; }
+        .pill.curs { background: #d1e7dd; color: #0f5132; }
+        .pill.eval { background: #fff3cd; color: #856404; }
+        .pill.aprob { background: #cfe2ff; color: #084298; }
+        .pill.rech { background: #f8d7da; color: #842029; }
+        .eye { cursor: pointer; font-size: 1.1rem; opacity: 0.7; }
+        .eye:hover { opacity: 1; }
+        .showing {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+    </style>
+        <!-- Custom CSS del sistema -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="wrapper">
+    <!-- ========== Topbar (idéntica Dim720) ========== -->
+    <div class="rd-navbar context rd-navbar-original rd-navbar-fullwidth">
+        <div class="navbar-container fixed-top">
+            <div class="navbar-custom">
+                <div class="topbar">
+                    <div class="d-flex align-items-center gap-lg-1 gap-1">
+                        <div class="logo-topbar">
+                            <a class="logo-light"><span class="logo-lg"><img src="assets/img/logo.png" alt="logo"></span><span class="logo-sm"><img src="assets/img/logo-sm.png" alt="small logo"></span></a>
+                            <a class="logo-dark"><span class="logo-lg"><img src="assets/img/logo-dark.png" alt="dark logo"></span><span class="logo-sm"><img src="assets/img/logo-dark-sm.png" alt="small logo"></span></a>
+                        </div>
+                        <button class="button-toggle-menu"><i class="mdi mdi-menu"></i></button>
+                        <button class="navbar-toggle" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content"><div class="lines"><span></span><span></span><span></span></div></button>
+                        <div class="topbar-title"><i class="mdi mdi-file-document-edit"></i> OPERACIONES · FACTORING</div>
+                    </div>
+                    <div class="topbar-right">
+                        <div class="live-indicator"><div class="live-dot"></div>EN VIVO</div>
+                        <div class="topbar-date" id="topbarDate">22 MAY 2026 · 10:24</div>
+                    </div>
+                    <ul class="topbar-menu d-flex align-items-center gap-1">
+                        <li class="d-none d-sm-inline-block"><div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" title="COLOR MODE"><i class="mdi mdi-brightness-4 mdi-24px"></i></div></li>
+                        <li class="d-none d-md-inline-block"><a class="nav-link" href="" data-toggle="fullscreen"><i class="mdi mdi-fullscreen mdi-24px"></i></a></li>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                <span class="account-user-avatar"><i class="mdi mdi-account-circle h2 icon-danger icon-circle icon-style-2 mdi-36px"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                                <a href="" class="dropdown-item"><i class="mdi mdi-account-edit me-1"></i>Modificar Usuario</a>
+                                <a href="" class="dropdown-item"><i class="mdi mdi-lock-outline me-1"></i>Cambiar Contraseña</a>
+                                <a href="index.html" class="dropdown-item"><i class="mdi mdi-logout me-1"></i>Cerrar Sesión</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Sidebar completa (con todos los enlaces) ========== -->
+    <div class="leftside-menu border-0 rounded-0">
+        <a class="logo logo-light m-0 p-0"><span class="logo-lg justify-content-center mt-3"><img src="assets/images/logo.png" alt="logo"></span><span class="logo-sm mt-0 mb-2"><img src="assets/images/logo-sm.png" alt="small logo"></span></a>
+        <a class="logo logo-dark m-0 p-0"><span class="logo-lg"><img src="assets/images/logo-dark.png" alt="logo"></span><span class="logo-sm"><img src="assets/images/logo-dark-sm.png" alt="small logo"></span></a>
+        <div class="button-sm-hover" data-bs-toggle="tooltip" title="Mantener Sidebar"><i class="ri-checkbox-blank-circle-line"></i></div>
+        <div class="button-close-fullsidebar"><i class="ri-close-fill"></i></div>
+        <div class="leftbar-user">
+            <a class="avatar-sm"><img src="assets/images/users/user-1.jpg" width="130" alt="user-image" class="avatar-img rounded-circle shadow-out"><span class="leftbar-user-name">John Sanders</span></a>
+            <div class="info"><a><span style="color:#faaec2"><div class="user-role">Gerencia General</div></span></a></div>
+        </div>
+        <div id="leftside-menu-container" data-simplebar="init" style="height: 66vh !important;">
+            <div class="simplebar-wrapper"><div class="simplebar-mask"><div class="simplebar-offset"><div class="simplebar-content-wrapper"><div class="simplebar-content">
+                <nav id="sidebarNav">
+                    <ul class="side-nav mt-2">
+                        <!-- Ítems del menú original del factoring integrados -->
+                        <li class="side-nav-item nav-item active"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-panel-general')"><i class="mdi mdi-view-dashboard"></i><span>Panel General</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_operaciones.html" class="side-nav-link" onclick="scrollToSection('view-operaciones')"><i class="mdi mdi-file-document-edit"></i><span>Operaciones</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-cartera')"><i class="mdi mdi-account-group"></i><span>Cartera</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_cobranza.html" class="side-nav-link" onclick="scrollToSection('view-cobranza')"><i class="mdi mdi-cash-100"></i><span>Cobranza</span><span class="nav-badge green">activo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_recaudacion.html" class="side-nav-link" onclick="scrollToSection('view-recaudacion')"><i class="mdi mdi-cash-multiple"></i><span>Recaudación</span><span class="nav-badge blue">nuevo</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="pantalla_prorroga.html" class="side-nav-link" onclick="scrollToSection('view-prorrogas')"><i class="mdi mdi-calendar-clock"></i><span>Prórrogas</span><span class="nav-badge orange">8</span></a></li>
+                        <li class="side-nav-title">Administración</li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-clientes')"><i class="mdi mdi-account-multiple"></i><span>Clientes y Deudores</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="factoring_taller_productos.html" class="side-nav-link"><i class="mdi mdi-toolbox-outline"></i><span>Taller de Productos</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-riesgo')"><i class="mdi mdi-shield-half-full"></i><span>Riesgo y Líneas</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-reportes')"><i class="mdi mdi-chart-line"></i><span>Reportes</span></a></li>
+                        <li class="side-nav-item nav-item"><a href="javascript:void(0)" class="side-nav-link" onclick="scrollToSection('view-config')"><i class="mdi mdi-cog"></i><span>Configuración</span></a></li>
+                    </ul>
+                </nav>
+            </div></div></div></div></div>
+        </div>
+        <ul class="side-nav fixed-bottom"><li class="side-nav-item nav-item m-0"><a class="side-nav-link h-100" onclick="logout()" data-bs-toggle="tooltip" title="Cerrar Sesión"><i class="mdi mdi-logout-variant mdi-24px"></i></a></li></ul>
+    </div>
+
+    <!-- ========== Contenido principal ========== -->
+    <div class="content-page p-0">
+        <main class="dashboard-content" id="dashboardContent">
+            <div class="dashboard-view active">
+                <!-- Topbar interno con tasas y demo -->
+                <div class="topbar-operaciones">
+                    <div class="rate-list">
+                        <div class="rate"><b>UF</b><span class="v">$38.245,67</span></div>
+                        <div class="rate"><b>DÓLAR</b><span class="v">$945,30</span></div>
+                        <div class="rate"><b>EURO</b><span class="v">$1.020,15</span></div>
+                        <div class="rate"><b>UTM</b><span class="v">$68.034,00</span></div>
+                        <div class="demo-tag"><span class="dot"></span>Datos de ejemplo</div>
+                    </div>
+                </div>
+
+                <!-- Criterio de búsqueda con input-group según especificación -->
+                <div class="card-operaciones">
+                    <div class="card-header-operaciones">
+                        <h3><i class="mdi mdi-filter-variant"></i> Criterio de búsqueda</h3>
+                    </div>
+                    <div class="card-body-operaciones">
+                        <div class="row g-3">
+                            <!-- RUT Cliente con input-group -->
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">RUT Cliente</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" value="96.571.480" placeholder="RUT">
+                                    <span class="input-group-text" style="max-width: 60px;">-</span>
+                                    <input type="text" class="form-control" maxlength="1" value="4" style="max-width: 50px;">
+                                    <button class="btn btn-outline-secondary" type="button">?</button>
+                                </div>
+                            </div>
+                            <!-- Nombre -->
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold text-muted">Nombre</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" value="DIMENSIÓN S.A.">
+                                </div>
+                            </div>
+                            <!-- Fecha Desde -->
+                            <div class="col-md-2">
+                                <label class="form-label small fw-semibold text-muted">Fecha Desde</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" value="08/06/2026">
+                                </div>
+                            </div>
+                            <!-- Fecha Hasta -->
+                            <div class="col-md-2">
+                                <label class="form-label small fw-semibold text-muted">Fecha Hasta</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" value="09/06/2026">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer-operaciones">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-danger btn-sm px-4"><i class="mdi mdi-magnify me-1"></i>Buscar</button>
+                            <button class="btn btn-secondary btn-sm px-4"><i class="mdi mdi-broom me-1"></i>Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de operaciones -->
+                <div class="card-operaciones">
+                    <div class="card-header-operaciones">
+                        <h3><i class="mdi mdi-format-list-bulleted"></i> Lista de operaciones</h3>
+                        <div class="list-search d-flex align-items-center gap-2">
+                            <span class="small text-muted">Buscar:</span>
+                            <input type="text" class="form-control form-control-sm" placeholder="Filtrar en la tabla…" style="width: 200px;">
+                        </div>
+                    </div>
+                    <div class="card-body-operaciones p-0">
+                        <div class="table-responsive">
+                            <table class="table-dim w-100">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Ver</th>
+                                        <th class="text-end">Nro Operación</th>
+                                        <th>RUT Cliente</th>
+                                        <th>Tipo Documento</th>
+                                        <th class="text-center">Fecha Recepción</th>
+                                        <th class="text-end">Monto Operación</th>
+                                        <th class="text-end">% Anticipo</th>
+                                        <th>Moneda</th>
+                                        <th>Estado</th>
+                                        <th>Origen</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td><td class="text-end mono">100245</td><td class="mono">96.571.480-4</td><td>FACTURA</td><td class="text-center mono">02/05/2026</td><td class="text-end mono">18.900.000</td><td class="text-end mono">80,00%</td><td>PESO CL</td><td><span class="pill curs">Cursada</span></td><td>Factoring</td></tr>
+                                    <tr><td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td><td class="text-end mono">100246</td><td class="mono">96.571.480-4</td><td>FACTURA</td><td class="text-center mono">08/05/2026</td><td class="text-end mono">22.500.000</td><td class="text-end mono">85,00%</td><td>PESO CL</td><td><span class="pill curs">Cursada</span></td><td>Factoring</td></tr>
+                                    <tr><td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td><td class="text-end mono">100247</td><td class="mono">96.571.480-4</td><td>CHEQUE</td><td class="text-center mono">20/04/2026</td><td class="text-end mono">11.200.000</td><td class="text-end mono">90,00%</td><td>PESO CL</td><td><span class="pill curs">Cursada</span></td><td>Factoring</td></tr>
+                                    <tr><td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td><td class="text-end mono">100251</td><td class="mono">96.571.480-4</td><td>FACTURA</td><td class="text-center mono">04/05/2026</td><td class="text-end mono">24.500.000</td><td class="text-end mono">80,00%</td><td>PESO CL</td><td><span class="pill curs">Cursada</span></td><td>Factoring</td></tr>
+                                    <tr><td class="text-center"><i class="mdi mdi-eye eye text-muted"></i></td><td class="text-end mono">100271</td><td class="mono">79.333.444-5</td><td>FACTURA</td><td class="text-center mono">12/05/2026</td><td class="text-end mono">30.700.000</td><td class="text-end mono">75,00%</td><td>PESO CL</td><td><span class="pill curs">Cursada</span></td><td>Factoring</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer-operaciones d-flex justify-content-between">
+                        <span class="showing">Mostrando 1 a 5 de 1.284 operaciones activas (muestra)</span>
+                        <span class="pager">
+                            <a href="javascript:void(0)">Primero</a>
+                            <a href="javascript:void(0)">Anterior</a>
+                            <a href="javascript:void(0)" class="active">1</a>
+                            <a href="javascript:void(0)">Siguiente</a>
+                            <a href="javascript:void(0)">Último</a>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Botonera de acción -->
+                <div class="actionbar">
+                    <a href="pantalla_ingreso_operacion.html" class="btn btn-danger btn-sm"><i class="mdi mdi-plus me-1"></i>Nuevo</a>
+                    <button class="btn btn-info btn-sm"><i class="mdi mdi-pencil me-1"></i>Modificar</button>
+                    <button class="btn btn-info btn-sm"><i class="mdi mdi-file-chart me-1"></i>Inf. Eva</button>
+                    <button class="btn btn-dark btn-sm"><i class="mdi mdi-printer me-1"></i>Impr. Neg</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="dashboard-footer footer text-center d-flex justify-content-center">
+        <i class="mdi mdi-shield-check"></i> DIM-ONE · Motor de Evaluación de Riesgo · Confidencial — Uso Interno
+    </footer>
+</div>
+
+<!-- Scripts base -->
+<script src="assets/js/vendor.min.js"></script>
+<script src="assets/js/app.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    // Actualizar fecha/hora en topbar
+    (function updateDate() {
+        const M = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+        const n = new Date();
+        const el = document.getElementById('topbarDate');
+        if(el) el.textContent = String(n.getDate()).padStart(2,'0')+' '+M[n.getMonth()]+' '+n.getFullYear()+' · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+        setTimeout(updateDate, 30000);
+    })();
+    
+    // Función de logout
+    function logout() {
+        Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: 'Serás redirigido al inicio de sesión',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d21047',
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'index.html';
+            }
+        });
+    }
+</script>
+</body>
+</html>

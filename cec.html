@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CEC > INICIO</title>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="shortcut icon" href="img/chile_card.png" />
+
+  <script src="assets/js/hyper-config.js"></script>
+
+  <link rel="stylesheet" href="assets/css/app-dim.min.css" class="app-style">
+  <link rel="stylesheet" href="assets/css/icons.min.css">
+  <link rel="stylesheet" href="assets/css/spinner.css">
+  <link rel="stylesheet" href="assets/css/fuentes.css">
+
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/style-2.css">
+  <!-- dataTables -->
+  <link rel="stylesheet" href="assets/dataTables/css/responsive.bootstrap5.css">
+  <link rel="stylesheet" href="assets/dataTables/css/dataTables.bootstrap5.css">
+  <link rel="stylesheet" href="assets/dataTables/css/searchPanes.bootstrap5.css">
+  <link rel="stylesheet" href="assets/dataTables/css/select.bootstrap5.css">
+  <link rel="stylesheet" href="assets/dataTables/css/buttons.bootstrap5.css">
+  <!-- dataTables -->
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .truncated-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      display: block;
+    }
+
+    .input-group-text {
+      min-width: 120px;
+    }
+
+    .form-select {
+      cursor: pointer;
+    }
+
+    .tooltip-inner {
+      max-width: 400px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="loader-wrap">
+    <div class="preloader">
+      <div class="contents mt-4" style="z-index: 10000">
+        <div class="loader-image-wrapper">
+          <div class="loader-inner loader-image"> <img alt="" class="img-1" src="../assets/images/cliloader.png" /> <img
+              alt="" class="img-2" src="../assets/images/cliloader.png" /> <img alt="" class="img-3"
+              src="../assets/images/cliloader.png" /> <img alt="" class="img-4" src="../assets/images/cliloader.png" />
+          </div>
+        </div>
+        <div class="contents mt-4">
+          <div class="s1">
+            <div class="s2">
+              <div class="s3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="preloader-close">cerrar</div> -->
+      <div id="handle-preloader" class="handle-preloader">
+        <div class="animation-preloader mt-5">
+          <div class="txt-loading">
+            <span data-text-preloader="C" class="letters-loading">C </span>
+            <span data-text-preloader="E" class="letters-loading">E</span>
+            <span data-text-preloader="C" class="letters-loading">C</span>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wrapper">
+    <!-- ========== Topbar =========== -->
+    <div class="rd-navbar context rd-navbar-original rd-navbar-fullwidth ">
+      <div class="navbar-container">
+        <div class="navbar-custom ">
+          <div class="topbar ">
+            <div class="d-flex align-items-center gap-lg-1 gap-1">
+              <!-- Topbar Brand Logo -->
+              <div class="logo-topbar">
+                <!-- Logo light -->
+                <a class="logo-light">
+                  <span class="logo-lg">
+                    <img src="assets/images/logo.png" alt="logo">
+                  </span>
+                  <span class="logo-sm">
+                    <img src="assets/images/logo-sm.png" alt="small logo">
+                  </span>
+                </a>
+                <!-- Logo Dark -->
+                <a class="logo-dark">
+                  <span class="logo-lg">
+                    <img src="assets/images/logo-dark.png" alt="dark logo">
+                  </span>
+                  <span class="logo-sm">
+                    <img src="assets/images/logo-dark-sm.png" alt="small logo">
+                  </span>
+                </a>
+              </div>
+              <!-- Sidebar Menu Toggle Button -->
+              <button class="button-toggle-menu">
+                <i class="ms-2 mdi mdi-menu"></i>
+              </button>
+              <!-- Horizontal Menu Toggle Button -->
+              <button class="navbar-toggle" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content">
+                <div class="lines">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </button>
+              <!-- Topbar marcador vista actual -->
+              <div class="app-search dropdown d-none d-lg-block">
+                <div class="page-title-box">
+                  <div class="page-title-right" style="margin-top: 0px !important;">
+                    <ol class="breadcrumb m-0 fw-bold p-0">
+                      <li class="breadcrumb-item"><a href="index.html">DIM-ONE</a></li>
+                      <!-- <li class="breadcrumb-item"><a>PORTAL CLIENTES</a></li> -->
+                      <li class="breadcrumb-item active" id="pagina-actual"></li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="content-indicator d-none d-sm-none d-md-none d-lg-none d-xl-block"
+              style="width: 40%; align-content: center;">
+              <div class="row justify-content-end">
+                <div class="col-4">
+                  <div class="rounded-pill p-0 rounded  bg-gradient text-light fw-bold  shadow-in">
+                    <div class="justify-content-center input-group py-0 indicator-info align-content-center"
+                      style="font-size: 12px; align-items: center;">
+                      <span class="text-danger fw-bold me-1">UF =</span>
+                      <p class="text-success mb-1 mt-1 me-1" id="UF"></p>
+                      <a class="btn-sm " style="cursor: pointer !important" data-bs-toggle="modal"
+                        data-bs-target="#modalUF"><i class="mdi mdi-eye mdi-18px"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal UF-->
+                <div class="modal fade" id="modalUF" tabindex="-1" aria-labelledby="modalUFLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered d-flex">
+                    <div class="modal-content" style=" width: 500px !important;">
+                      <div class="modal-header h-login2">
+                        <h5 class="modal-title" id="modalUFLabel">Información UF</h5>
+                        <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                          aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body modal-ind p-0 px-0 scrolling" style="overflow: auto; max-height: 305px;">
+                        <!-- Contenido del modal -->
+                        Aquí puedes colocar el contenido que desees mostrar en el modal, como
+                        los datos de la API.
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4 ">
+                  <div class="rounded-pill p-0 rounded  bg-gradient text-light fw-bold  shadow-in">
+                    <div class="justify-content-center input-group py-0 indicator-info align-content-center"
+                      style="font-size: 12px; align-items: center;">
+                      <span class=" text-danger fw-bold me-1">DOLAR =</span>
+                      <p class=" text-success mb-1 mt-1 me-1" id="DolarO"></p>
+                      <!-- Botón que activa el modal -->
+                      <a class="btn-sm " style="cursor: pointer !important" data-bs-toggle="modal"
+                        data-bs-target="#modalDOLAR"><i class="mdi mdi-eye mdi-18px"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal DOLAR-->
+                <div class="modal fade" id="modalDOLAR" tabindex="-1" aria-labelledby="modalDOLARLabel"
+                  aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style=" width: 500px !important;">
+                      <div class="modal-header h-login2">
+                        <h5 class="modal-title" id="modalDOLARLabel">Información DOLAR</h5>
+                        <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                          aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body modal-ind p-0 px-0 scrolling" style="overflow: auto; max-height: 305px;">
+                        <!-- Contenido del modal -->
+                        Aquí puedes colocar el contenido que desees mostrar en el modal, como
+                        los datos de la API.
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4 d-none">
+                  <div class="rounded-pill p-0 rounded  bg-gradient text-light fw-bold  shadow-in">
+                    <div class="justify-content-center input-group py-0 indicator-info align-content-center"
+                      style="font-size: 12px; align-items: center;">
+                      <span class="text-danger fw-bold me-1">UTM = </span>
+                      <p class=" text-success mb-1 me-1 mt-1" id="UTM"></p>
+                      <div class="col-auto indicator-link">
+                        <!-- Botón que activa el modal -->
+                        <a class="btn-sm " style="cursor: pointer !important" data-bs-toggle="modal"
+                          data-bs-target="#modalUTM"><i class="mdi mdi-eye mdi-18px"></i></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal UTM-->
+                <div class="modal fade" id="modalUTM" tabindex="-1" aria-labelledby="modalUTMlabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style=" width: 500px !important;">
+                      <div class="modal-header h-login2">
+                        <h5 class="modal-title" id="modalUTMLabel">Información UTM</h5>
+                        <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                          aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body modal-ind p-0 px-0 scrolling" style="overflow: auto;max-height: 305px;">
+                        <!-- Contenido del modal -->
+                        Aquí puedes colocar el contenido que desees mostrar en el modal, como
+                        los datos de la API.
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ul class="topbar-menu d-flex align-items-center gap-1">
+              <li class="dropdown d-none">
+                <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button"
+                  aria-haspopup="false" aria-expanded="false">
+                  <i class="ri-search-line font-22"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+                  <form class="p-3">
+                    <input type="search" class="form-control" placeholder="Buscar ..."
+                      aria-label="Recipient's username">
+                  </form>
+                </div>
+              </li>
+              <li>
+                <a class="logo">
+                  <img src="assets/images/Logo_Scotiabank.png" width=" 160" alt="Dimension" class="navbar-brand">
+                </a>
+              </li>
+              <li class="d-none d-sm-inline-block">
+                <div class="nav-link " id="light-dark-mode" data-bs-toggle="tooltip" data-bs-placement="left"
+                  aria-label="COLOR MODE" data-bs-original-title="COLOR MODE">
+                  <i class="mdi  mdi-brightness-4  mdi-24px"></i>
+                </div>
+              </li>
+              <li class="d-none d-md-inline-block">
+                <a class="nav-link" href="" data-toggle="fullscreen">
+                  <i class="ri-fullscreen-line font-22"></i>
+                </a>
+              </li>
+              <li>
+                <div class="navbar-subpanel-item d-none">
+                  <button class="navbar-button navbar-info-button mdi-dots-vertical"
+                    data-multi-switch="{&quot;targets&quot;:&quot;.rd-navbar&quot;,&quot;scope&quot;:&quot;.rd-navbar&quot;,&quot;class&quot;:&quot;navbar-info-active&quot;,&quot;isolate&quot;:&quot;[data-multi-switch]&quot;}"></button>
+                  <div class="navbar-info">
+                    <button class="btn btn-sm" id="p_frecuentes" data-bs-toggle="modal" data-bs-target="#ModalPrincipal"
+                      onclick="reDireccionar(1,0)"><i class="fa-regular fa-circle-question bt_icon2 me-1"
+                        aria-hidden="true"></i>AYUDA</button>
+
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="navbar-subpanel-item d-none">
+                  <button class="navbar-button navbar-info-button mdi-dots-vertical"
+                    data-multi-switch="{&quot;targets&quot;:&quot;.rd-navbar&quot;,&quot;scope&quot;:&quot;.rd-navbar&quot;,&quot;class&quot;:&quot;navbar-info-active&quot;,&quot;isolate&quot;:&quot;[data-multi-switch]&quot;}"></button>
+                  <div class="navbar-info">
+                    <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#empresasModal"><i
+                        class="fa-regular fa-building bt_icon1 me-1" aria-hidden="true"></i>lonix</button>
+                  </div>
+                </div>
+              </li>
+              <li class="dropdown">
+                <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown"
+                  href="javascript:void(0);" role="button" aria-haspopup="false" aria-expanded="false">
+                  <span id="usuario" class="d-lg-flex flex-column gap-1 d-none text-end">
+                    <asp:label id="Lbl_Usuario" runat="server" text="Usuario Conectado: " cssclass="Label"></asp:label>
+                    <asp:label id="Lbl_Cargo" runat="server" text="Cargo/Perfil: " cssclass="Label">
+                    </asp:label>
+                  </span>
+                  <span class="account-user-avatar">
+                    <i class="mdi mdi-account-circle h2 icon-danger icon icon-circle  icon-style-2 mdi-36px"
+                      style="width: 1em; height: 1em;"></i>
+                  </span>
+
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                  <!-- item-->
+                  <a href="" class="dropdown-item">
+                    <i class="mdi mdi-account-edit me-1 mdi-18px"></i>
+                    <span>Modificar Usuario</span>
+                  </a>
+                  <!-- item-->
+                  <a href="" class="dropdown-item">
+                    <i class="mdi mdi-lock-outline me-1 mdi-18px"></i>
+                    <span>Cambiar Contraseña</span>
+                  </a>
+                  <!-- item-->
+                  <a href="index.html" class="dropdown-item" onclick="cerrarPestana();">
+                    <i class="mdi mdi-logout me-1 mdi-18px"></i>
+                    <span>Cerrar Sesión</span>
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ========== Topbar =========== -->
+    <!-- ========== Sidebar ========== -->
+    <div class="leftside-menu border-0 rounded-0 ">
+      <!-- Brand Logo Light -->
+      <a class="logo logo-light mt-0 mb-2 ">
+        <span class="logo-lg justify-content-center">
+          <img src="assets/images/logo.png" alt="logo"></span>
+        <span class="logo-sm mt-0 mb-2 justify-content-center">
+          <img src="assets/images/logo-sm.png" alt="small logo"></span>
+      </a>
+      <!-- Brand Logo Dark -->
+      <a class="logo logo-dark mt-0 mb-2">
+        <span class="logo-lg justify-content-center">
+          <img src="assets/images/logo-dark.png" alt="dark logo"></span>
+        <span class="logo-sm mt-0 mb-2 justify-content-center">
+          <img src="assets/images/logo-dark-sm.png" alt="small logo"></span>
+      </a>
+      <!-- Sidebar Hover Menu Toggle Button -->
+      <div class="button-sm-hover" data-bs-toggle="tooltip" data-bs-placement="right" title="Mantener Sidebar">
+        <i class="ri-checkbox-blank-circle-line align-middle"></i>
+      </div>
+      <!-- Full Sidebar Menu Close Button -->
+      <div class="button-close-fullsidebar">
+        <i class="ri-close-fill align-middle"></i>
+      </div>
+      <!-- Leftbar User -->
+      <div class="leftbar-user">
+        <a class="avatar-sm float-left mr-2" href="../../../Modulos/Inicio/rightframe_archivos/Inicio.aspx">
+          <img id="imgPerfilsidebar" src="assets/images/users/user-1.jpg" alt="user-image" height="150"
+            class="p-2  avatar-img rounded-circle">
+          <span class="leftbar-user-name mt-2">John Sanders</span>
+        </a>
+        <div class="info">
+          <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
+            <span style="color: #faaec2">
+              <span class="user-level ">Gerencia General</span>
+              <span class="caret"></span>
+            </span>
+          </a>
+          <div class="clearfix"></div>
+        </div>
+        <div class="app-search dropdown d-none ">
+          <form action="1">
+            <div class="input-group mx-2 my-1  p-1">
+              <input type="search" class="form-control dropdown-toggle" placeholder="Buscar..." id="search" />
+              <span class="mdi mdi-magnify search-icon mt-1 ms-1"></span>
+              <button class="input-group-text btn btn-danger" type="submit">Buscar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="" style="height: 70vh !important;" id="leftside-menu-container" data-simplebar="init" class="show">
+        <div class="simplebar-wrapper" style="margin: 0px;">
+          <div class="simplebar-height-auto-observer-wrapper">
+            <div class="simplebar-height-auto-observer"></div>
+          </div>
+          <div class="simplebar-mask">
+            <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+              <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
+                style="height: 100%; overflow: scroll hidden;">
+                <div class="simplebar-content" style="padding: 0px;">
+                  <ul class="side-nav mt-2">
+                    <li runat="server" id="DO10" class="side-nav-item menuitem-active">
+                      <a data-bs-toggle="collapse" class="side-nav-link" aria-expanded="false" href="#DO18181">
+                        <i class="mdi mdi-home-analytics"></i>
+                        <span>INICIO</span>
+                      </a>
+                      <div class="collapse show" id="DO18181">
+                        <ul class="side-nav-second-level">
+                          <li runat="server" id="Li1" class="menuitem-active">
+                            <a id="in" href="index.html" class="active">
+                              <span class="sub-item">Inicio</span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                    <li runat="server" id="SV10" class="side-nav-item">
+                      <a data-bs-toggle="collapse" class="side-nav-link" aria-expanded="false" href="#SV18181">
+                        <i class="mdi mdi-exit-to-app"></i>
+                        <span>CERRAR SESIÓN</span>
+                      </a>
+                      <div class="collapse " id="SV18181">
+                        <ul class="side-nav-second-level">
+                          <li runat="server" id="Li1">
+                            <a href="index.html">
+                              <span class="sub-item">Salir</span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                  <div>
+                  </div>
+                  <div class="scroll-element scroll-x">
+                    <div class="scroll-element_outer">
+                      <div class="scroll-element_size">
+                      </div>
+                      <div class="scroll-element_track">
+                      </div>
+                      <div class="scroll-bar ui-draggable ui-draggable-handle" style="width: 100px;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="scroll-element scroll-y">
+                    <div class="scroll-element_outer">
+                      <div class="scroll-element_size">
+                      </div>
+                      <div class="scroll-element_track">
+                      </div>
+                      <div class="scroll-bar ui-draggable ui-draggable-handle" style="height: 100%;">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="simplebar-placeholder" style="width: auto; height: 262px;"></div>
+        </div>
+        <div class="simplebar-track simplebar-horizontal" style="visibility: visible;">
+          <div class="simplebar-scrollbar" style="width: 25px; transform: translate3d(0px, 0px, 0px); display: block;">
+          </div>
+        </div>
+        <div class="simplebar-track simplebar-vertical" style="visibility: hidden;">
+          <div class="simplebar-scrollbar" style="height: 0px; display: none;"></div>
+        </div>
+      </div>
+      <!-- Topbar Brand Logo -->
+      <div class="leftbar-user">
+        <div class="app-search dropdown d-none"></div>
+        <footer class="side-nav-title footer justify-content-center d-flex"
+          style="width: 300px; height: 60px; background: #f0ffff00 !important;">
+          <div class="col-lg-12 justify-content-center text-center">
+            <a href="https://www.dimension.cl" target="_blank">
+              <img alt="" src="assets/images/powerby.svg" height="40px" />
+            </a>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- ========== Sidebar ========== -->
+  </div>
+  <div class="wrapper">
+    <div class="content-page p-0">
+
+<section class="section section-lg pb-0 mb-0 mt-5 mt-lg-0 pt-lg-2 pt-0 mt-sm-0 mt-md-0 mt-lg-0">
+    <div class="container-fluid pb-0 mb-0 px-3">
+        <div class="d-md-flex align-items-md-center my-3">
+            <h5 class="fw-bold text-danger fs-5">Carpeta Electrónica de Cliente y Deudor</h5>
+            <p class="biggest mt-md-0 ms-md-4 border-md-left ps-md-3"></p>
+        </div>
+        <div class="offset-xl blurb-hovered mt-2 ">
+            <div class="row d-flex">
+                <div class="col-md-6 col-lg-3">
+                    <div class="blurb-hovered-item pb-0 pt-1 pt-lg-0" style="cursor: pointer;">
+                        <a href="cec_cliente.html">
+                        <article class="blurb blurb-boxed">
+                            <div class="media media-sm flex-lg-column flex-xxl-row" style="align-items: center;">
+                                <div class="media-left">
+                                    <div class="blurb-embed"><span class="icon icon-round icon-md icon-danger icon-style-3  mdi mdi-table-sync mdi-36px"></span></div>
+                                </div>
+                                <div class="media-body">
+                                    <div class="blurb-title  fw-bold h5">Ingreso Cliente</div>
+                                </div>
+                            </div>
+                        </article>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="blurb-hovered-item pb-0 pt-1 pt-lg-0" style="cursor: pointer;">
+                        <a style="cursor: pointer !important" data-bs-toggle="modal" data-bs-target="#modal_cli_busqueda">
+                        <!-- Blurb boxed-->
+                        <article class="blurb blurb-boxed">
+                            <div class="media media-sm flex-lg-column flex-xxl-row" style="align-items: center;">
+                                <div class="media-left">
+                                    <div class="blurb-embed"><span class="icon icon-round icon-md icon-danger icon-style-3 mdi mdi-human-male-board-poll mdi-36px"></span></div>
+                                </div>
+                                <div class="media-body">
+                                    <div class="blurb-title h5 fw-bold">Búsqueda Cliente</div>
+                                </div>
+                            </div>
+                        </article>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="card rounded-3 m-3 mt-5">
+    <div class="card-header rounded-top-3 h-login py-2">
+        <h4 class="text-light">Clientes</h4>
+    </div>
+    <div class="card-body p-2">
+            <div class="table-responsive">
+            <table id="table_cli_ini_cec"  class="table table-striped dt-responsive nowrap dataTable no-footer dtr-inline table-bordered" style="width:100%">
+                    <thead class="h-login3">
+                        <tr>
+                            <th>RUT</th>
+                            <th>Razón Social</th>
+                            <th style="width: 15%">Línea Ocupada (CLP)</th>
+                            <th style="width: 15%">Línea Disponible (CLP)</th>
+                            <th>Fecha Vencimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>96571480-4</td>
+                            <td>DIMENSIÓN S.A.</td>
+                            <td class="position-relative" style="align-content:center" style="align-content:center">
+                                <div class="progress  bg-danger bg-opacity-10">
+                                    <div class="progress-bar bg-danger bg-opacity-50" role="progressbar" style="width: 65.00%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$130.000.000</span>
+                            </td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-success bg-opacity-10">
+                                    <div class="progress-bar bg-success bg-opacity-50" role="progressbar" style="width: 100%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$200.000.000</span>
+                            </td>
+                            <td>30/06/2026</td>
+                        </tr>
+                        <tr>
+                            <td>76543210-K</td>
+                            <td>Comercial Andes SpA</td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-danger bg-opacity-10">
+                                    <div class="progress-bar bg-danger bg-opacity-50" role="progressbar" style="width: 55.20%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$41.400.000</span>
+                            </td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-success bg-opacity-10">
+                                    <div class="progress-bar bg-success bg-opacity-50" role="progressbar" style="width: 100%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$75.000.000</span>
+                            </td>
+                            <td>28/05/2026</td>
+                        </tr>
+                        <tr>
+                            <td>77111222-3</td>
+                            <td>Distribuidora Sur Ltda.</td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-danger bg-opacity-10">
+                                    <div class="progress-bar bg-danger bg-opacity-50" role="progressbar" style="width: 49.00%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$24.500.000</span>
+                            </td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-success bg-opacity-10">
+                                    <div class="progress-bar bg-success bg-opacity-50" role="progressbar" style="width: 100%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$50.000.000</span>
+                            </td>
+                            <td>14/05/2026</td>
+                        </tr>
+                        <tr>
+                            <td>78222333-4</td>
+                            <td>Inversiones Pacífico</td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-danger bg-opacity-10">
+                                    <div class="progress-bar bg-danger bg-opacity-50" role="progressbar" style="width: 28.00%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$11.200.000</span>
+                            </td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-success bg-opacity-10">
+                                    <div class="progress-bar bg-success bg-opacity-50" role="progressbar" style="width: 100%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$40.000.000</span>
+                            </td>
+                            <td>20/05/2026</td>
+                        </tr>
+                        <tr>
+                            <td>79333444-5</td>
+                            <td>Maderas del Maule</td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-danger bg-opacity-10">
+                                    <div class="progress-bar bg-danger bg-opacity-50" role="progressbar" style="width: 51.17%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$30.700.000</span>
+                            </td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-success bg-opacity-10">
+                                    <div class="progress-bar bg-success bg-opacity-50" role="progressbar" style="width: 100%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$60.000.000</span>
+                            </td>
+                            <td>22/05/2026</td>
+                        </tr>
+                        <tr>
+                            <td>15488549-8</td>
+                            <td>PEDRO ANDRÉS ROJAS FIGUEROA SPA</td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-danger bg-opacity-10">
+                                    <div class="progress-bar bg-danger bg-opacity-50" role="progressbar" style="width: 36.67%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$11.000.000</span>
+                            </td>
+                            <td class="position-relative" style="align-content:center">
+                                <div class="progress  bg-success bg-opacity-10">
+                                    <div class="progress-bar bg-success bg-opacity-50" role="progressbar" style="width: 100%"></div>
+                                </div>
+                                <span class="position-absolute top-50 end-0 translate-middle-y pe-2 fw-bold">$30.000.000</span>
+                            </td>
+                            <td>10/06/2026</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+    </div>
+</div>
+<div class="modal fade" id="modal_cli_busqueda" tabindex="-1" aria-labelledby="modal_cli_busqueda_Label"
+     aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered d-flex">
+        <div class="modal-content rounded-4" style=" width: 100% !important;">
+            <div class="modal-header h-login rounded-top-4">
+                <h4 class="modal-title" id="modal_cli_busqueda_Label">Busqueda Clientes</h4>
+                <button type="button" class="btn-close bg-light rounded-circle" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-ind p-2 scrolling" style="overflow-y: auto; overflow-x: hidden;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-group mb-1">
+                            <label class="Label me-1" style="width: 45% !important" for="">Rut :</label>
+                            <input class="form-control" style="width: 40% !important" type="text">
+                            <input class="form-control" style="width: 20px !important" type="text">
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="input-group mb-1">
+                            <label class="Label me-1" for="">Razón Social :</label>
+                            <input class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="" id="" value="{3:option1}" />
+                            <label class="form-check-label" for="">Comience</label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="" id="" value="option2" />
+                            <label class="form-check-label" for="">Contenga</label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="btn-group">
+                            <button class="btn btn-prime" text="Limpiar">Buscar</button>
+                            <!-- <button class="btn btn-ok" text="Limpiar">Nuevo</button>  -->
+                            <button class="btn btn-black" text="Limpiar">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-2">
+                    <div class="card-header h-login3">Listado Clientes</div>
+                    <div class="card-body p-2">
+                        <table id="ayuda_cli" class="table table-striped DataTable dt-responsive nowrap w-100 dataTable no-footer dtr-inline">
+                            <thead class="h-login3">
+                                <tr>
+                                    <th scope="col">Rut Cliente</th>
+                                    <th scope="col">Nombre Cliente</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>96.571.480-4</td>
+                                    <td>DIMENSIÓN S.A.</td>
+                                </tr>
+                                <tr>
+                                    <td>76.543.210-K</td>
+                                    <td>Comercial Andes SpA</td>
+                                </tr>
+                                <tr>
+                                    <td>77.111.222-3</td>
+                                    <td>Distribuidora Sur Ltda.</td>
+                                </tr>
+                                <tr>
+                                    <td>78.222.333-4</td>
+                                    <td>Inversiones Pacífico</td>
+                                </tr>
+                                <tr>
+                                    <td>79.333.444-5</td>
+                                    <td>Maderas del Maule</td>
+                                </tr>
+                                <tr>
+                                    <td>15.488.549-8</td>
+                                    <td>PEDRO ANDRÉS ROJAS FIGUEROA SPA</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-end d-flex rounded-bottom-4">
+                <div class="btn-group">
+                <button type="button" class="btn btn-ok" data-bs-dismiss="modal">Aceptar</button>
+                <button type="button" class="btn btn-prime" data-bs-dismiss="modal">Restablecer</button>
+                <button type="button" class="btn btn-mora" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+  </div>
+  </div>
+  </div>
+  <!-- Footer -->
+  <footer class=" footer fixed-bottom" style="z-index: 250;">
+    <div class="row w-100" style="font-size: 12px;">
+      <div class="col justify-content-center d-flex text-center font-bold ">
+        <script type="text/javascript">document.write(new Date().getFullYear())</script>
+        © DIM-ONE - todos los derechos reservados
+      </div>
+    </div>
+  </footer>
+  <!--data table -->
+  <!--título de la página actual-->
+  <script type="text/javascript">
+    const tituloPagina = document.title;
+    const elementoPaginaActual = document.getElementById("pagina-actual");
+    elementoPaginaActual.textContent = tituloPagina;
+  </script>
+  <!-- Footer -->
+  <script src="assets/js/vendor.min.js"></script>
+  <script src="assets/js/app.min.js"></script>
+
+      <script src="assets/js/core.min.js"></script>
+    <script src="assets/js/script.js"></script>
+
+  <script src="assets/datatables/js/dataTables.js"></script>
+  <script src="assets/datatables/js/dataTables.searchPanes.js"></script>
+  <script src="assets/datatables/js/searchPanes.bootstrap5.js"></script>
+  <script src="assets/datatables/js/dataTables.select.js"></script>
+  <script src="assets/datatables/js/select.bootstrap5.js"></script>
+  <script src="assets/datatables/js/dataTables.bootstrap5.js"></script>
+  <script src="assets/datatables/js/dataTables.responsive.js"></script>
+  <script src="assets/datatables/js/responsive.bootstrap5.js"></script>
+  <script src="assets/datatables/js/dataTables.buttons.js"></script>
+  <script src="assets/datatables/js/jszip.js"></script>
+  <script src="assets/datatables/js/FileSaver.js"></script>
+  <script src="assets/datatables/js/pdfmake.js"></script>
+  <script src="assets/datatables/js/vfs_fonts.js"></script>
+  <script src="assets/datatables/js/buttons.bootstrap5.js"></script>
+  <script src="assets/datatables/js/buttons.html5.js"></script>
+  <script src="assets/datatables/js/buttons.print.js"></script>
+  <script src="assets/datatables/js/datatable.init3.js"></script>
+  <script type="text/javascript">
+    function handlePreloader() {
+      if ($('.loader-wrap').length) {
+        $('.loader-wrap').delay(3000).fadeOut(500);
+      }
+    }
+    if ($(".preloader-close").length) {
+      $(".preloader-close").on("click", function () {
+        $('.loader-wrap').delay(200).fadeOut(500);
+      })
+    }
+    $(window).on('load', function () {
+      handlePreloader();
+
+    });
+  </script>
+  <script>
+    // Inicializar tooltips de Bootstrap
+    document.addEventListener('DOMContentLoaded', function () {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+          trigger: 'hover focus'
+        });
+      });
+      // Actualizar tooltip cuando cambia la selección
+      var selects = document.querySelectorAll('.form-select');
+      selects.forEach(function (select) {
+        select.addEventListener('change', function () {
+          if (this.selectedIndex > 0) {
+            this.setAttribute('title', this.options[this.selectedIndex].text);
+            var tooltip = bootstrap.Tooltip.getInstance(this);
+            if (tooltip) {
+              tooltip.setContent({ '.tooltip-inner': this.options[this.selectedIndex].text });
+            }
+          }
+        });
+      });
+    });
+  </script>
+  <script src="assets/js/indicadores.js"></script>
+</body>
+</html>

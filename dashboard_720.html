@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIM-ONE — Dashboard Motor de Riesgo</title>
+         <link rel="shortcut icon" href="assets/img/icono.ico" type="image/x-icon">
+    <script src="assets/js/hyper-config.js"></script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="assets/css/app-dim.min.css" class="app-style" rel="stylesheet">
+    <link href="assets/css/style-2.css" rel="stylesheet">
+    <!-- MDI Icons -->
+    <link rel="stylesheet" href="assets/css/icons.min.css">
+    <!-- Google Fonts -->
+    <link href="assets/css/fonts.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+:root{
+ --dim-red:#d21047;--dim-blue:#0a345f;--dim-teal:#10d29b;--dim-teal-light:rgba(16,210,155,.12);
+ --danger:#ef4444;--danger-light:rgba(239,68,68,.1);
+ --warning:#f59e0b;--warning-light:rgba(245,158,11,.1);
+ --success:#10b981;--success-light:rgba(16,185,129,.1);
+ --info:#3b82f6;--status-orange:#f97316;--status-teal:#06b6d4;--status-violet:#8b5cf6;
+ --gray-100:#f1f5f9;--gray-700:#374151;
+ --text-main:#1a1a1a;--text-muted:#9ca3af;--text-secondary:#6b7280;
+ --border:#e5e7eb;
+ --bg:#eef0f5;--bg-card:#ffffff;--bg-sidebar:#ffffff;
+ --font-sans:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
+ --sidebar-w:210px;--topbar-h:56px
+}
+
+
+/* SIDEBAR */
+.logo-dim{padding:1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+.logo-dim h3{font-size:1.15rem;font-weight:900;color:var(--dim-red);letter-spacing:-.5px;line-height:1}
+.logo-dim h3 span{color:var(--dim-blue)}
+.logo-dim p{font-size:.58rem;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.leftbar-user{padding:1rem;border-bottom:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:.4rem}
+.avatar-img{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid var(--dim-red)}
+.avatar-placeholder{width:85px;height:85px;border-radius:50%;background:var(--dim-red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;border:3px solid var(--dim-red);position:relative}
+.avatar-badge{position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:var(--dim-red);color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.leftbar-user-name{font-size:.82rem;font-weight:700;color:var(--text-main);text-align:center}
+.user-role{font-size:.68rem;color:var(--dim-red);font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:center}
+.side-nav{list-style:none;padding:.35rem 0;flex:1}
+.side-nav-title{font-size:.58rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);padding:.65rem 1rem .2rem}
+.side-nav-item a{display:flex;align-items:center;gap:.6rem;padding:.55rem 1rem;font-size:.78rem;color:var(--text-secondary);cursor:pointer;border-left:3px solid transparent;transition:all .15s;font-weight:500}
+.side-nav-item a:hover{background:rgba(210,16,71,.04);color:var(--dim-red)}
+.side-nav-item.active a{background:rgba(210,16,71,.06);color:var(--dim-red);border-left-color:var(--dim-red);font-weight:700}
+.side-nav-item a i{font-size:1rem;width:18px}
+.sidebar-bottom{padding:.6rem .5rem;border-top:1px solid var(--border)}
+.sidebar-bottom a{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;font-size:.78rem;color:var(--text-muted);cursor:pointer;border-radius:6px}
+.sidebar-bottom a:hover{color:var(--danger);background:rgba(239,68,68,.05)}
+
+/* MAIN */
+.dashboard-content{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:.85rem}
+.dashboard-view{display:none;flex-direction:column;gap:.85rem}
+.dashboard-view.active{display:flex}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.1rem}
+.section-number{width:26px;height:26px;border-radius:50%;background:var(--dim-red);color:#fff;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-title{font-size:.8rem;font-weight:600;color:var(--text-main)}
+.kpi-section-label{font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);font-weight:600}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;position:relative;transition:box-shadow .2s}
+.kpi-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.kpi-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;position:absolute;top:.9rem;right:.9rem}
+.kpi-icon.teal{background:rgba(16,210,155,.12);color:var(--dim-teal)}
+.kpi-icon.green{background:rgba(16,185,129,.12);color:var(--success)}
+.kpi-icon.red{background:rgba(239,68,68,.12);color:var(--danger)}
+.kpi-icon.yellow{background:rgba(245,158,11,.12);color:var(--warning)}
+.kpi-icon.blue{background:rgba(59,130,246,.12);color:var(--info)}
+.kpi-label{font-size:.67rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem;font-weight:500}
+.kpi-value{font-size:1.55rem;font-weight:800;line-height:1.1;margin-bottom:.15rem}
+.kpi-value.teal{color:var(--dim-teal)}.kpi-value.green{color:var(--success)}.kpi-value.red{color:var(--danger)}.kpi-value.yellow{color:var(--warning)}.kpi-value.blue{color:var(--info)}
+.kpi-sub{font-size:.68rem;color:var(--text-muted)}
+.kpi-delta{font-size:.7rem;font-weight:600;display:flex;align-items:center;gap:3px}
+.kpi-delta.up{color:var(--success)}.kpi-delta.down{color:var(--danger)}.kpi-delta.warn{color:var(--warning)}
+
+/* INSUMO GRID */
+.insumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}
+.insumo-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem}
+.insumo-domain{display:flex;align-items:center;gap:.4rem;margin-bottom:.4rem;flex-wrap:wrap}
+.domain-label{font-size:.62rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:.25rem}
+.domain-label.ext{color:var(--info)}.domain-label.int{color:var(--status-violet)}.domain-label.manual{color:var(--warning)}.domain-label.mass{color:var(--success)}
+.insumo-title{font-size:.82rem;font-weight:700;color:var(--text-main);margin-bottom:.2rem}
+.insumo-value{font-size:1.7rem;font-weight:800;line-height:1;margin-bottom:.15rem}
+.insumo-sub{font-size:.68rem;color:var(--text-muted);margin-bottom:.3rem}
+.insumo-event{font-family:var(--font-mono);font-size:.6rem;color:var(--text-muted);background:#f3f4f6;padding:.15rem .4rem;border-radius:4px;display:inline-block}
+
+/* STAT SISTEMA */
+.stat-sistema{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.75rem;align-items:start}
+.stat-col{background:#fff;border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem}
+.stat-label{font-size:.68rem;font-weight:600;color:var(--text-muted);display:flex;align-items:center;gap:.3rem;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.4px}
+.stat-val{font-size:1.6rem;font-weight:800;line-height:1.1}
+.stat-sub{font-size:.68rem;color:var(--text-muted);margin-top:.15rem}
+.stat-deltas{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem}
+.stat-delta{font-size:.65rem;font-weight:600;padding:.2rem .5rem;border-radius:20px}
+.motor-card{background:var(--dim-red);color:#fff;border-radius:10px;padding:.9rem 1rem;min-width:185px}
+.motor-card-label{font-size:.62rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;opacity:.85;margin-bottom:.3rem;display:flex;align-items:center;gap:.3rem}
+.motor-card-val{font-size:1.75rem;font-weight:900;line-height:1.1}
+.motor-card-sub{font-size:.68rem;opacity:.85;margin-top:.15rem}
+.motor-card-data{margin-top:.65rem;padding-top:.65rem;border-top:1px solid rgba(255,255,255,.25)}
+.motor-card-data-val{font-size:1rem;font-weight:800}
+.motor-card-data-sub{font-size:.65rem;opacity:.75}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
+
+/* CARDS */
+.card-dim{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.card-header-dim{padding:.65rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.card-header-dim h3{font-size:.8rem;font-weight:700;color:var(--text-main);display:flex;align-items:center;gap:.35rem;margin:0}
+.card-header-dim p{font-size:.7rem;color:var(--text-muted);margin:.15rem 0 0}
+.card-body-dim{padding:.9rem 1rem}
+
+/* PROGRESS */
+.progress-dim{height:5px;background:#f3f4f6;border-radius:3px;overflow:hidden;margin-top:.3rem}
+.progress-bar{height:100%;border-radius:3px}
+.progress-bar-red{background:var(--danger)}.progress-bar-green{background:var(--success)}.progress-bar-yellow{background:var(--warning)}.progress-bar-blue{background:var(--info)}
+
+/* BADGES */
+.badge-dim{font-size:.62rem;font-weight:700;padding:.2rem .55rem;border-radius:20px;display:inline-flex;align-items:center;gap:.25rem;white-space:nowrap}
+.badge-dim.badge-green{background:rgba(16,185,129,.1);color:var(--success)}
+.badge-dim.badge-red{background:rgba(239,68,68,.1);color:var(--danger)}
+.badge-dim.badge-yellow{background:rgba(245,158,11,.1);color:#92400e}
+.badge-dim.badge-blue{background:rgba(59,130,246,.1);color:var(--info)}
+.badge-dim.badge-gray{background:#f3f4f6;color:var(--text-secondary)}
+.badge-dim.badge-teal{background:rgba(6,182,212,.1);color:var(--status-teal)}
+
+/* DONUT LEGEND */
+.donut-legend{display:flex;flex-direction:column;gap:.3rem;margin-top:.6rem}
+.dl-item{display:flex;align-items:center;justify-content:space-between;padding:.4rem .65rem;border-radius:6px}
+.dl-left{display:flex;align-items:center;gap:.45rem}
+.dl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dl-name{font-size:.73rem;font-weight:500}.dl-pct{font-size:.8rem;font-weight:800}
+
+/* ALERT ITEMS */
+.alert-item{display:flex;gap:.75rem;padding:.7rem 0;border-bottom:1px solid var(--border)}
+.alert-item:last-child{border-bottom:none;padding-bottom:0}
+.alert-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem}
+.alert-icon.danger{background:rgba(239,68,68,.1);color:var(--danger)}
+.alert-icon.warning{background:rgba(245,158,11,.1);color:var(--warning)}
+.alert-content h4{font-size:.78rem;font-weight:700;margin-bottom:.15rem;color:var(--text-main)}
+.alert-content p{font-size:.7rem;color:var(--text-secondary);margin-bottom:.25rem}
+.alert-action{font-size:.68rem;font-weight:600;color:var(--dim-red);display:flex;align-items:center;gap:.25rem}
+
+/* ¿QUÉ HAGO HOY? */
+.accion-hoy-grid{display:flex;flex-direction:column;gap:.4rem}
+.accion-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem .8rem;border-radius:8px;background:#f9fafb;border:1px solid var(--border)}
+.accion-title{font-size:.75rem;font-weight:700;color:var(--text-main)}
+.accion-sub{font-size:.65rem;color:var(--text-muted);margin-top:.1rem}
+.accion-val{font-size:1.1rem;font-weight:800;text-align:right}
+.btn-cta{display:block;width:100%;margin-top:.6rem;background:var(--dim-red);border:none;color:#fff;font-size:.75rem;font-weight:700;padding:.55rem 1rem;border-radius:7px;cursor:pointer;text-align:center}
+.btn-cta:hover{background:#b8063e}
+
+/* TABLE */
+.table-dim{width:100%;border-collapse:collapse;font-size:.77rem}
+.table-dim thead th{padding:.5rem .75rem;font-size:.65rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap;text-align:left}
+.table-dim tbody td{padding:.6rem .75rem;border-bottom:1px solid #f3f4f6;vertical-align:middle;color:var(--text-main)}
+.table-dim tbody tr:last-child td{border-bottom:none}
+.table-dim tbody tr:hover{background:#fafafa}
+.eid-tag{font-family:var(--font-mono);font-size:.62rem;background:#ffe4ec;color:var(--dim-red);padding:.15rem .4rem;border-radius:4px;white-space:nowrap;font-weight:600}
+.impact-pill{font-family:var(--font-mono);font-size:.72rem;font-weight:700;background:rgba(239,68,68,.1);color:var(--danger);padding:.2rem .5rem;border-radius:4px}
+.dec-badge{font-size:.62rem;font-weight:700;padding:.2rem .5rem;border-radius:20px;display:inline-flex;align-items:center;gap:.25rem}
+.dec-badge.dec-auto{background:rgba(59,130,246,.1);color:var(--info)}
+.dec-badge.dec-manual{background:rgba(245,158,11,.1);color:#92400e}
+.btn-action{background:#f9fafb;border:1px solid var(--border);color:var(--text-secondary);font-size:.65rem;padding:.25rem .6rem;border-radius:5px;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem}
+.btn-action:hover{border-color:var(--dim-red);color:var(--dim-red)}
+.nivel-badge{font-size:.6rem;font-weight:700;padding:.15rem .45rem;border-radius:4px;text-transform:uppercase}
+.nivel-bajo{background:rgba(16,185,129,.12);color:var(--success)}
+.nivel-medio{background:rgba(245,158,11,.12);color:#92400e}
+.nivel-alto{background:rgba(249,115,22,.12);color:var(--status-orange)}
+.nivel-critico{background:rgba(239,68,68,.12);color:var(--danger)}
+
+/* GR - DECISION GRID */
+.decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.6rem}
+.decision-cell{padding:.7rem .85rem;border:1px solid var(--border);border-radius:8px;background:#fafafa}
+.decision-label{font-size:.65rem;color:var(--text-muted);font-weight:500;margin-bottom:.2rem}
+.decision-value{font-size:1.5rem;font-weight:800;line-height:1.1}
+.decision-sub{font-size:.63rem;color:var(--text-muted)}
+.sc-badge{font-size:.6rem;font-weight:700;padding:.15rem .45rem;border-radius:4px}
+.sc-01{background:rgba(6,182,212,.1);color:var(--status-teal)}
+.sc-02{background:rgba(139,92,246,.1);color:var(--status-violet)}
+.sc-03{background:rgba(245,158,11,.1);color:var(--warning)}
+
+/* EXPLAIN ITEMS */
+.explain-item{padding:.55rem 0;border-bottom:1px solid #f3f4f6}
+.explain-item:last-child{border-bottom:none}
+.explain-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.15rem}
+.explain-head-left{display:flex;align-items:center;gap:.4rem}
+.explain-ir{font-size:.62rem;font-weight:700;background:rgba(210,16,71,.1);color:var(--dim-red);padding:.15rem .4rem;border-radius:4px}
+.explain-name{font-size:.77rem;font-weight:600}
+.explain-val{font-size:.8rem;font-weight:800}
+.explain-why{font-size:.68rem;color:var(--text-secondary);margin-bottom:.25rem}
+.dim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+.dim-item{padding:.5rem .6rem;border-radius:7px;background:#f9fafb;border:1px solid var(--border)}
+.dim-name{font-size:.63rem;color:var(--text-muted);margin-bottom:.15rem}
+.dim-val{font-size:1.05rem;font-weight:800;margin-bottom:.2rem}
+.dim-peso{font-size:.58rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:.15rem}
+.ir-tag{font-size:.58rem;background:#e0e7ff;color:#4338ca;border-radius:3px;padding:.1rem .3rem;font-family:var(--font-mono)}
+.var-item{padding:.45rem 0;border-bottom:1px solid #f3f4f6}
+.var-item:last-child{border-bottom:none}
+.var-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem}
+.var-name{font-size:.73rem;font-weight:500;display:flex;align-items:center;gap:.35rem}
+.var-pct{font-size:.78rem;font-weight:700;color:var(--dim-red)}
+
+/* PRED / CMP */
+.pred-item{display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid #f3f4f6}
+.pred-item:last-child{border-bottom:none}
+.pred-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pred-info{flex:1}
+.pred-name{font-size:.75rem;font-weight:600}
+.pred-desc{font-size:.67rem;color:var(--text-muted)}
+.pred-arrow{font-size:.62rem;font-weight:700;text-align:right}
+.pred-prob{font-size:.85rem;font-weight:800;text-align:right}
+.cmp-row{display:flex;gap:.65rem;align-items:stretch}
+.cmp-bot{flex:1;padding:.65rem .75rem;border-radius:8px;background:rgba(16,210,155,.06);border:1px solid rgba(16,185,129,.2)}
+.cmp-hum{flex:1;padding:.65rem .75rem;border-radius:8px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.2)}
+.cmp-label{font-size:.65rem;font-weight:600;display:flex;align-items:center;gap:.3rem;margin-bottom:.25rem;color:var(--text-secondary)}
+.cmp-decision{font-size:.78rem;font-weight:700;margin-bottom:.2rem}
+.cmp-why{font-size:.65rem;color:var(--text-secondary)}
+.cmp-vs{font-size:.65rem;font-weight:800;color:var(--text-muted);display:flex;align-items:center;padding:0 .2rem}
+.det-bar{display:flex;align-items:center;gap:.4rem}
+.det-track{width:55px;height:5px;background:#f3f4f6;border-radius:3px;overflow:hidden;flex-shrink:0}
+.det-fill{height:100%;border-radius:3px}
+
+/* GC */
+.recup-item{display:flex;gap:.6rem;padding:.65rem 0;border-bottom:1px solid #f3f4f6}
+.recup-item:last-child{border-bottom:none;padding-bottom:0}
+.recup-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.recup-name{font-size:.78rem;font-weight:700;margin-bottom:.12rem}
+.recup-why{font-size:.68rem;color:var(--text-secondary);margin-bottom:.18rem}
+.recup-accion{font-size:.67rem;font-weight:600;color:var(--dim-teal);display:flex;align-items:center;gap:.25rem}
+.rk-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:.7rem;font-weight:800}
+.r1{background:#fef3c7;color:#92400e}.r2{background:#f3f4f6;color:#374151}.rn{background:#f9fafb;color:var(--text-secondary);border:1px solid var(--border)}
+.mt-tag{font-size:.65rem;font-weight:700;padding:.15rem .4rem;border-radius:4px}
+.mt-tag.lw{background:rgba(16,185,129,.1);color:var(--success)}
+.mt-tag.md{background:rgba(245,158,11,.1);color:#92400e}
+.mt-tag.hi{background:rgba(239,68,68,.1);color:var(--danger)}
+
+/* EC */
+.eval-bar{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;background:#fff;border:1px solid var(--border);border-radius:10px;padding:.65rem 1rem}
+.eval-label{font-size:.65rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+.eval-tipo{font-size:.7rem;font-weight:600;padding:.3rem .7rem;border-radius:20px;border:1px solid var(--border);cursor:pointer;color:var(--text-secondary)}
+.eval-tipo.active{background:var(--dim-red);color:#fff;border-color:var(--dim-red)}
+.eval-input{background:#f9fafb;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;color:var(--text-main);font-size:.75rem}
+.btn-mora{background:var(--dim-red);border:none;color:#fff;font-size:.75rem;font-weight:700;padding:.35rem 1rem;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem}
+.hist-tag{font-size:.63rem;font-weight:700;padding:.2rem .5rem;border-radius:4px}
+.hist-tag.si{background:rgba(139,92,246,.1);color:var(--status-violet)}
+.result-card{display:flex;gap:1.25rem;align-items:flex-start;background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.25rem}
+.result-circle{width:100px;height:100px;border-radius:50%;border:5px solid var(--warning);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;background:#fff}
+.result-circle.condicionado{border-color:var(--warning)}
+.result-circle.aprobado{border-color:var(--success)}
+.result-circle.rechazado{border-color:var(--danger)}
+.result-score{font-size:1.6rem;font-weight:900;line-height:1}
+.result-escala{font-size:.62rem;color:var(--text-muted)}
+.result-title{font-size:1.1rem;font-weight:900;margin-bottom:.4rem}
+.result-title.condicionado{color:var(--warning)}
+.result-title.aprobado{color:var(--success)}
+.result-title.rechazado{color:var(--danger)}
+.result-desc{font-size:.75rem;color:var(--text-secondary);margin:.35rem 0}
+.result-evts{display:flex;flex-wrap:wrap;gap:.3rem}
+.evt-tag{font-size:.62rem;background:#f3f4f6;color:var(--text-secondary);padding:.15rem .45rem;border-radius:4px}
+.result-sidebar{padding:.8rem;background:#f9fafb;border:1px solid var(--border);border-radius:8px;min-width:150px;flex-shrink:0}
+.sr-label{font-size:.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+.sr-val{font-size:1.2rem;font-weight:800;margin:.1rem 0}
+.sr-sub{font-size:.63rem;color:var(--text-muted)}
+.status-badge{font-size:.63rem;font-weight:700;padding:.2rem .5rem;border-radius:4px}
+.status-condicionado{background:rgba(245,158,11,.1);color:#92400e}
+.status-monitoreo{background:rgba(6,182,212,.1);color:var(--status-teal)}
+.score-explain{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.score-explain-head{padding:.65rem 1rem;border-bottom:1px solid var(--border);font-size:.75rem;font-weight:600;display:flex;align-items:center;gap:.4rem;color:var(--text-main)}
+.score-explain-body{padding:.9rem 1rem}
+.se-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.se-item{background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:.65rem .75rem}
+.se-ir{font-size:.6rem;color:var(--text-muted);margin-bottom:.15rem}
+.se-name{font-size:.77rem;font-weight:700;margin-bottom:.2rem}
+.se-status{font-size:.63rem;font-weight:700;padding:.15rem .4rem;border-radius:4px;display:inline-block}
+.se-status.warn{background:rgba(245,158,11,.15);color:#92400e}
+.se-status.ok{background:rgba(16,185,129,.12);color:var(--success)}
+.se-accion{font-size:.65rem;color:var(--text-secondary);margin-top:.25rem}
+.fichas-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.ficha-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.ficha-head{padding:.65rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.ficha-title{font-size:.8rem;font-weight:700}
+.ficha-sub{font-size:.67rem;color:var(--text-muted)}
+.ficha-chip{font-size:.63rem;font-weight:700;padding:.2rem .5rem;border-radius:4px}
+.ficha-body{padding:.75rem 1rem}
+.dr-row{display:flex;justify-content:space-between;align-items:center;padding:.35rem 0;border-bottom:1px solid #f3f4f6}
+.dr-label{font-size:.73rem;color:var(--text-secondary)}
+.dr-value{font-size:.73rem;font-weight:600}
+.dr-value.ok{color:var(--success)}.dr-value.warn{color:var(--warning)}
+.fuentes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+.fuente-box{padding:.5rem .6rem;border:1px solid var(--border);border-radius:6px;background:#f9fafb}
+.fuente-src{font-size:.6rem;font-weight:600;color:var(--text-muted);margin-bottom:.12rem}
+.fuente-st{font-size:.65rem;font-weight:700}
+.fuente-st.ok{color:var(--success)}.fuente-st.warn{color:var(--warning)}
+.fuente-det{font-size:.62rem;color:var(--text-secondary)}
+.fuente-ir{font-size:.58rem;color:var(--dim-teal);margin-top:.1rem}
+
+/* RC / RD */
+.client-selector{background:#fff;border:1px solid var(--border);border-radius:10px;padding:.65rem 1rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.selector-label{font-size:.65rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.selector-btns{display:flex;flex-wrap:wrap;gap:.4rem}
+.selector-btn{font-size:.72rem;font-weight:600;padding:.3rem .8rem;border-radius:20px;border:1px solid var(--border);cursor:pointer;background:#fff;color:var(--text-secondary);display:flex;align-items:center;gap:.3rem;transition:all .15s}
+.selector-btn:hover{border-color:var(--dim-red);color:var(--dim-red)}
+.selector-btn.active{background:var(--dim-red);color:#fff;border-color:var(--dim-red)}
+.hero-score{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.25rem;display:flex;gap:1.5rem;align-items:flex-start}
+.score-wrap{display:flex;flex-direction:column;align-items:center;gap:.35rem;flex-shrink:0}
+.score-circle{width:80px;height:80px;border-radius:50%;border:4px solid var(--warning);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-num{font-size:1.4rem;font-weight:900;line-height:1}
+.score-escala{font-size:.58rem;color:var(--text-muted)}
+.score-hist{display:flex;gap:3px;align-items:flex-end;height:24px}
+.hist-bar{width:7px;border-radius:2px 2px 0 0}
+.hero-info{flex:1}
+.hero-name{font-size:1.05rem;font-weight:800;margin-bottom:.1rem}
+.hero-rut{font-size:.72rem;color:var(--text-muted);margin-bottom:.45rem}
+.hero-meta{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.55rem}
+.meta-pill{font-size:.63rem;padding:.15rem .45rem;border-radius:4px;font-weight:500}
+.dims-grid{display:flex;flex-direction:column;gap:.3rem}
+.dim-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.15rem}
+.dim-label{font-size:.68rem;color:var(--text-secondary)}
+.dim-value{font-size:.8rem;font-weight:800}
+.rd-kpis{display:flex;gap:.5rem;flex-wrap:wrap}
+.rd-kpi{background:#f9fafb;border:1px solid var(--border);padding:.5rem .7rem;border-radius:8px;min-width:70px;text-align:center}
+.rd-kpi-label{font-size:.6rem;color:var(--text-muted);font-weight:500}
+.rd-kpi-val{font-size:1.1rem;font-weight:800}
+.pago-meter{display:flex;flex-direction:column;align-items:center;gap:.35rem;flex-shrink:0}
+.pm-circle{width:85px;height:85px;border-radius:50%;border:4px solid var(--warning);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pm-val{font-size:1rem;font-weight:900;line-height:1.1}
+.pm-label{font-size:.55rem;color:var(--text-muted);text-align:center;font-family:var(--font-mono)}
+.pm-sublabel{font-size:.63rem;color:var(--text-secondary);font-weight:600}
+.conc-item{display:flex;align-items:center;gap:.6rem;padding:.3rem 0}
+.conc-name{font-size:.72rem;color:var(--text-secondary);width:135px;flex-shrink:0}
+.conc-track{flex:1;height:7px;background:#f3f4f6;border-radius:4px;overflow:hidden}
+.conc-fill{height:100%;border-radius:4px}
+.conc-pct{font-size:.72rem;font-weight:700;width:30px;text-align:right}
+.pago-tag{font-size:.63rem;font-weight:700;padding:.15rem .4rem;border-radius:4px;display:inline-flex;align-items:center;gap:.25rem}
+.pago-tag.ok{background:rgba(16,185,129,.1);color:var(--success)}
+.pago-tag.leve{background:rgba(245,158,11,.1);color:#92400e}
+.est-tag{font-size:.63rem;font-weight:700;padding:.15rem .45rem;border-radius:4px}
+.est-tag.vg{background:rgba(16,185,129,.1);color:var(--success)}
+.est-tag.rv{background:rgba(245,158,11,.1);color:#92400e}
+.est-tag.vc{background:rgba(239,68,68,.1);color:var(--danger)}
+.auto-block{display:flex;gap:.65rem;padding:.65rem .75rem;border-radius:8px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.15);margin-bottom:.45rem}
+.auto-block:last-child{margin-bottom:0}
+.auto-block.int{background:rgba(139,92,246,.04);border-color:rgba(139,92,246,.15)}
+.auto-block.target{background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.2)}
+.auto-ico{width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--info);font-size:1rem}
+.auto-title{font-size:.73rem;font-weight:700;margin-bottom:.15rem;color:var(--dim-teal)}
+.auto-text{font-size:.68rem;color:var(--text-secondary);line-height:1.5}
+.evt-item{display:flex;align-items:center;gap:.65rem;padding:.45rem .65rem;border-radius:7px;background:#f9fafb;border:1px solid var(--border);margin-bottom:.35rem}
+.evt-code{font-size:.65rem;font-family:var(--font-mono);background:rgba(245,158,11,.12);color:#92400e;padding:.15rem .45rem;border-radius:4px;font-weight:700;flex-shrink:0}
+.evt-info{flex:1}
+.evt-info-name{font-size:.73rem;font-weight:600}
+.evt-info-desc{font-size:.62rem;color:var(--text-muted)}
+.hist-item{display:flex;gap:.65rem;padding:.4rem 0;border-bottom:1px solid #f3f4f6}
+.hist-item:last-child{border-bottom:none}
+.hist-date{font-size:.62rem;color:var(--text-muted);min-width:40px;flex-shrink:0;margin-top:1px}
+.hist-action{font-size:.73rem;font-weight:600;display:flex;align-items:center;gap:.35rem;margin-bottom:.1rem}
+.hist-who{font-size:.62rem;color:var(--text-muted)}
+.rec-box{display:flex;gap:.6rem;padding:.6rem .75rem;border:1px solid var(--border);border-radius:7px;background:#f9fafb;margin-bottom:.4rem}
+.rec-icon{width:24px;height:24px;border-radius:50%;background:rgba(239,68,68,.1);color:var(--danger);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem}
+.rec-icon.teal{background:rgba(6,182,212,.1);color:var(--status-teal)}
+.rec-icon.blue{background:rgba(59,130,246,.1);color:var(--info)}
+.rec-icon.yellow{background:rgba(245,158,11,.1);color:var(--warning)}
+.rec-content{font-size:.73rem;color:var(--text-secondary);line-height:1.5}
+.sc-dot{display:flex;align-items:center;gap:.2rem;font-size:.73rem}
+.sc-dot.ok{color:var(--success)}.sc-dot.wn{color:var(--warning)}.sc-dot.bd{color:var(--danger)}
+.blurb-boxed{box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.shadow-in{box-shadow:inset 0 1px 3px rgba(0,0,0,.06)}
+.h-login3{background:#f9fafb}
+.chart-container{position:relative}
+@media(max-width:1200px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.grid-3{grid-template-columns:1fr 1fr}.stat-sistema{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}.insumo-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrapper">
+    <!-- ========== Topbar =========== -->
+        <div class="rd-navbar context rd-navbar-original rd-navbar-fullwidth ">
+            <div class="navbar-container fixed-top">
+                <div class="navbar-custom ">
+                    <div class="topbar">
+                        <div class="d-flex align-items-center gap-lg-1 gap-1">
+                            <!-- Topbar Brand Logo -->
+                            <div class="logo-topbar">
+                                <!-- Logo light -->
+                                <a class="logo-light">
+                                    <span class="logo-lg">
+                                        <img src="assets/img/logo.png" alt="logo">
+                                    </span>
+                                    <span class="logo-sm">
+                                        <img src="assets/img/logo-sm.png" alt="small logo">
+                                    </span>
+                                </a>
+                                <!-- Logo Dark -->
+                                <a class="logo-dark">
+                                    <span class="logo-lg">
+                                        <img src="assets/img/logo-dark.png" alt="dark logo">
+                                    </span>
+                                    <span class="logo-sm">
+                                        <img src="assets/img/logo-dark-sm.png" alt="small logo">
+                                    </span>
+                                </a>
+                            </div>
+                            <!-- Sidebar Menu Toggle Button -->
+                            <button class="button-toggle-menu">
+                                <i class=" mdi mdi-menu"></i>
+                            </button>
+                            <!-- Horizontal Menu Toggle Button -->
+                            <button class="navbar-toggle" data-bs-toggle="collapse"
+                                data-bs-target="#topnav-menu-content">
+                                <div class="lines">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </button>
+                            <!-- Topbar marcador vista actual -->
+                          <div class="topbar-title" style="font-family: dim-regular !important;" id="topbarTitle">
+                            <i class="mdi mdi-domain" ></i> DIM-ONE
+                        </div>
+                         <i class="mdi mdi-chevron-right"></i>
+                        <div class="topbar-breadcrumb fw-bold" style="font-family: dim-regular !important; font-size: 1em !important;">
+                            <span>DIM-ONE</span>
+                            <i class="mdi mdi-chevron-right" style="font-size: 1.1em;"></i>
+                            <span id="breadcrumbRole" >Gerencia General</span>
+                        </div>
+                        </div>
+                        <div class="content-indicator d-none "
+                            style="width: 40%; align-content: center;">
+                            <div class="row justify-content-end">
+                                <div class="col-4">
+                                    <div class="rounded-pill p-0 rounded  bg-gradient text-light fw-bold  shadow-in">
+                                        <div class="justify-content-center input-group py-0 indicator-info align-content-center"
+                                            style="font-size: 12px; align-items: center;">
+                                            <span class="text-danger fw-bold me-1">UF =</span>
+                                            <p class="text-success mb-1 mt-1 me-1" id="UF"></p>
+                                            <a class="btn-sm " style="cursor: pointer !important" data-bs-toggle="modal"
+                                                data-bs-target="#modalUF"><i class="mdi mdi-eye mdi-18px"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal UF-->
+                                <div class="modal fade" id="modalUF" tabindex="-1" aria-labelledby="modalUFLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered d-flex">
+                                        <div class="modal-content" style=" width: 500px !important;">
+                                            <div class="modal-header h-login2">
+                                                <h5 class="modal-title" id="modalUFLabel">Información UF</h5>
+                                                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body modal-ind p-0 px-0 scrolling"
+                                                style="overflow: auto; max-height: 305px;">
+                                                <!-- Contenido del modal -->
+                                                Aquí puedes colocar el contenido que desees mostrar en el modal, como
+                                                los datos de la API.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                    data-bs-dismiss="modal">Cerrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4 ">
+                                    <div class="rounded-pill p-0 rounded  bg-gradient text-light fw-bold  shadow-in">
+                                        <div class="justify-content-center input-group py-0 indicator-info align-content-center"
+                                            style="font-size: 12px; align-items: center;">
+                                            <span class=" text-danger fw-bold me-1">DOLAR =</span>
+                                            <p class=" text-success mb-1 mt-1 me-1" id="DolarO"></p>
+                                            <!-- Botón que activa el modal -->
+                                            <a class="btn-sm " style="cursor: pointer !important" data-bs-toggle="modal"
+                                                data-bs-target="#modalDOLAR"><i class="mdi mdi-eye mdi-18px"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal DOLAR-->
+                                <div class="modal fade" id="modalDOLAR" tabindex="-1" aria-labelledby="modalDOLARLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content" style=" width: 500px !important;">
+                                            <div class="modal-header h-login2">
+                                                <h5 class="modal-title" id="modalDOLARLabel">Información DOLAR</h5>
+                                                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body modal-ind p-0 px-0 scrolling"
+                                                style="overflow: auto; max-height: 305px;">
+                                                <!-- Contenido del modal -->
+                                                Aquí puedes colocar el contenido que desees mostrar en el modal, como
+                                                los datos de la API.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-sm btn-secondary"
+                                                    data-bs-dismiss="modal">Cerrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4 d-none">
+                                    <div class="rounded-pill p-0 rounded  bg-gradient text-light fw-bold  shadow-in">
+                                        <div class="justify-content-center input-group py-0 indicator-info align-content-center"
+                                            style="font-size: 12px; align-items: center;">
+                                            <span class="text-danger fw-bold me-1">UTM = </span>
+                                            <p class=" text-success mb-1 me-1 mt-1" id="UTM"></p>
+                                            <div class="col-auto indicator-link">
+                                                <!-- Botón que activa el modal -->
+                                                <a class="btn-sm " style="cursor: pointer !important"
+                                                    data-bs-toggle="modal" data-bs-target="#modalUTM"><i
+                                                        class="mdi mdi-eye mdi-18px"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal UTM-->
+                                <div class="modal fade" id="modalUTM" tabindex="-1" aria-labelledby="modalUTMlabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content" style=" width: 500px !important;">
+                                            <div class="modal-header h-login2">
+                                                <h5 class="modal-title" id="modalUTMLabel">Información UTM</h5>
+                                                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body modal-ind p-0 px-0 scrolling"
+                                                style="overflow: auto;max-height: 305px;">
+                                                <!-- Contenido del modal -->
+                                                Aquí puedes colocar el contenido que desees mostrar en el modal, como
+                                                los datos de la API.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-sm btn-secondary"
+                                                    data-bs-dismiss="modal">Cerrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="topbar-right">
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        EN VIVO
+                    </div>
+                    <div class="topbar-date" id="topbarDate">22 MAY 2026 · 10:24</div>
+                </div>
+                        <ul class="topbar-menu d-flex align-items-center gap-1">
+                            <li class="dropdown d-none">
+                                <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
+                                    role="button" aria-haspopup="false" aria-expanded="false">
+                                    <i class="ri-search-line font-22"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+                                    <form class="p-3">
+                                        <input type="search" class="form-control" placeholder="Buscar ..."
+                                            aria-label="Recipient's username">
+                                    </form>
+                                </div>
+                            </li>
+                            <li>
+                                <a class="logo">
+                                    <img src="assets/images/dimred.png" width=" 150" alt="Dimension"
+                                        class="navbar-brand">
+                                </a>
+                            </li>
+                            <li class="d-none d-sm-inline-block">
+                                <div class="nav-link " id="light-dark-mode" data-bs-toggle="tooltip"
+                                    data-bs-placement="left" aria-label="COLOR MODE"
+                                    data-bs-original-title="COLOR MODE">
+                                    <i class="mdi  mdi-brightness-4  mdi-24px"></i>
+                                </div>
+                            </li>
+                            <li class="d-none d-md-inline-block">
+                                <a class="nav-link" href="" data-toggle="fullscreen">
+                                    <i class="mdi mdi-fullscreen mdi-24px"></i>
+                                </a>
+                            </li>
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown"
+                                    href="javascript:void(0);" role="button" aria-haspopup="false"
+                                    aria-expanded="false">
+                                    <span id="usuario" class="d-lg-flex flex-column gap-1 d-none text-end">
+                                        <asp:label id="Lbl_Usuario" runat="server" text="Usuario Conectado: "
+                                            cssclass="Label"></asp:label>
+                                        <asp:label id="Lbl_Cargo" runat="server" text="Cargo/Perfil: " cssclass="Label">
+                                        </asp:label>
+                                    </span>
+                                    <span class="account-user-avatar">
+                                        <i class="mdi mdi-account-circle h2 icon-danger icon icon-circle  icon-style-2 mdi-36px"
+                                            style="width: 1em; height: 1em;"></i>
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                                    <!-- item-->
+                                    <a href="" class="dropdown-item">
+                                        <i class="mdi mdi-account-edit me-1 mdi-18px"></i>
+                                        <span>Modificar Usuario</span>
+                                    </a>
+                                    <!-- item-->
+                                    <a href="" class="dropdown-item">
+                                        <i class="mdi mdi-lock-outline me-1 mdi-18px"></i>
+                                        <span>Cambiar Contraseña</span>
+                                    </a>
+                                    <!-- item-->
+                                    <a href="index.html" class="dropdown-item" onClick="cerrarPestana();">
+                                        <i class="mdi mdi-logout me-1 mdi-18px"></i>
+                                        <span>Cerrar Sesión</span>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- ========== SIDEBAR ========== -->
+    <div class="leftside-menu border-0 rounded-0">
+              <!-- Brand Logo Light -->
+           <a class="logo logo-light m-0  p-0">
+                <span class="logo-lg justify-content-center mt-3">
+                    <img src="assets/images/loader.png" alt="logo">
+                <div class="sidebar-brand text-start ms-1">
+                    <h3 style="font-family: dim-bold;" class="my-0 py-0">DIM<span class="my-0 py-0">-ONE</span><p class="my-0 py-0">Motor de Riesgo</p></h3>
+                    
+                </div>
+                </span>
+                <span class="logo-sm mt-0 mb-2 justify-content-center">
+                    <img src="assets/images/logo-sm.png" alt="small logo">
+                </span>
+            </a>
+            <!-- Brand Logo Dark -->
+             <a class="logo logo-dark m-0  p-0">
+                <span class="logo-lg justify-content-center mt-3">
+                    <img src="assets/images/loader.png" alt="logo">
+                <div class="sidebar-brand text-start ms-1">
+                    <h3 style="font-family: dim-bold;" class="my-0 py-0">DIM<span class="my-0 py-0">-ONE</span><p class="my-0 py-0 text-dark">Motor de Riesgo</p></h3>
+                    
+                </div>
+                </span>
+                <span class="logo-sm mt-0 mb-2 justify-content-center">
+                    <img src="assets/images/logo-dark-sm.png" alt="small logo">
+                </span>
+            </a>
+        <div class="leftbar-user d-flex">
+            <div class="avatar-placeholder">
+                <span id="userAvatar">GG</span>
+                <div class="avatar-badge" id="avatarBadge">GG</div>
+            </div>
+            <div class="leftbar-user-name">John Sanders</div>
+            <div class="user-role" id="userRole">Gerencia General</div>
+        </div>
+        <div class="side-nav-title">Perfiles</div>
+        <ul class="side-nav" id="sidebarNav">
+            <li class="side-nav-item active" id="nav-gg"><a href="#" onclick="switchView('view-gg',this,'GG')"><i class="mdi mdi-domain"></i>Gerencia General</a></li>
+            <li class="side-nav-item" id="nav-gr"><a href="#" onclick="switchView('view-gr',this,'GR')"><i class="mdi mdi-shield-account"></i>Gerencia Riesgo</a></li>
+            <li class="side-nav-item" id="nav-gc"><a href="#" onclick="switchView('view-gc',this,'GC')"><i class="mdi mdi-handshake"></i>Gerencia Comercial</a></li>
+            <li class="side-nav-item" id="nav-ec"><a href="#" onclick="switchView('view-ec',this,'EC')"><i class="mdi mdi-account-tie"></i>Ejecutivo Comercial</a></li>
+            <li class="side-nav-item" id="nav-rc"><a href="#" onclick="switchView('view-rc',this,'RC')"><i class="mdi mdi-account-cash"></i>Rep. Cliente</a></li>
+            <li class="side-nav-item" id="nav-rd"><a href="#" onclick="switchView('view-rd',this,'RD')"><i class="mdi mdi-account-search"></i>Rep. Deudor</a></li>
+        </ul>
+        <ul class="side-nav fixed-bottom">
+                        <li class="side-nav-item nav-item m-0" style="width: 60px; height: 45px;">
+                            <a class="side-nav-link h-100" href="Sistemas.html" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Volver al Inicio">
+                                <i class="mdi mdi-logout-variant mdi-24px"></i>
+                            </a>
+                        </li>
+                    </ul>
+    </div>
+    <div class="wrapper">   
+        <div class="content-page p-0">
+        <main class="dashboard-content" id="dashboardContent">
+         <!-- ====== VIEW GG ====== -->
+<div class="dashboard-view active" id="view-gg">
+ <div class="kpi-section-label"><i class="mdi mdi-circle-small"></i> Estado de Cartera</div>
+ <div class="kpi-grid">
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon teal"><i class="mdi mdi-wallet"></i></div><div class="kpi-label">Cartera Activa</div><div class="kpi-value teal">$284.000M</div><div class="kpi-delta up"><i class="mdi mdi-arrow-up"></i> +8.3% vs mes anterior</div></div>
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon green"><i class="mdi mdi-percent"></i></div><div class="kpi-label">Porcentaje Mora</div><div class="kpi-value green">2.3%</div><div class="kpi-delta up"><i class="mdi mdi-arrow-down"></i> vs 3.1% mes ant.</div></div>
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon red"><i class="mdi mdi-currency-usd"></i></div><div class="kpi-label">Cartera en Riesgo</div><div class="kpi-value red">$36.900M</div><div class="kpi-sub">Clientes ALTO + CR&#205;TICO</div></div>
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon yellow"><i class="mdi mdi-alert-circle"></i></div><div class="kpi-label">EST-02 CONDICIONADOS</div><div class="kpi-value yellow">18</div><div class="kpi-sub">clientes activos</div></div>
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon red"><i class="mdi mdi-close-circle"></i></div><div class="kpi-label">EST-03 BLOQUEADOS</div><div class="kpi-value red">3</div><div class="kpi-sub">acci&#243;n requerida</div></div>
+ </div>
+ <div class="section-header"><div class="section-number">2</div><div class="section-title">Explicaci&#243;n &#8212; cuatro insumos al Motor de Decisiones (v15)</div></div>
+ <div class="insumo-grid">
+ <div class="insumo-card blurb-boxed rounded-3 h-100"><div class="insumo-domain"><span class="domain-label ext"><i class="mdi mdi-web"></i> Dominio Externo</span><span class="badge-dim badge-blue">SII&#183;TGR&#183;Sheriff&#183;Dicom</span></div><div class="insumo-title">Evaluador Externo</div><div class="insumo-value" style="color:var(--info)">481</div><div class="insumo-sub">evaluaciones procesadas</div></div>
+ <div class="insumo-card blurb-boxed rounded-3 h-100"><div class="insumo-domain"><span class="domain-label int"><i class="mdi mdi-database-lock"></i> Dominio Interno</span><span class="badge-dim badge-gray">DimRepo</span></div><div class="insumo-title">Evaluador Interno</div><div class="insumo-value" style="color:var(--status-violet)">251</div><div class="insumo-sub">evaluaciones procesadas</div></div>
+ <div class="insumo-card blurb-boxed rounded-3 h-100"><div class="insumo-domain"><span class="domain-label manual"><i class="mdi mdi-hand-front-right"></i> Manual</span><span class="badge-dim badge-yellow">Control dual</span></div><div class="insumo-title">Gesti&#243;n Manual</div><div class="insumo-value" style="color:var(--warning)">7</div><div class="insumo-sub">bloqueos / desbloqueos</div></div>
+ <div class="insumo-card blurb-boxed rounded-3 h-100"><div class="insumo-domain"><span class="domain-label mass"><i class="mdi mdi-upload-multiple"></i> Masiva</span><span class="badge-dim badge-green">CSV&#183;Excel&#183;JSON</span></div><div class="insumo-title">Carga Masiva</div><div class="insumo-value" style="color:var(--success)">2</div><div class="insumo-sub">archivos procesados</div></div>
+ </div>
+ <div class="stat-sistema">
+ <div class="stat-col blurb-boxed rounded-3 h-100"><div class="stat-label"><i class="mdi mdi-robot"></i> Decisiones autom&#225;ticas (mes)</div><div class="stat-val" style="color:var(--status-teal)">412</div><div class="stat-sub">evaluaciones procesadas</div><div class="stat-deltas"><span class="stat-delta" style="background:var(--success-light);color:var(--success)">68.4% APROBADO</span><span class="stat-delta" style="background:var(--warning-light);color:#92400e">20.4% CONDICIONADO</span><span class="stat-delta" style="background:var(--danger-light);color:var(--danger)">11.2% RECHAZADO</span></div></div>
+ <div class="stat-col blurb-boxed rounded-3 h-100"><div class="stat-label"><i class="mdi mdi-gauge"></i> Autonom&#237;a del motor</div><div class="stat-val" style="color:var(--success)">94.2%</div><div class="stat-sub">sin intervenci&#243;n humana</div><div class="progress-dim" style="margin-top:10px"><div class="progress-bar progress-bar-green" style="width:94.2%"></div></div><div style="font-size:.7rem;color:var(--text-muted);margin-top:6px">5.8% requiri&#243; revisi&#243;n manual </div></div>
+ <div class="stat-col blurb-boxed rounded-3 h-100"><div class="stat-label"><i class="mdi mdi-bullseye-arrow"></i> Mora Actual vs Mes Anterior</div><div class="stat-val" style="color:var(--success)">2.3%</div><div class="stat-sub">vs 3.1% mes anterior</div><div class="kpi-delta up" style="margin-top:8px"><i class="mdi mdi-arrow-down"></i> 0.8pp vs mes anterior</div></div>
+ <div class="motor-card"><div class="motor-card-label"><i class="mdi mdi-shield-check"></i> EXPOSICI&#211;N CONTROLADA POR EL MOTOR (3M)</div><div class="motor-card-val">$1.300M</div><div class="motor-card-sub">cartera de clientes bloqueados autom&#225;ticamente</div><div class="motor-card-data"><div class="motor-card-data-val">10 bloqueos</div><div class="motor-card-data-sub">bloqueos automáticos &#183; CAPA_AUTO</div></div></div>
+ </div>
+ <div class="section-header"><div class="section-number">3</div><div class="section-title">Decisi&#243;n &#8212; evoluci&#243;n de mora + distribuci&#243;n</div></div>
+ <div class="grid-2">
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2"><div><h3><i class="mdi mdi-chart-line"></i> Evoluci&#243;n de Mora &#8212; 12 meses</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Trayectoria &#250;ltimos 12 meses &#183; tendencia descendente</p></div><span class="badge-dim badge-green"><i class="mdi mdi-trending-down"></i> tendencia favorable</span></div><div class="card-body-dim"><div class="chart-container" style="height:220px"><canvas id="gg-mora"></canvas></div></div></div>
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2"><div><h3><i class="mdi mdi-chart-donut"></i> Distribuci&#243;n por Nivel</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Cartera activa &#183; escala 0&#8211;1000</p></div></div><div class="card-body-dim"><div class="chart-container" style="height:160px"><canvas id="gg-donut"></canvas></div><div class="donut-legend"><div class="dl-item" style="background:rgba(16,185,129,.08)"><div class="dl-left"><div class="dl-dot" style="background:var(--success)"></div><span class="dl-name">BAJO &#8805; 800</span></div><span class="dl-pct" style="color:var(--success)">68%</span></div><div class="dl-item" style="background:rgba(245,158,11,.08)"><div class="dl-left"><div class="dl-dot" style="background:var(--warning)"></div><span class="dl-name">MEDIO 600&#8211;799</span></div><span class="dl-pct" style="color:var(--warning)">19%</span></div><div class="dl-item" style="background:rgba(249,115,22,.08)"><div class="dl-left"><div class="dl-dot" style="background:var(--status-orange)"></div><span class="dl-name">ALTO 400&#8211;599</span></div><span class="dl-pct" style="color:var(--status-orange)">9%</span></div><div class="dl-item" style="background:rgba(239,68,68,.08)"><div class="dl-left"><div class="dl-dot" style="background:var(--danger)"></div><span class="dl-name">CR&#205;TICO &lt; 400</span></div><span class="dl-pct" style="color:var(--danger)">4%</span></div></div></div></div>
+ </div>
+ <div class="section-header"><div class="section-number">4</div><div class="section-title">Acci&#243;n &#8212; alertas cr&#237;ticas y panel del d&#237;a</div></div>
+ <div class="grid-2">
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="card-header-dim py-2"><div><h3><i class="mdi mdi-bell-alert"></i> Alertas Cr&#237;ticas &#8212; Acci&#243;n Requerida</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Concentraci&#243;n &#183; deterioro &#183; riesgo sist&#233;mico</p></div><span class="badge-dim badge-red"><i class="mdi mdi-alert"></i> 3 cr&#237;ticas</span></div>
+ <div class="card-body-dim">
+ <div class="alert-item"><div class="alert-icon danger"><i class="mdi mdi-alert-circle"></i></div><div class="alert-content"><h4>Concentraci&#243;n cr&#237;tica &#8212; Segmento Construcci&#243;n</h4><p>31% de la cartera en un solo deudor (Constructora Norte). L&#237;mite regulatorio 25%. Indicador activo. CAPA_AUTO.</p><div class="alert-action"><i class="mdi mdi-flash"></i> Reducir exposici&#243;n inmediata</div></div></div>
+ <div class="alert-item"><div class="alert-icon danger"><i class="mdi mdi-alert-circle"></i></div><div class="alert-content"><h4>2 bloqueados con exposici&#243;n activa &gt; $500M</h4><p>Constructora Norte ($842M) y Minera Atacama ($288M) en EST-03 BLOQUEADO. Posici&#243;n sin cobertura.</p><div class="alert-action"><i class="mdi mdi-flash"></i> Revisar garant&#237;as y provisiones</div></div></div>
+ <div class="alert-item"><div class="alert-icon warning"><i class="mdi mdi-alert"></i></div><div class="alert-content"><h4>3 clientes con deterioro score &gt; 100 pts </h4><p>Cohort Q4-2025 muestra mora 3.4% en M+4 vs 2.2% cohortes anteriores. Posible cambio de ciclo.</p><div class="alert-action"><i class="mdi mdi-magnify"></i> Revisar pol&#237;tica de aprobaci&#243;n</div></div></div>
+ </div>
+ </div>
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="card-header-dim py-2"><div><h3><i class="mdi mdi-clipboard-check"></i> &#191;Qu&#233; hago hoy?</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Acciones prioritarias &#8212; actualizado hace 5 min</p></div><span class="badge-dim badge-red">5 pendientes</span></div>
+ <div class="card-body-dim">
+ <div class="accion-hoy-grid">
+ <div class="accion-item"><div><div class="accion-title">Revisiones Pendientes</div><div class="accion-sub">Requieren decisi&#243;n hoy</div></div><div style="text-align:right"><div class="accion-val" style="color:var(--status-orange)">8 casos</div></div></div>
+ <div class="accion-item"><div><div class="accion-title">Clientes en Deterioro</div><div class="accion-sub">Score ca&#237;da &gt; 50 pts</div></div><div style="text-align:right"><div class="accion-val" style="color:var(--danger)">12 clientes</div></div></div>
+ <div class="accion-item"><div><div class="accion-title">Bloqueos Nuevos Hoy</div><div class="accion-sub">Acci&#243;n autom&#225;tica</div></div><div style="text-align:right"><div class="accion-val" style="color:var(--danger)">5 bloqueos</div></div></div>
+ <div class="accion-item"><div><div class="accion-title">Vence SLA Hoy</div><div class="accion-sub">Escalan a Riesgo si no se resuelven</div></div><div style="text-align:right"><div class="accion-val" style="color:var(--status-orange)">3 evaluaciones</div></div></div>
+ <div class="accion-item"><div><div class="accion-title">Inmunidades Temporales</div><div class="accion-sub">Vencen en &lt; 48 hrs</div></div><div style="text-align:right"><div class="accion-val" style="color:var(--warning)">2 activas</div></div></div>
+ </div>
+ <button class="btn-cta"><i class="mdi mdi-briefcase-check"></i> Ver bandeja de trabajo</button>
+ </div>
+ </div>
+ </div>
+</div>
+
+<!-- ====== VIEW GR ====== -->
+<div class="dashboard-view" id="view-gr">
+ <div class="section-header" style="margin-top:0"><div class="section-number">1</div><div class="section-title">Estado &#8212; alertas cr&#237;ticas con impacto $</div></div>
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="card-header-dim" style="background:rgba(239,68,68,.04)"><div style="display:flex;align-items:center;gap:.75rem"><div style="width:32px;height:32px;border-radius:50%;background:var(--danger-light);display:flex;align-items:center;justify-content:center;color:var(--danger)"><i class="mdi mdi-alert-octagon"></i></div><h3 style="color:var(--danger)"><i class="mdi mdi-alert"></i> ALERTAS CR&#205;TICAS ACTIVAS &#8212; requieren decisi&#243;n inmediata</h3></div><span class="badge-dim badge-red">3 bloqueantes</span></div>
+ <div class="card-body-dim" style="padding:0"><div class="table-responsive"><table class="table-dim"><thead><tr><th>Cliente / Deudor</th><th>evaluacionId</th><th>Evento disparador</th><th>Impacto $</th><th>Decisi&#243;n</th><th>Acci&#243;n</th></tr></thead><tbody>
+ <tr><td><div style="font-weight:600">Constructora Norte S.A.</div><div style="font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono)">76.123.456-7 &#183; EST-03 &#183; CAPA_AUTO</div></td><td><span class="eid-tag">EVL-220522-0841</span></td><td>Deuda TGR + Protesto</td><td><span class="impact-pill">$842M</span></td><td><span class="dec-badge dec-auto"><i class="mdi mdi-robot"></i>  BLOQUEO</span></td><td><button class="btn-action"><i class="mdi mdi-eye"></i> Revisar provisi&#243;n</button></td></tr>
+ <tr><td><div style="font-weight:600">Minera Atacama S.A.</div><div style="font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono)">76.445.667-3 &#183; EST-03 &#183; CAPA_AUTO</div></td><td><span class="eid-tag">EVL-220522-0792</span></td><td>Protesto $38M Dicom</td><td><span class="impact-pill" style="background:var(--warning-light);color:var(--warning)">$288M</span></td><td><span class="dec-badge dec-auto"><i class="mdi mdi-robot"></i>  BLOQUEO</span></td><td><button class="btn-action"><i class="mdi mdi-eye"></i> Verificar recupero</button></td></tr>
+ <tr><td><div style="font-weight:600">Agr&#237;cola del Sur Ltda.</div><div style="font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono)">77.654.321-K &#183; EST-02 &#183; CONDICIONADO</div></td><td><span class="eid-tag">EVL-220521-1103</span></td><td>Mora previsional + deterioro SC-02</td><td><span class="impact-pill" style="background:var(--warning-light);color:var(--warning)">$615M</span></td><td><span class="dec-badge dec-manual"><i class="mdi mdi-account"></i>  MANUAL</span></td><td><button class="btn-action"><i class="mdi mdi-file-send"></i> Solicitar regularizaci&#243;n</button></td></tr>
+ </tbody></table></div></div>
+ </div>
+ <div class="section-header"><div class="section-number">2</div><div class="section-title">Explicaci&#243;n &#8212; decisiones del motor + modelos SC + drivers</div></div>
+ <div class="grid-2">
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-robot"></i> Decisiones Autom&#225;ticas &#8212; Mayo 2026</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Acciones AC-* ejecutadas &#183; sin intervenci&#243;n humana</p></div></div>
+ <div class="card-body-dim">
+ <div class="decision-grid">
+ <div class="decision-cell"><div class="decision-label">Bloqueos  &#183; CAPA_AUTO</div><div class="decision-value" style="color:var(--danger)">47</div><div class="decision-sub">bloqueos totales</div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:38%"></div></div></div>
+ <div class="decision-cell"><div class="decision-label">Condicionados </div><div class="decision-value" style="color:var(--warning)">84</div><div class="decision-sub">revisi&#243;n manual</div><div class="progress-dim"><div class="progress-bar progress-bar-yellow" style="width:68%"></div></div></div>
+ <div class="decision-cell"><div class="decision-label">Aprobados </div><div class="decision-value" style="color:var(--success)">281</div><div class="decision-sub">autom&#225;tico</div><div class="progress-dim"><div class="progress-bar progress-bar-green" style="width:100%"></div></div></div>
+ <div class="decision-cell"><div class="decision-label">Manuales &#183; CAPA_MANUAL</div><div class="decision-value" style="color:var(--status-violet)">7</div><div class="decision-sub">control dual &#183; analista</div><div class="progress-dim"><div class="progress-bar progress-bar-blue" style="width:12%"></div></div></div>
+ </div>
+ <div style="border:1px solid var(--border-color);border-radius:8px;padding:.875rem;margin-top:.75rem">
+ <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:.75rem">Modelos scoring ejecutados</div>
+ <div style="display:flex;gap:.5rem">
+ <div style="flex:1;text-align:center;padding:.5rem;background:rgba(16,185,129,.08);border-radius:8px"><span class="sc-badge sc-01">SC-01 Cliente Nuevo</span><div style="font-size:1.25rem;font-weight:800;color:var(--status-teal);margin-top:6px">134</div><div style="font-size:.7rem;color:var(--text-muted)">tieneHistoricoInterno: false</div></div>
+ <div style="flex:1;text-align:center;padding:.5rem;background:rgba(139,92,246,.08);border-radius:8px"><span class="sc-badge sc-02">SC-02 Cliente Activo</span><div style="font-size:1.25rem;font-weight:800;color:var(--status-violet);margin-top:6px">189</div><div style="font-size:.7rem;color:var(--text-muted)">tieneHistoricoInterno: true</div></div>
+ <div style="flex:1;text-align:center;padding:.5rem;background:rgba(245,158,11,.08);border-radius:8px"><span class="sc-badge sc-03">SC-03 Deudor</span><div style="font-size:1.25rem;font-weight:800;color:var(--warning);margin-top:6px">89</div><div style="font-size:.7rem;color:var(--text-muted)">EVALUAR_DEUDOR</div></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-brain"></i> Explicabilidad &#8212; Drivers del Riesgo</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Constructora Norte &#183; SC-01 &#183; score 380</p></div></div>
+ <div class="card-body-dim">
+ <div class="explain-item"><div class="explain-head"><div class="explain-head-left"><span class="explain-name">Deuda TGR CON_DEUDA</span></div><span class="explain-val" style="color:var(--danger)">&#8722;180 pts</span></div><div class="explain-why">Certificado TGR vigente con deuda activa. Bloquea cualquier aprobaci&#243;n ().</div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:82%"></div></div></div>
+ <div class="explain-item"><div class="explain-head"><div class="explain-head-left"><span class="explain-name">Protestos Dicom $38M</span></div><span class="explain-val" style="color:var(--danger)">&#8722;120 pts</span></div><div class="explain-why">2 protestos impagos en 30 d&#237;as. activo.</div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:60%"></div></div></div>
+ <div class="explain-item"><div class="explain-head"><div class="explain-head-left"><span class="explain-name">Concentraci&#243;n cartera 31%</span></div><span class="explain-val" style="color:var(--danger)">&#8722;55 pts</span></div><div class="explain-why">Supera umbral_concentracion 30%. .</div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:35%"></div></div></div>
+ <div class="explain-item"><div class="explain-head"><div class="explain-head-left"><span class="explain-name">Juicios vigentes</span></div><span class="explain-val" style="color:var(--danger)">&#8722;30 pts</span></div><div class="explain-why">3 juicios laborales activos detectados v&#237;a Sheriff.</div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:20%"></div></div></div>
+ <div style="margin-top:.75rem;border:1px solid var(--border-color);border-radius:8px;padding:.75rem">
+ <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:1px;color:var(--text-muted);margin-bottom:.5rem;text-transform:uppercase">Sub-scores SC-01</div>
+ <div class="dim-grid">
+ <div class="dim-item blurb-boxed rounded-3"><div class="dim-name">Liquidez (25%)</div><div class="dim-val" style="color:var(--danger)">142</div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:14%"></div></div></div>
+ <div class="dim-item blurb-boxed rounded-3"><div class="dim-name">Legal (20%)</div><div class="dim-val" style="color:var(--danger)">310</div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:31%"></div></div></div>
+ <div class="dim-item blurb-boxed rounded-3"><div class="dim-name">AML (20%)</div><div class="dim-val" style="color:var(--warning)">650</div><div class="progress-dim"><div class="progress-bar progress-bar-yellow" style="width:65%"></div></div></div>
+ <div class="dim-item blurb-boxed rounded-3"><div class="dim-name">Estructura (20%)</div><div class="dim-val" style="color:var(--warning)">520</div><div class="progress-dim"><div class="progress-bar progress-bar-yellow" style="width:52%"></div></div></div>
+ <div class="dim-item blurb-boxed rounded-3"><div class="dim-name">Due&#241;os (15%)</div><div class="dim-val" style="color:var(--success)">820</div><div class="progress-dim"><div class="progress-bar progress-bar-green" style="width:82%"></div></div></div>
+ <div class="dim-item blurb-boxed rounded-3"><div class="dim-name">Comportamiento</div><div class="dim-val" style="color:var(--text-muted)">N/A</div><div class="progress-dim"></div></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="section-header"><div class="section-number">3</div><div class="section-title">Decisi&#243;n &#8212; sistema vs alternativa + predicci&#243;n</div></div>
+ <div class="grid-3">
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-scale-balance"></i> Sistema vs Alternativa</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">DIM-ONE vs. escenario sin automatizaci&#243;n</p></div></div><div class="card-body-dim"><div class="cmp-row"><div class="cmp-bot"><div class="cmp-label"><i class="mdi mdi-robot"></i> Motor DIM-ONE</div><div class="cmp-decision"> &#8212; BLOQUEO TOTAL inmediato</div><div class="cmp-why"> + &#8594; &#8594; bloquea sin excepci&#243;n. CAPA_AUTO.</div></div><div class="cmp-vs">VS</div><div class="cmp-hum"><div class="cmp-label"><i class="mdi mdi-account"></i> Sin automatizaci&#243;n</div><div class="cmp-decision" style="color:var(--danger)">Revisi&#243;n manual 3&#8211;5 d&#237;as h&#225;biles</div><div class="cmp-why">Riesgo de operar $842M sin control durante ventana de revisi&#243;n.</div></div></div></div></div>
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-crystal-ball"></i> Predicci&#243;n &#8212; Early Warning</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Pr&#243;ximos 30 d&#237;as &#183; Sheriff push</p></div><span class="badge-dim badge-yellow">4 en radar</span></div><div class="card-body-dim"><div class="pred-item"><div class="pred-dot" style="background:var(--danger)"></div><div class="pred-info"><div class="pred-name">Constructora Norte</div><div class="pred-desc">3er juicio laboral. Bloqueo permanente &#8593;</div></div><div><div class="pred-arrow" style="color:var(--danger)"><i class="mdi mdi-arrow-down"></i> CR&#205;TICO</div><div class="pred-prob" style="color:var(--danger)">92%</div></div></div><div class="pred-item"><div class="pred-dot" style="background:var(--warning)"></div><div class="pred-info"><div class="pred-name">Agr&#237;cola del Sur</div><div class="pred-desc">Mora previsional subiendo. 4 meses &#8594; &#8594; </div></div><div><div class="pred-arrow" style="color:var(--warning)"><i class="mdi mdi-arrow-down"></i> ALTO</div><div class="pred-prob" style="color:var(--warning)">71%</div></div></div><div class="pred-item"><div class="pred-dot" style="background:var(--warning)"></div><div class="pred-info"><div class="pred-name">Transportes R&#225;pido</div><div class="pred-desc">TGR peque&#241;a detectada. SC-02 delta &#8722;70 pts en 90 d&#237;as.</div></div><div><div class="pred-arrow" style="color:var(--warning)"><i class="mdi mdi-arrow-down"></i> ALTO</div><div class="pred-prob" style="color:var(--warning)">58%</div></div></div><div class="pred-item"><div class="pred-dot" style="background:var(--success)"></div><div class="pred-info"><div class="pred-name">Retail Express</div><div class="pred-desc">Sin alertas. Trayectoria positiva sostenida.</div></div><div><div class="pred-arrow" style="color:var(--success)"><i class="mdi mdi-arrow-up"></i> BAJO</div><div class="pred-prob" style="color:var(--success)">84%</div></div></div></div></div>
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-chart-bar"></i> Variables m&#225;s Influyentes</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Feature importance &#183; indicadores de riesgo</p></div></div><div class="card-body-dim"><div class="var-item"><div class="var-header"><span class="var-name">D&#237;as desv&#237;o pago </span><span class="var-pct">31.4%</span></div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:100%"></div></div></div><div class="var-item"><div class="var-header"><span class="var-name">Deuda TGR </span><span class="var-pct">18.7%</span></div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:60%"></div></div></div><div class="var-item"><div class="var-header"><span class="var-name">Protestos Sheriff </span><span class="var-pct">14.2%</span></div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:45%"></div></div></div><div class="var-item"><div class="var-header"><span class="var-name">Tasa recompra </span><span class="var-pct">11.8%</span></div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:37%"></div></div></div><div class="var-item"><div class="var-header"><span class="var-name">Concentraci&#243;n deudor </span><span class="var-pct">9.3%</span></div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:30%"></div></div></div><div class="var-item"><div class="var-header"><span class="var-name">Mora previsional </span><span class="var-pct">7.1%</span></div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:22%"></div></div></div></div></div>
+ </div>
+ <div class="section-header"><div class="section-number">4</div><div class="section-title">Acci&#243;n &#8212; early warning + cat&#225;logo estados v11</div></div>
+ <div class="grid-2">
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-radar"></i> Early Warning &#8212; Deterioro de Score</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Monitoreo continuo &#183; modelo SC por evaluaci&#243;n</p></div><span class="badge-dim badge-red">5 activos</span></div><div class="card-body-dim" style="padding:0"><div class="table-responsive"><table class="table-dim"><thead><tr><th>Deudor</th><th>Modelo SC</th><th>Score / Nivel</th><th>Deterioro 90d</th><th>Exposici&#243;n</th><th>Estado</th></tr></thead><tbody>
+ <tr><td><div style="font-weight:500">Constructora Norte</div><div style="font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono)">alertas activas</div></td><td><span class="sc-badge sc-01">SC-01</span></td><td><span style="font-family:var(--font-mono);color:var(--danger);font-size:.85rem;font-weight:700">380</span> <span class="nivel-badge nivel-critico">CR&#205;TICO</span></td><td><div class="det-bar"><div class="det-track"><div class="det-fill" style="width:78%;background:var(--danger)"></div></div><span style="font-family:var(--font-mono);font-size:.7rem;color:var(--danger)">&#8722;220 pts</span></div></td><td style="font-family:var(--font-mono);font-size:.8rem">$842M</td><td><span class="badge-dim badge-red">EST-03</span></td></tr>
+ <tr><td><div style="font-weight:500">Minera Atacama</div><div style="font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono)">alertas activas</div></td><td><span class="sc-badge sc-01">SC-01</span></td><td><span style="font-family:var(--font-mono);color:var(--danger);font-size:.85rem;font-weight:700">420</span> <span class="nivel-badge nivel-alto">ALTO</span></td><td><div class="det-bar"><div class="det-track"><div class="det-fill" style="width:60%;background:var(--danger)"></div></div><span style="font-family:var(--font-mono);font-size:.7rem;color:var(--danger)">&#8722;180 pts</span></div></td><td style="font-family:var(--font-mono);font-size:.8rem">$288M</td><td><span class="badge-dim badge-red">EST-03</span></td></tr>
+ <tr><td><div style="font-weight:500">Agr&#237;cola del Sur</div><div style="font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono)">alerta en historial DimRepo</div></td><td><span class="sc-badge sc-02">SC-02</span></td><td><span style="font-family:var(--font-mono);color:var(--warning);font-size:.85rem;font-weight:700">540</span> <span class="nivel-badge nivel-alto">ALTO</span></td><td><div class="det-bar"><div class="det-track"><div class="det-fill" style="width:40%;background:var(--warning)"></div></div><span style="font-family:var(--font-mono);font-size:.7rem;color:var(--warning)">&#8722;110 pts</span></div></td><td style="font-family:var(--font-mono);font-size:.8rem">$615M</td><td><span class="badge-dim badge-yellow">EST-02</span></td></tr>
+ <tr><td><div style="font-weight:500">Transportes R&#225;pido</div><div style="font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono)">alerta en historial DimRepo</div></td><td><span class="sc-badge sc-02">SC-02</span></td><td><span style="font-family:var(--font-mono);color:var(--warning);font-size:.85rem;font-weight:700">610</span> <span class="nivel-badge nivel-medio">MEDIO</span></td><td><div class="det-bar"><div class="det-track"><div class="det-fill" style="width:28%;background:var(--warning)"></div></div><span style="font-family:var(--font-mono);font-size:.7rem;color:var(--warning)">&#8722;70 pts</span></div></td><td style="font-family:var(--font-mono);font-size:.8rem">$503M</td><td><span class="badge-dim badge-yellow">EST-02</span></td></tr>
+ <tr><td><div style="font-weight:500">Retail Express</div><div style="font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono)">sin alertas activas</div></td><td><span class="sc-badge sc-02">SC-02</span></td><td><span style="font-family:var(--font-mono);color:var(--success);font-size:.85rem;font-weight:700">790</span> <span class="nivel-badge nivel-bajo">BAJO</span></td><td><div class="det-bar"><div class="det-track"><div class="det-fill" style="width:10%;background:var(--success)"></div></div><span style="font-family:var(--font-mono);font-size:.7rem;color:var(--success)">&#8722;20 pts</span></div></td><td style="font-family:var(--font-mono);font-size:.8rem">$391M</td><td><span class="badge-dim badge-teal">EST-07</span></td></tr>
+ </tbody></table></div></div></div>
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-tag-multiple"></i> Cat&#225;logo de Estados &#8212; v11</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">CAPA_AUTO + CAPA_MANUAL &#183; 11 estados vigentes</p></div><span class="badge-dim badge-blue">11 estados</span></div><div class="card-body-dim" style="display:flex;flex-direction:column;gap:.35rem">
+<style>
+.est-row{display:flex;align-items:center;gap:.65rem;padding:.5rem .85rem;border-radius:8px;font-size:.78rem;font-weight:500}
+.est-cod{font-family:var(--font-mono);font-size:.68rem;font-weight:700;min-width:52px;flex-shrink:0}
+.est-ico{font-size:1rem;flex-shrink:0}
+</style>
+<div class="est-row" style="background:#f0fdf4;border:1px solid #bbf7d0"><span class="est-cod" style="color:#15803d">EST-01</span><span class="est-ico"><i class="mdi mdi-check-circle" style="color:#16a34a"></i></span><span style="color:#15803d">APROBADO &#8212; ambas capas limpias</span></div>
+<div class="est-row" style="background:#fffbeb;border:1px solid #fde68a"><span class="est-cod" style="color:#b45309">EST-02</span><span class="est-ico"><i class="mdi mdi-alert-circle" style="color:#d97706"></i></span><span style="color:#b45309">CONDICIONADO &#8212; alertas o limitantes</span></div>
+<div class="est-row" style="background:#fef2f2;border:1px solid #fecaca"><span class="est-cod" style="color:#b91c1c">EST-03</span><span class="est-ico"><i class="mdi mdi-close-circle" style="color:#dc2626"></i></span><span style="color:#b91c1c">BLOQUEADO &#8212; al menos una capa activa</span></div>
+<div class="est-row" style="background:#fef2f2;border:1px solid #fca5a5"><span class="est-cod" style="color:#991b1b">EST-04</span><span class="est-ico"><i class="mdi mdi-cancel" style="color:#dc2626"></i></span><span style="color:#991b1b">RECHAZADO &#8212; descarte permanente</span></div>
+<div class="est-row" style="background:#eff6ff;border:1px solid #bfdbfe"><span class="est-cod" style="color:#1d4ed8">EST-05</span><span class="est-ico"><i class="mdi mdi-clock-outline" style="color:#2563eb"></i></span><span style="color:#1d4ed8">EN_EVALUACION &#8212; en curso</span></div>
+<div class="est-row" style="background:#fff7ed;border:1px solid #fed7aa"><span class="est-cod" style="color:#c2410c">EST-06</span><span class="est-ico"><i class="mdi mdi-timer-sand" style="color:#ea580c"></i></span><span style="color:#c2410c">PENDIENTE_SUBSANACION</span></div>
+<div class="est-row" style="background:#ecfeff;border:1px solid #a5f3fc"><span class="est-cod" style="color:#0e7490">EST-07</span><span class="est-ico"><i class="mdi mdi-radar" style="color:#0891b2"></i></span><span style="color:#0e7490">MONITOREO_ACTIVO &#8212; 24/7</span></div>
+<div class="est-row" style="background:#ecfeff;border:1px solid #67e8f9"><span class="est-cod" style="color:#155e75">EST-08</span><span class="est-ico"><i class="mdi mdi-shield-crown" style="color:#0891b2"></i></span><span style="color:#155e75">INMUNE_TEMPORAL</span></div>
+<div class="est-row" style="background:#f0fdf4;border:1px solid #bbf7d0"><span class="est-cod" style="color:#166534">EST-D01</span><span class="est-ico"><i class="mdi mdi-check" style="color:#16a34a"></i></span><span style="color:#166534">DEUDOR_APTO &#8212; puede operar</span></div>
+<div class="est-row" style="background:#fefce8;border:1px solid #fef08a"><span class="est-cod" style="color:#854d0e">EST-D02</span><span class="est-ico"><i class="mdi mdi-eye" style="color:#ca8a04"></i></span><span style="color:#854d0e">DEUDOR_OBSERVADO &#8212; con condiciones</span></div>
+<div class="est-row" style="background:#fef2f2;border:1px solid #fca5a5"><span class="est-cod" style="color:#b91c1c">EST-D03</span><span class="est-ico"><i class="mdi mdi-block-helper" style="color:#dc2626"></i></span><span style="color:#b91c1c">DEUDOR_BLOQUEADO &#8212; no financiable</span></div>
+</div></div>
+ </div>
+</div>
+
+<!-- ====== VIEW GC ====== -->
+<div class="dashboard-view" id="view-gc">
+ <div class="kpi-section-label"><i class="mdi mdi-circle-small"></i> Estado de Cartera</div>
+ <div class="kpi-grid">
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon teal"><i class="mdi mdi-wallet"></i></div><div class="kpi-label">Cartera Activa</div><div class="kpi-value teal">$284.000M</div><div class="kpi-delta up"><i class="mdi mdi-arrow-up"></i> +8.3% vs mes anterior</div></div>
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon blue"><i class="mdi mdi-file-document"></i></div><div class="kpi-label">Evaluaciones mes</div><div class="kpi-value blue">412</div><div class="kpi-delta up"><i class="mdi mdi-arrow-up"></i> +34</div></div>
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon green"><i class="mdi mdi-percent"></i></div><div class="kpi-label">Porcentaje Mora</div><div class="kpi-value green">2.3%</div><div class="kpi-delta up"><i class="mdi mdi-arrow-down"></i> &#8722;0.8pp</div></div>
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon yellow"><i class="mdi mdi-check-circle"></i></div><div class="kpi-label">Tasa APROBADO</div><div class="kpi-value yellow">68.4%</div><div class="kpi-delta warn"><i class="mdi mdi-minus"></i> estable</div></div>
+ <div class="kpi-card blurb-boxed rounded-3"><div class="kpi-icon red"><i class="mdi mdi-currency-usd-off"></i></div><div class="kpi-label">Ventas perdidas riesgo</div><div class="kpi-value red">$94M</div><div class="kpi-delta down">11.2% rechazado</div></div>
+ </div>
+ <div class="section-header"><div class="section-number">2</div><div class="section-title">Explicaci&#243;n &#8212; tendencia evaluaciones &#183; distribuci&#243;n cartera</div></div>
+ <div class="grid-2">
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-chart-bar"></i> Resultados DIM-ONE &#8212; 6 meses</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">APROBADO / CONDICIONADO / RECHAZADO</p></div><span class="badge-dim badge-green"><i class="mdi mdi-trending-down"></i> rechazos bajando</span></div><div class="card-body-dim"><div class="chart-container" style="height:200px"><canvas id="gc-tend"></canvas></div></div></div>
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-chart-donut"></i> Cartera por Nivel</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Escala 0&#8211;1000 &#183; 4 niveles</p></div></div><div class="card-body-dim"><div class="chart-container" style="height:140px"><canvas id="gc-donut"></canvas></div><div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.75rem"><div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem .75rem;background:rgba(16,185,129,.08);border-radius:6px;border:1px solid rgba(16,185,129,.2)"><span style="font-size:.75rem;color:var(--success);font-weight:600">BAJO &#8805; 800</span><span style="font-size:1rem;font-weight:700;color:var(--success)">68%</span></div><div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem .75rem;background:rgba(245,158,11,.08);border-radius:6px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:.75rem;color:var(--warning);font-weight:600">MEDIO 600&#8211;799</span><span style="font-size:1rem;font-weight:700;color:var(--warning)">19%</span></div><div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem .75rem;background:rgba(249,115,22,.08);border-radius:6px;border:1px solid rgba(249,115,22,.2)"><span style="font-size:.75rem;color:var(--status-orange);font-weight:600">ALTO 400&#8211;599</span><span style="font-size:1rem;font-weight:700;color:var(--status-orange)">9%</span></div><div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem .75rem;background:rgba(239,68,68,.08);border-radius:6px;border:1px solid rgba(239,68,68,.2)"><span style="font-size:.75rem;color:var(--danger);font-weight:600">CR&#205;TICO &lt; 400</span><span style="font-size:1rem;font-weight:700;color:var(--danger)">4%</span></div></div></div></div>
+ </div>
+ <div class="section-header"><div class="section-number">3</div><div class="section-title">Decisi&#243;n &#8212; clientes recuperables y ventas perdidas</div></div>
+ <div class="grid-2">
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-account-check"></i> Clientes Recuperables</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0"><i class="mdi mdi-robot"></i> Motor detecta condiciones para mejora de score</p></div><span class="badge-dim badge-green">4 identificados</span></div>
+ <div class="card-body-dim">
+ <div class="recup-item"><div class="recup-dot" style="background:var(--warning)"></div><div><div class="recup-name">Agr&#237;cola del Sur Ltda. &#8212; Score 540 &#183; SC-02</div><div class="recup-why">mora previsional activa. tieneHistoricoInterno: true. Historial DimRepo favorable.</div><div class="recup-accion"><i class="mdi mdi-robot"></i> Condicionar a pago PreviRed &#8594; desactiva &#8594; pasa a APROBADO</div></div></div>
+ <div class="recup-item"><div class="recup-dot" style="background:var(--warning)"></div><div><div class="recup-name">Transportes R&#225;pido SpA &#8212; Score 610 &#183; SC-02</div><div class="recup-why">Deuda TGR $28M. /internos favorables.</div><div class="recup-accion"><i class="mdi mdi-robot"></i> Solicitar cert. TGR &#8594; desactiva &#8594; pasa a nivel MEDIO</div></div></div>
+ <div class="recup-item"><div class="recup-dot" style="background:var(--success)"></div><div><div class="recup-name">Comercial Pac&#237;fico &#8212; Score 650 &#183; SC-01</div><div class="recup-why">Cliente nuevo (tieneHistoricoInterno: false). Sin alertas activas. 3 meses sin eventos.</div><div class="recup-accion"><i class="mdi mdi-robot"></i> Monitorear 60 d&#237;as &#8594; sin alertas &#8594; reevaluar como SC-02</div></div></div>
+ <div class="recup-item"><div class="recup-dot" style="background:var(--success)"></div><div><div class="recup-name">Retail Express &#8212; Score 790 &#183; SC-02</div><div class="recup-why">EST-07 monitoreo activo. Trayectoria positiva.</div><div class="recup-accion"><i class="mdi mdi-robot"></i> Ampliar cupo seg&#250;n nueva evaluaci&#243;n</div></div></div>
+ <button class="btn-cta" style="margin-top:.75rem"><i class="mdi mdi-account-check"></i> Ver clientes recuperables</button>
+ </div>
+ </div>
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-currency-usd-off"></i> Ventas Perdidas por Riesgo</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Rechazos + condicionados sin resolver</p></div><span class="badge-dim badge-red">este mes</span></div>
+ <div class="card-body-dim">
+ <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem">
+ <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.15);border-radius:7px"><div><div style="font-size:.85rem;font-weight:600">Rechazos  este mes</div><div style="font-size:.75rem;color:var(--text-secondary)">47 operaciones &#183; CAPA_AUTO</div></div><div style="font-size:1.25rem;font-weight:700;color:var(--danger)">$6.700M</div></div>
+ <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem;background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.15);border-radius:7px"><div><div style="font-size:.85rem;font-weight:600">Condicionados sin resolver</div><div style="font-size:.75rem;color:var(--text-secondary)">Clientes que no regularizaron en 15 d&#237;as</div></div><div style="font-size:1.25rem;font-weight:700;color:var(--warning)">$2.700M</div></div>
+ </div>
+ <div style="background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:.75rem 1rem"><div style="font-size:.75rem;font-weight:700;color:var(--success);margin-bottom:.35rem"><i class="mdi mdi-lightbulb"></i> Oportunidad de recupero</div><div>4 clientes recuperables representan <strong style="color:var(--success)">$3.800M</strong> en operaciones reactivables.</div></div>
+ </div>
+ </div>
+ </div>
+ <div class="section-header"><div class="section-number">4</div><div class="section-title">Acci&#243;n &#8212; ranking ejecutivos y recomendaciones de condiciones</div></div>
+ <div class="grid-2">
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-trophy"></i> Ranking Ejecutivos &#8212; Mayo 2026</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Volumen &#183; mora &#183; nivel cartera</p></div><span class="badge-dim badge-green">5 activos</span></div>
+ <div class="card-body-dim" style="padding:0"><div class="table-responsive"><table class="table-dim"><thead><tr><th>#</th><th>Ejecutivo</th><th>Ops</th><th>Volumen</th><th>Mora</th><th>Nivel cartera</th></tr></thead><tbody>
+ <tr><td><span class="rk-num r1">1</span></td><td><div style="font-weight:500">Camila Reyes</div><div style="font-size:.75rem;color:var(--text-muted)">desde 2021</div></td><td>98</td><td><strong>$76.000M</strong></td><td><span class="mt-tag lw">1.1%</span></td><td><span class="nivel-badge nivel-bajo">BAJO</span></td></tr>
+ <tr><td><span class="rk-num r2">2</span></td><td><div style="font-weight:500">Rodrigo Fuentes</div><div style="font-size:.75rem;color:var(--text-muted)">desde 2020</div></td><td>84</td><td><strong>$64.000M</strong></td><td><span class="mt-tag lw">1.8%</span></td><td><span class="nivel-badge nivel-bajo">BAJO</span></td></tr>
+ <tr><td><span class="rk-num rn">3</span></td><td><div style="font-weight:500">Valentina Pino</div><div style="font-size:.75rem;color:var(--text-muted)">desde 2022</div></td><td>76</td><td><strong>$58.000M</strong></td><td><span class="mt-tag md">2.4%</span></td><td><span class="nivel-badge nivel-medio">MEDIO</span></td></tr>
+ <tr><td><span class="rk-num rn">4</span></td><td><div style="font-weight:500">Felipe Torres <i class="mdi mdi-alert" style="color:var(--danger)"></i></div><div style="font-size:.75rem;color:var(--danger)">2 clientes CR&#205;TICO</div></td><td>89</td><td><strong>$52.000M</strong></td><td><span class="mt-tag hi">3.8%</span></td><td><span class="nivel-badge nivel-critico">CR&#205;TICO</span></td></tr>
+ <tr><td><span class="rk-num rn">5</span></td><td><div style="font-weight:500">Andrea Mora</div><div style="font-size:.75rem;color:var(--text-muted)">desde 2024</div></td><td>65</td><td><strong>$34.000M</strong></td><td><span class="mt-tag md">2.1%</span></td><td><span class="nivel-badge nivel-medio">MEDIO</span></td></tr>
+ </tbody></table></div></div>
+ </div>
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="card-header-dim py-2" style="background:rgba(16,185,129,.04)"><div><h3><i class="mdi mdi-file-document-edit"></i> Recomendaci&#243;n de Condiciones</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0"><i class="mdi mdi-robot"></i> Motor DIM-ONE &#183; condiciones sugeridas por score</p></div></div>
+ <div class="card-body-dim" style="display:flex;flex-direction:column;gap:.6rem">
+ <div style="padding:.75rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border-color);border-radius:8px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem"><span style="font-size:.85rem;font-weight:600">Agr&#237;cola del Sur &#183; 540 &#183; SC-02</span><span class="nivel-badge nivel-alto">CONDICIONADO</span></div><div style="font-size:.8rem;color:var(--text-secondary)">Cupo m&#225;x. <strong>$2.000M</strong> (&#8722;40%) &#183; Plazo m&#225;x. <strong>30 d&#237;as</strong> &#183; Requiere: pago previsional + cert. TGR</div></div>
+ <div style="padding:.75rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border-color);border-radius:8px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem"><span style="font-size:.85rem;font-weight:600">Transportes R&#225;pido &#183; 610 &#183; SC-02</span><span class="nivel-badge nivel-medio">CONDICIONADO</span></div><div style="font-size:.8rem;color:var(--text-secondary)">Cupo m&#225;x. <strong>$800M</strong> &#183; Plazo m&#225;x. <strong>30 d&#237;as</strong> &#183; Requiere: cert. TGR sin deuda vigente</div></div>
+ <div style="padding:.75rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border-color);border-radius:8px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem"><span style="font-size:.85rem;font-weight:600">Retail Express &#183; 790 &#183; SC-02</span><span class="nivel-badge nivel-bajo">EXPANDIR CUPO</span></div><div style="font-size:.8rem;color:var(--text-secondary)">Score en alza. Ampliar cupo a <strong>$4.500M</strong> (+15%) &#183; Plazo hasta <strong>60 d&#237;as</strong></div></div>
+ </div>
+ </div>
+ </div>
+</div>
+
+<!-- ====== VIEW EC ====== -->
+<div class="dashboard-view" id="view-ec">
+ <!-- CC-EC-1: solo EVALUAR_CLIENTE_DEUDOR, dos campos RUT -->
+ <div class="eval-bar blurb-boxed rounded-3">
+ <span class="eval-label">Tipo Solicitud</span>
+ <span class="eval-tipo active">EVALUAR_CLIENTE_DEUDOR</span>
+ <div style="display:flex;flex-direction:column;gap:2px">
+ <span style="font-size:.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">RUT Cliente</span>
+ <input class="eval-input" type="text" value="77.321.654-8" style="max-width:140px">
+ </div>
+ <div style="display:flex;flex-direction:column;gap:2px">
+ <span style="font-size:.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">RUT Deudor</span>
+ <input class="eval-input" type="text" value="76.987.123-2" style="max-width:140px">
+ </div>
+ <div style="display:flex;flex-direction:column;gap:2px">
+ <span style="font-size:.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">Monto</span>
+ <input class="eval-input" type="text" value="$120.000.000" style="max-width:130px">
+ </div>
+ <button class="btn-mora" onclick="simEval()"><i class="mdi mdi-lightning-bolt"></i> Evaluar</button>
+ <span class="hist-tag si" id="hist-tag-ec">Cliente SC-02 &#183; Deudor SC-03</span>
+ </div>
+
+ <!-- CC-EC-2: dos scores en paralelo -->
+ <div class="grid-2">
+ <!-- Score Cliente izquierda (posición correcta) -->
+ <div class="card-dim blurb-boxed rounded-3">
+ <div class="card-header-dim py-2" style="background:rgba(245,158,11,.04);border-bottom:1px solid rgba(245,158,11,.15)">
+ <div>
+ <h3 style="color:var(--warning)"><i class="mdi mdi-account-tie"></i> Score Cliente &#8212; SC-02</h3>
+ <p style="font-size:.72rem;color:var(--text-muted);margin:0">Serv. Log&#237;sticos Norte &#183; 77.321.654-8</p>
+ </div>
+ <span class="nivel-badge nivel-medio">MEDIO</span>
+ </div>
+ <div class="card-body-dim">
+ <div style="display:flex;gap:1rem;align-items:center;margin-bottom:.75rem">
+ <div class="result-circle condicionado">
+ <div class="result-score" style="color:var(--warning);font-size:1.4rem">610</div>
+ <div class="result-escala">/ 1000</div>
+ </div>
+ <div>
+ <div style="font-size:1rem;font-weight:800;color:var(--warning);margin-bottom:.3rem">CONDICIONADO</div>
+ <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.3rem">
+ <span class="sc-badge sc-02">SC-02 &#183; Activo</span>
+ <span class="eid-tag">EVL-20260610-1482</span>
+ </div>
+ <div style="display:flex;flex-wrap:wrap;gap:.3rem">
+ <span class="evt-tag" style="background:rgba(239,68,68,.08);color:var(--danger)"> &#183; deuda_tributaria</span>
+ <span class="evt-tag" style="background:rgba(245,158,11,.08);color:#92400e"> &#183; deterioro_score</span>
+ </div>
+ </div>
+ </div>
+ <div style="font-size:.68rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.5rem">Indicadores clave &#8212; externo + interno</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem">
+ <div class="se-item"><div class="se-ir">TGR</div><div class="se-name">Deuda tributaria</div><span class="se-status warn">CON DEUDA</span></div>
+ <div class="se-item"><div class="se-ir">DimRepo</div><div class="se-name">D&#237;as desv&#237;o pago</div><span class="se-status warn">18 d&#237;as</span></div>
+ <div class="se-item"><div class="se-ir">DimRepo</div><div class="se-name">Tasa recompra</div><span class="se-status ok">1.2% &#8212; OK</span></div>
+ <div class="se-item"><div class="se-ir">SII</div><div class="se-name">Continuidad IVA</div><span class="se-status ok">12/12 meses</span></div>
+ <div class="se-item"><div class="se-ir">Sheriff</div><div class="se-name">Mora previsional</div><span class="se-status ok">0 meses</span></div>
+ <div class="se-item"><div class="se-ir">DimRepo</div><div class="se-name">Concentraci&#243;n</div><span class="se-status ok">22% &#8212; OK</span></div>
+ </div>
+ </div>
+ </div>
+
+ <!-- Score Deudor derecha (posición correcta) -->
+ <div class="card-dim blurb-boxed rounded-3">
+ <div class="card-header-dim py-2" style="background:rgba(16,185,129,.04);border-bottom:1px solid rgba(16,185,129,.15)">
+ <div>
+ <h3 style="color:var(--success)"><i class="mdi mdi-file-document"></i> Score Deudor &#8212; SC-03</h3>
+ <p style="font-size:.72rem;color:var(--text-muted);margin:0">Transportes R&#225;pido SpA &#183; 76.987.123-2</p>
+ </div>
+ <span class="nivel-badge nivel-bajo">BAJO</span>
+ </div>
+ <div class="card-body-dim">
+ <div style="display:flex;gap:1rem;align-items:center;margin-bottom:.75rem">
+ <div class="result-circle aprobado" style="width:80px;height:80px;flex-shrink:0">
+ <div class="result-score" style="color:var(--success);font-size:1.4rem">790</div>
+ <div class="result-escala">/ 1000</div>
+ </div>
+ <div>
+ <div style="font-size:1rem;font-weight:800;color:var(--success);margin-bottom:.3rem">APROBADO</div>
+ <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.3rem">
+ <span class="sc-badge sc-03">SC-03 &#183; Deudor</span>
+ <span class="est-tag vg">EST-D01 DEUDOR_APTO</span>
+ </div>
+ <div style="display:flex;flex-wrap:wrap;gap:.3rem">
+ <span class="evt-tag">Sin EVT activos</span>
+ </div>
+ </div>
+ </div>
+ <div style="font-size:.68rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.5rem">Indicadores clave &#8212; Sheriff &#183; SII (sin TGR)</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem">
+ <div class="se-item"><div class="se-ir">Sheriff</div><div class="se-name">Protestos</div><span class="se-status ok">Sin protestos</span></div>
+ <div class="se-item"><div class="se-ir">Sheriff</div><div class="se-name">Juicios vigentes</div><span class="se-status ok">Sin juicios</span></div>
+ <div class="se-item"><div class="se-ir">Sheriff</div><div class="se-name">Mora previsional</div><span class="se-status ok">0 meses</span></div>
+ <div class="se-item"><div class="se-ir">Sheriff</div><div class="se-name">Score Sheriff</div><span class="se-status ok">790 &#183; BAJO</span></div>
+ <div class="se-item"><div class="se-ir">SII</div><div class="se-name">Existencia giro</div><span class="se-status ok">Activo c/giro</span></div>
+ <div class="se-item"><div class="se-ir">DimRepo</div><div class="se-name">Concentraci&#243;n</div><span class="se-status ok">22% &#8212; OK</span></div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- Resultado consolidado operación -->
+ <div class="blurb-boxed rounded-3" style="background:#f9fafb;border:1px solid var(--border);padding:.85rem 1.25rem">
+ <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem">
+ <div>
+ <div style="font-size:.62rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.25rem">Resultado operaci&#243;n</div>
+ <div style="font-size:1.1rem;font-weight:800;color:var(--warning)">CONDICIONADO</div>
+ <div style="font-size:.68rem;color:var(--text-muted);margin-top:.15rem">Determinado por score cliente</div>
+ </div>
+ <div>
+ <div style="font-size:.62rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.25rem">Monto m&#225;x. sugerido</div>
+ <div style="font-size:1.1rem;font-weight:800;color:var(--warning)">$80M</div>
+ <div style="font-size:.68rem;color:var(--text-muted);margin-top:.15rem">vs. $120M solicitado</div>
+ </div>
+ <div>
+ <div style="font-size:.62rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.25rem">Plazo recomendado</div>
+ <div style="font-size:1.1rem;font-weight:800">30 d&#237;as</div>
+ <div style="font-size:.68rem;color:var(--text-muted);margin-top:.15rem">vs. 60 d&#237;as solicitado</div>
+ </div>
+ <div>
+ <div style="font-size:.62rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.25rem">Estado</div>
+ <div style="font-size:.9rem;font-weight:800">EST-02 CONDICIONADO</div>
+ <div style="margin-top:.3rem"><span class="eid-tag">EVL-20260610-1482</span></div>
+ </div>
+ </div>
+ </div>
+
+ <!-- CC-EC-3: fichas invertidas — deudor izquierda, cliente derecha -->
+ <div class="fichas-grid">
+ <!-- Ficha Cliente izquierda -->
+ <div class="ficha-card blurb-boxed rounded-3 p-0">
+ <div class="ficha-head py-2" style="background:rgba(245,158,11,.04);border-bottom:1px solid rgba(245,158,11,.15)">
+ <div><div class="ficha-title">Ficha Cliente &#8212; SC-02</div><div class="ficha-sub">Serv. Log&#237;sticos Norte &#183; 77.321.654-8</div></div>
+ <span class="ficha-chip" style="background:var(--warning-light);color:#92400e">610 / MEDIO &#183; SC-02</span>
+ </div>
+ <div class="ficha-body">
+ <div class="dr-row"><span class="dr-label">D&#237;as desv&#237;o pago </span><span class="dr-value warn">18 d&#237;as</span></div>
+ <div class="dr-row"><span class="dr-label">Tasa recompra </span><span class="dr-value ok">1.2% &#8212; OK</span></div>
+ <div class="dr-row"><span class="dr-label">Deuda TGR </span><span class="dr-value warn">$28M activa</span></div>
+ <div class="dr-row"><span class="dr-label">Mora previsional </span><span class="dr-value ok">0 meses</span></div>
+ <div class="dr-row"><span class="dr-label">Continuidad IVA </span><span class="dr-value ok">12/12 meses</span></div>
+ <div style="margin-top:.75rem"><div style="font-family:var(--font-mono);font-size:.6rem;letter-spacing:1.5px;color:var(--text-muted);text-transform:uppercase;margin-bottom:.5rem">Fuentes consultadas</div>
+ <div class="fuentes-grid">
+ <div class="fuente-box"><div class="fuente-src">TGR</div><div class="fuente-st warn">CON DEUDA</div><div class="fuente-det">$28M vigente</div></div>
+ <div class="fuente-box"><div class="fuente-src">Sheriff</div><div class="fuente-st ok">Sin mora prev.</div><div class="fuente-det">0 meses</div></div>
+ <div class="fuente-box"><div class="fuente-src">DimRepo &#183; Interno</div><div class="fuente-st ok">14 ops OK</div><div class="fuente-det">3 a&#241;os historial</div></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <!-- Ficha Deudor derecha -->
+ <div class="ficha-card blurb-boxed rounded-3 p-0">
+ <div class="ficha-head py-2" style="background:rgba(16,185,129,.04);border-bottom:1px solid rgba(16,185,129,.15)">
+ <div><div class="ficha-title">Ficha Deudor &#8212; SC-03</div><div class="ficha-sub">Transportes R&#225;pido SpA &#183; 76.987.123-2</div></div>
+ <span class="ficha-chip" style="background:rgba(16,185,129,.1);color:var(--success)">790 / BAJO &#183; SC-03</span>
+ </div>
+ <div class="ficha-body">
+ <div class="dr-row"><span class="dr-label">Protestos </span><span class="dr-value ok">Sin protestos</span></div>
+ <div class="dr-row"><span class="dr-label">Juicios vigentes </span><span class="dr-value ok">Sin juicios</span></div>
+ <div class="dr-row"><span class="dr-label">Mora previsional </span><span class="dr-value ok">0 meses</span></div>
+ <div class="dr-row"><span class="dr-label">Score Sheriff </span><span class="dr-value ok">790 &#183; BAJO</span></div>
+ <div class="dr-row"><span class="dr-label">Concentraci&#243;n </span><span class="dr-value ok">22% &#8212; OK</span></div>
+ <div style="margin-top:.75rem"><div style="font-family:var(--font-mono);font-size:.6rem;letter-spacing:1.5px;color:var(--text-muted);text-transform:uppercase;margin-bottom:.5rem">Fuentes consultadas (sin TGR)</div>
+ <div class="fuentes-grid">
+ <div class="fuente-box"><div class="fuente-src">SII</div><div class="fuente-st ok">Activo c/giro</div><div class="fuente-det">existencia_giro OK</div></div>
+ <div class="fuente-box"><div class="fuente-src">Sheriff</div><div class="fuente-st ok">Sin protestos</div><div class="fuente-det">0 protestos</div></div>
+ <div class="fuente-box"><div class="fuente-src">Sheriff</div><div class="fuente-st ok">Sin juicios</div><div class="fuente-det">0 juicios</div></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="card-dim blurb-boxed rounded-3 p-0">
+ <div class="ficha-head" style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)"><div><div class="ficha-title">Mis Operaciones Activas</div><div class="ficha-sub">Cartera personal &#183; evaluacionId por fila &#183; modelo SC aplicado</div></div><span class="ficha-chip" style="background:var(--success-light);color:var(--success)">12 vigentes</span></div>
+ <div style="padding:0"><div class="table-responsive"><table class="table-dim table-sm"><thead class="h-login3"><tr><th>evaluacionId</th><th>Cedente</th><th>Deudor</th><th>Monto</th><th>Vencimiento</th><th>SC</th><th>Score</th><th>Estado</th></tr></thead><tbody>
+ <tr><td><span class="eid-tag" style="font-size:.6rem">EVL-220522-1482</span></td><td><strong>Serv. Log. Norte</strong></td><td>Transp. R&#225;pido</td><td><strong>$120M</strong></td><td>15/06/2026</td><td><span class="sc-badge sc-02">SC-02</span></td><td><span class="sc-dot wn"><i class="mdi mdi-circle-medium" style="color:var(--warning)"></i>610 &#183; MEDIO</span></td><td><span class="est-tag rv">CONDICIONADO</span></td></tr>
+ <tr><td><span class="eid-tag" style="font-size:.6rem">EVL-220518-0931</span></td><td><strong>Comercial Austral</strong></td><td>Retail Express</td><td><strong>$88M</strong></td><td>20/06/2026</td><td><span class="sc-badge sc-02">SC-02</span></td><td><span class="sc-dot ok"><i class="mdi mdi-circle-medium" style="color:var(--success)"></i>790 &#183; BAJO</span></td><td><span class="est-tag vg">APROBADO</span></td></tr>
+ <tr><td><span class="eid-tag" style="font-size:.6rem">EVL-220515-0744</span></td><td><strong>TechImport SpA</strong></td><td>MegaStore Chile</td><td><strong>$245M</strong></td><td>28/06/2026</td><td><span class="sc-badge sc-03">SC-03</span></td><td><span class="sc-dot ok"><i class="mdi mdi-circle-medium" style="color:var(--success)"></i>840 &#183; BAJO</span></td><td><span class="est-tag vg">APROBADO</span></td></tr>
+ <tr><td><span class="eid-tag" style="font-size:.6rem">EVL-220510-0312</span></td><td><strong>Const. Andina</strong></td><td>Municipalidad B.B.</td><td><strong>$67M</strong></td><td>10/06/2026</td><td><span class="sc-badge sc-03">SC-03</span></td><td><span class="sc-dot ok"><i class="mdi mdi-circle-medium" style="color:var(--success)"></i>910 &#183; BAJO</span></td><td><span class="est-tag vg">APROBADO</span></td></tr>
+ <tr><td><span class="eid-tag" style="font-size:.6rem">EVL-220508-0219</span></td><td><strong>Agro Sur Ltda.</strong></td><td>Constructora Norte</td><td><strong>$190M</strong></td><td>08/06/2026</td><td><span class="sc-badge sc-01">SC-01</span></td><td><span class="sc-dot bd"><i class="mdi mdi-circle-medium" style="color:var(--danger)"></i>380 &#183; CR&#205;TICO</span></td><td><span class="est-tag vc">RECHAZADO</span></td></tr>
+ </tbody></table></div></div>
+ </div>
+</div>
+
+<div class="dashboard-view" id="view-rc">
+ <div class="client-selector"><span class="selector-label"><i class="mdi mdi-account-search"></i> Seleccionar cliente</span><div class="selector-btns">
+ <div class="selector-btn active" onclick="selCliente(this,'Agr&#237;cola del Sur Ltda.','77.654.321-K',540,'alto','EST-02 CONDICIONADO','sc2',true)"><i class="mdi mdi-seed"></i> Agr&#237;cola del Sur</div>
+ <div class="selector-btn" onclick="selCliente(this,'Transportes R&#225;pido SpA','76.987.123-2',610,'medio','EST-02 CONDICIONADO','sc2',true)"><i class="mdi mdi-truck"></i> Transportes R&#225;pido</div>
+ <div class="selector-btn" onclick="selCliente(this,'Retail Express Chile','76.222.888-5',790,'bajo','EST-07 MONITOREO','sc2',true)"><i class="mdi mdi-store"></i> Retail Express</div>
+ <div class="selector-btn" onclick="selCliente(this,'Constructora Norte S.A.','76.123.456-7',380,'critico','EST-03 BLOQUEADO','sc1',false)"><i class="mdi mdi-hard-hat"></i> Constructora Norte</div>
+ </div></div>
+ <div class="hero-score blurb-boxed rounded-3">
+ <div class="score-wrap"><div class="score-circle" id="rch-circle" style="border-color:var(--warning);box-shadow:0 0 24px rgba(245,158,11,.2)"><div class="score-num" id="rch-score-num" style="color:var(--warning)">540</div><div class="score-escala">/ 1000</div></div><span class="nivel-badge nivel-alto" id="rch-nivel">ALTO</span><span class="sc-badge sc-02" id="rch-sc">SC-02</span><div class="score-hist" id="rch-hist"><div class="hist-bar" style="height:18px;background:var(--warning)"></div><div class="hist-bar" style="height:22px;background:var(--status-orange)"></div><div class="hist-bar" style="height:19px;background:var(--warning)"></div><div class="hist-bar" style="height:16px;background:var(--danger)"></div><div class="hist-bar" style="height:20px;background:var(--warning)"></div><div class="hist-bar" style="height:24px;background:var(--warning)"></div></div><div style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-muted)">ult. 6 meses</div></div>
+ <div class="hero-info">
+ <div class="hero-name" id="rch-name">Agr&#237;cola del Sur Ltda.</div><div class="hero-rut" id="rch-rut">77.654.321-K</div>
+ <div class="hero-meta"><span class="meta-pill" style="background:var(--warning-light);color:#92400e" id="rch-estado-pill">EST-02 CONDICIONADO</span><span class="meta-pill" style="color:var(--dim-teal);background:var(--dim-teal-light)" id="rch-hist-int">tieneHistoricoInterno: true</span><span class="meta-pill" style="background:var(--gray-100);color:var(--gray-700)">Ejecutivo: Valentina Pino</span></div>
+ <div class="dims-grid" id="rch-dims">
+ <div class="dim-row"><div class="dim-header"><span class="dim-label">Liquidez (20%)</span><span class="dim-value" style="color:var(--danger)">280</span></div><div class="progress-dim"><div class="progress-bar progress-bar-red" style="width:28%"></div></div></div>
+ <div class="dim-row"><div class="dim-header"><span class="dim-label">Legal (15%)</span><span class="dim-value" style="color:var(--warning)">620</span></div><div class="progress-dim"><div class="progress-bar progress-bar-yellow" style="width:62%"></div></div></div>
+ <div class="dim-row"><div class="dim-header"><span class="dim-label">AML (15%)</span><span class="dim-value" style="color:var(--success)">890</span></div><div class="progress-dim"><div class="progress-bar progress-bar-green" style="width:89%"></div></div></div>
+ <div class="dim-row"><div class="dim-header"><span class="dim-label">Estructura (10%)</span><span class="dim-value" style="color:var(--warning)">580</span></div><div class="progress-dim"><div class="progress-bar progress-bar-yellow" style="width:58%"></div></div></div>
+ <div class="dim-row"><div class="dim-header"><span class="dim-label">Due&#241;os (10%)</span><span class="dim-value" style="color:var(--success)">810</span></div><div class="progress-dim"><div class="progress-bar progress-bar-green" style="width:81%"></div></div></div>
+ <div class="dim-row"><div class="dim-header"><span class="dim-label">Comportamiento (30%)</span><span class="dim-value" style="color:var(--warning)">470</span></div><div class="progress-dim"><div class="progress-bar progress-bar-yellow" style="width:47%"></div></div></div>
+ </div>
+ </div>
+ <div style="min-width:200px"><div class="blurb-boxed rounded-3" style="padding:.75rem"><div style="font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:.5rem">L&#237;mites vigentes</div><div style="display:flex;flex-direction:column;gap:.35rem">
+ <div style="display:flex;justify-content:space-between"><span style="font-size:.8rem;color:var(--text-secondary)">Cupo aprobado</span><span style="font-family:var(--font-mono);font-size:.8rem">$200M</span></div>
+ <div style="display:flex;justify-content:space-between"><span style="font-size:.8rem;color:var(--text-secondary)">Cupo utilizado</span><span style="font-family:var(--font-mono);font-size:.8rem;color:var(--warning)">$145M (72%)</span></div>
+ <div style="display:flex;justify-content:space-between"><span style="font-size:.8rem;color:var(--text-secondary)">Plazo m&#225;ximo</span><span style="font-family:var(--font-mono);font-size:.8rem">30 d&#237;as</span></div>
+ <div style="display:flex;justify-content:space-between"><span style="font-size:.8rem;color:var(--text-secondary)">evaluacionId</span><span class="eid-tag">EVL-220521-1103</span></div>
+ </div></div></div>
+ </div>
+ <div class="grid-2">
+ <div class="card-dim blurb-boxed rounded-3 p-0"><div class="card-header-dim py-2" style="background:rgba(245,158,11,.04);border-bottom:1px solid rgba(245,158,11,.15)"><div><h3><i class="mdi mdi-robot"></i> An&#225;lisis Autom&#225;tico</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">SC-02 &#183; Dominio Externo + Dominio Interno</p></div></div><div class="card-body-dim">
+ <div class="auto-block"><div class="auto-ico"><i class="mdi mdi-web"></i></div><div><div class="auto-title">Dominio Externo</div><div class="auto-text"><strong>Mora previsional activa.</strong> TGR sin deuda. Sheriff sin protestos. Continuidad IVA 12/12.</div></div></div>
+ <div class="auto-block int"><div class="auto-ico"><i class="mdi mdi-database-lock"></i></div><div><div class="auto-title">Dominio Interno &#183; DimRepo</div><div class="auto-text">(ddp): 18 d&#237;as. (tasa_recompra): 1.2% bajo umbral. Cliente activo con historial.</div></div></div>
+ <div class="auto-block target"><div class="auto-ico"><i class="mdi mdi-bullseye-arrow"></i></div><div><div class="auto-title">Recomendaci&#243;n SC-02</div><div class="auto-text"><strong style="color:#92400e">Condicionar hasta regularizaci&#243;n previsional.</strong> Si regulariza en 30 d&#237;as, desactiva &#8594; APROBADO.</div></div></div>
+ </div></div>
+ <div class="card-dim blurb-boxed rounded-3"><div class="card-header-dim py-2" style="background:rgba(245,158,11,.04);border-bottom:1px solid rgba(245,158,11,.15)"><div><h3><i class="mdi mdi-lightning-bolt"></i> EVT Activos + Hist&#243;rico WORM</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Eventos de riesgo disparados actualmente</p></div><span class="badge-dim badge-yellow">2 activos</span></div><div class="card-body-dim">
+ <div class="evt-item"><div class="evt-info"><div class="evt-info-name">mora_previsional_alta</div><div class="evt-info-desc">= 3 meses &#183; Umbral = 3</div></div><span class="badge-dim badge-yellow">ALERTA</span></div>
+ <div class="evt-item"><div class="evt-info"><div class="evt-info-name">deterioro_score_cliente (SC-02 delta)</div><div class="evt-info-desc">delta_score = &#8722;110 pts en 90 d&#237;as &#183; umbral = &#8722;50</div></div><span class="badge-dim badge-yellow">ALERTA</span></div>
+ <div style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border-color)"><div style="font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:.5rem">Hist&#243;rico &#183; Almac&#233;n WORM</div>
+ <div class="hist-item"><div class="hist-date">22 May</div><div><div class="hist-action"> &#8212; Alerta revisi&#243;n manual <span class="dec-badge dec-auto"><i class="mdi mdi-robot"></i></span></div><div class="hist-who">Motor DIM-ONE &#183; EvidenceId: EVD-240522-0018</div></div></div>
+ <div class="hist-item"><div class="hist-date">24 Abr</div><div><div class="hist-action"> &#8212; Monitoreo activado <span class="dec-badge dec-auto"><i class="mdi mdi-robot"></i></span></div><div class="hist-who">Sheriff push: nueva mora previsional</div></div></div>
+ <div class="hist-item"><div class="hist-date">10 Mar</div><div><div class="hist-action">Revisi&#243;n manual &#8212; Cupo mantenido <span class="dec-badge dec-manual"><i class="mdi mdi-account"></i></span></div><div class="hist-who">Valentina Pino &#183; CAPA_MANUAL</div></div></div>
+ </div>
+ </div></div>
+ </div>
+</div>
+
+<!-- ====== VIEW RD ====== -->
+<div class="dashboard-view" id="view-rd">
+ <div class="client-selector"><span class="selector-label"><i class="mdi mdi-account-search"></i> Seleccionar deudor</span><div class="selector-btns">
+ <div class="selector-btn active" onclick="selDeudor(this,'Transportes R&#225;pido SpA','76.987.123-2',610,'medio',18,0,22)"><i class="mdi mdi-truck"></i> Transportes R&#225;pido</div>
+ <div class="selector-btn" onclick="selDeudor(this,'Retail Express Chile','76.222.888-5',790,'bajo',4,0,8)"><i class="mdi mdi-store"></i> Retail Express</div>
+ <div class="selector-btn" onclick="selDeudor(this,'Constructora Norte S.A.','76.123.456-7',380,'critico',42,2,31)"><i class="mdi mdi-hard-hat"></i> Constructora Norte</div>
+ <div class="selector-btn" onclick="selDeudor(this,'MegaStore Chile S.A.','77.111.222-3',840,'bajo',3,0,12)"><i class="mdi mdi-cart-outline"></i> MegaStore Chile</div>
+ </div></div>
+ <div class="hero-score blurb-boxed rounded-3" style="gap:2rem;align-items:center">
+ <div class="pago-meter"><div class="pm-circle" id="pm-circle" style="border-color:var(--warning)"><div class="pm-val" id="pm-val" style="color:var(--warning)">18 d&#237;as</div><div class="pm-label">mora prom.</div></div><div class="pm-sublabel">Comportamiento pago</div><span class="nivel-badge nivel-medio" id="rd-nivel">MEDIO</span><span class="sc-badge sc-03" style="margin-top:4px">SC-03 Deudor</span></div>
+ <div>
+ <div class="hero-name" id="rd-name">Transportes R&#225;pido SpA</div><div class="hero-rut" id="rd-rut">76.987.123-2</div>
+ <div class="hero-meta"><span class="meta-pill" style="background:var(--gray-100);color:var(--gray-700)">Score SC-03: <span id="rd-score-pill">610</span></span><span class="meta-pill" style="background:var(--gray-100);color:var(--gray-700)">Rubro: Log&#237;stica</span><span class="meta-pill" style="background:var(--gray-100);color:var(--gray-700)">Cedentes activos: 3</span><span class="meta-pill" style="background:var(--warning-light);color:#92400e" id="rd-estado-pill">EST-D02 DEUDOR_OBSERVADO</span></div>
+ <div class="rd-kpis">
+ <div class="rd-kpi p-2 rounded-3 shadow-in"><div class="rd-kpi-label">Ops. vigentes</div><div class="rd-kpi-val" style="color:var(--status-teal)">14</div></div>
+ <div class="rd-kpi p-2 rounded-3 shadow-in"><div class="rd-kpi-label">Protestos </div><div class="rd-kpi-val" id="rd-protestos" style="color:var(--success)">0</div></div>
+ <div class="rd-kpi p-2 rounded-3 shadow-in"><div class="rd-kpi-label">Concentraci&#243;n </div><div class="rd-kpi-val" id="rd-conc" style="color:var(--warning)">22%</div></div>
+ <div class="rd-kpi p-2 rounded-3 shadow-in"><div class="rd-kpi-label">Score Sheriff </div><div class="rd-kpi-val" id="rd-sheriff-score" style="color:var(--warning)">610</div></div>
+ </div>
+ </div>
+ <div class="auto-block shadow-in" style="margin:0;min-width:230px"><div class="auto-ico"><i class="mdi mdi-robot"></i></div><div><div class="auto-title" style="color:var(--status-teal)">An&#225;lisis SC-03 &#8212; Deudor</div><div class="auto-text">Deudor con <strong>comportamiento de pago consistente.</strong> 14 operaciones sin protesto. Concentraci&#243;n 22% bajo umbral.</div><div style="margin-top:.5rem;padding:.5rem .6rem;background:rgba(16,185,129,.06);border-radius:6px;border:1px solid rgba(16,185,129,.15)"><div class="auto-text" style="color:#065f46">Score Sheriff : 610 &#183; Nivel MEDIO. Sin protestos activos. Sin juicios vigentes. Mora previsional: 0 meses.</div></div></div></div>
+ </div>
+ <div class="grid-2">
+ <div class="card-dim"><div class="card-header-dim"><div><h3><i class="mdi mdi-history"></i> Historial de Operaciones &#183; SC-03</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Comportamiento de pago &#183; evaluacionId por operaci&#243;n</p></div><span class="badge-dim badge-green">14 ops OK</span></div><div class="card-body-dim" style="padding:0"><div class="table-responsive"><table class="table-dim"><thead><tr><th>Cedente</th><th>evaluacionId</th><th>Monto</th><th>Vencimiento</th><th>D&#237;as mora</th><th>Estado</th></tr></thead><tbody>
+ <tr><td style="color:var(--text-secondary)">Serv. Log. Norte</td><td><span class="eid-tag" style="font-size:.6rem">EVL-220522-1482</span></td><td>$120M</td><td>15/06/2026</td><td style="font-family:var(--font-mono)">0 (vigente)</td><td><span class="pago-tag ok"><i class="mdi mdi-check"></i> AL D&#205;A</span></td></tr>
+ <tr><td style="color:var(--text-secondary)">TechImport SpA</td><td><span class="eid-tag" style="font-size:.6rem">EVL-220415-0811</span></td><td>$88M</td><td>28/04/2026</td><td style="font-family:var(--font-mono);color:var(--warning)">12 d&#237;as</td><td><span class="pago-tag leve"><i class="mdi mdi-alert"></i> LEVE</span></td></tr>
+ <tr><td style="color:var(--text-secondary)">Comercial Austral</td><td><span class="eid-tag" style="font-size:.6rem">EVL-220310-0522</span></td><td>$56M</td><td>10/04/2026</td><td style="font-family:var(--font-mono);color:var(--success)">0 d&#237;as</td><td><span class="pago-tag ok"><i class="mdi mdi-check-circle"></i> PUNTUAL</span></td></tr>
+ <tr><td style="color:var(--text-secondary)">Const. Andina</td><td><span class="eid-tag" style="font-size:.6rem">EVL-220220-0299</span></td><td>$34M</td><td>20/03/2026</td><td style="font-family:var(--font-mono);color:var(--warning)">22 d&#237;as</td><td><span class="pago-tag leve"><i class="mdi mdi-alert"></i> LEVE</span></td></tr>
+ <tr><td style="color:var(--text-secondary)">Serv. Log. Norte</td><td><span class="eid-tag" style="font-size:.6rem">EVL-220205-0188</span></td><td>$95M</td><td>05/03/2026</td><td style="font-family:var(--font-mono);color:var(--success)">3 d&#237;as</td><td><span class="pago-tag ok"><i class="mdi mdi-check-circle"></i> PUNTUAL</span></td></tr>
+ </tbody></table></div></div></div>
+ <div class="card-dim"><div class="card-header-dim"><div><h3><i class="mdi mdi-pie-chart"></i> Concentraci&#243;n + Fuentes SC-03</h3><p style="font-size:.75rem;color:var(--text-muted);margin:0">Concentración + fuentes externas consultadas</p></div></div><div class="card-body-dim">
+ <div style="display:flex;flex-direction:column;gap:.2rem;margin-bottom:.75rem">
+ <div class="conc-item"><span class="conc-name">Serv. Log&#237;sticos Norte</span><div class="conc-track"><div class="conc-fill" style="width:50%;background:#3b82f6"></div></div><span class="conc-pct">50%</span></div>
+ <div class="conc-item"><span class="conc-name">TechImport SpA</span><div class="conc-track"><div class="conc-fill" style="width:28%;background:#0ea5e9"></div></div><span class="conc-pct">28%</span></div>
+ <div class="conc-item"><span class="conc-name">Otros (2)</span><div class="conc-track"><div class="conc-fill" style="width:22%;background:#64748b"></div></div><span class="conc-pct">22%</span></div>
+ </div>
+ <div style="padding-top:.75rem;border-top:1px solid var(--border-color)">
+ <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:.6rem">Fuentes externas SC-03</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+ <div class="fuente-box"><div class="fuente-src">SII</div><div class="fuente-st ok">Activo c/giro</div><div class="fuente-det">existencia_giro OK</div></div>
+ <div class="fuente-box"><div class="fuente-src">Sheriff</div><div class="fuente-st ok">Sin protestos</div><div class="fuente-det">0 protestos activos</div></div>
+ <div class="fuente-box"><div class="fuente-src">Sheriff</div><div class="fuente-st ok">Sin juicios</div><div class="fuente-det">0 juicios vigentes</div></div>
+ <div class="fuente-box"><div class="fuente-src">Sheriff</div><div class="fuente-st ok">Sin mora prev.</div><div class="fuente-det">0 meses</div></div>
+ </div>
+
+ </div>
+ </div></div>
+ </div>
+</div>
+        </main>
+    </div>
+    </div>
+      <!-- Footer -->
+            <footer class="dashboard-footer footer text-center justify-content-center d-flex">
+                <i class="mdi mdi-shield-check"></i> DIM-ONE · Motor de Evaluación de Riesgo · Confidencial — Uso Interno
+            </footer>
+</div>
+  <!-- ========== MODALES UF / DÓLAR ========== -->
+        <div id="modalUF" class="modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>Valor UF</h5><button class="btn-close" data-modal-close>&times;</button></div><div class="modal-body">UF actual: <strong>38.245,67</strong> (11-06-2026)<br>Variación última semana: +0.12%</div><div class="modal-footer"><button class="btn-secondary" data-modal-close>Cerrar</button></div></div></div></div>
+        <div id="modalDOLAR" class="modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>Valor Dólar</h5><button class="btn-close" data-modal-close>&times;</button></div><div class="modal-body">Dólar observado: <strong>945,30</strong> (11-06-2026)<br>Tendencia: -0.3% semanal</div><div class="modal-footer"><button class="btn-secondary" data-modal-close>Cerrar</button></div></div></div></div>
+<script>
+const viewMeta={
+ 'view-gg':{title:'GERENCIA GENERAL',breadcrumb:'Gerencia General',av:'GG',role:'Gerencia General'},
+ 'view-gr':{title:'GERENCIA DE RIESGO',breadcrumb:'Gerencia de Riesgo',av:'GR',role:'Gerencia de Riesgo'},
+ 'view-gc':{title:'GERENCIA COMERCIAL',breadcrumb:'Gerencia Comercial',av:'GC',role:'Gerencia Comercial'},
+ 'view-ec':{title:'EJECUTIVO COMERCIAL',breadcrumb:'Ejecutivo Comercial',av:'EC',role:'Ejecutivo Comercial'},
+ 'view-rc':{title:'REP. CLIENTE',breadcrumb:'Rep. Cliente',av:'RC',role:'Rep. Cliente'},
+ 'view-rd':{title:'REP. DEUDOR',breadcrumb:'Rep. Deudor',av:'RD',role:'Rep. Deudor'}
+};
+function switchView(id,el,av){
+ document.querySelectorAll('.dashboard-view').forEach(v=>v.classList.remove('active'));
+ document.querySelectorAll('.side-nav-item').forEach(n=>n.classList.remove('active'));
+ const view=document.getElementById(id);if(view)view.classList.add('active');
+ const navItem=document.getElementById('nav-'+id.replace('view-',''));if(navItem)navItem.classList.add('active');
+ const meta=viewMeta[id];
+ if(meta){document.getElementById('topbarTitle').textContent=meta.title;document.getElementById('breadcrumbRole').textContent=meta.breadcrumb;document.getElementById('userAvatar').textContent=meta.av;document.getElementById('avatarBadge').textContent=meta.av;document.getElementById('userRole').textContent=meta.role;}
+ window.scrollTo(0,0);
+}
+(function updateDate(){
+ const M=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+ const n=new Date();
+ const el=document.getElementById('topbarDate');
+ if(el)el.textContent=String(n.getDate()).padStart(2,'0')+' '+M[n.getMonth()]+' '+n.getFullYear()+' · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+ setTimeout(updateDate,30000);
+})();
+function setTipo(t,el){document.querySelectorAll('.eval-tipo').forEach(e=>e.classList.remove('active'));el.classList.add('active');}
+function simEval(){
+ const R=[{s:820,r:'APROBADO',n:'BAJO',c:'var(--success)',cl:'aprobado',sc:'SC-01 · Cliente Nuevo',m:'$120M',p:'60 días',e:'EST-01 APROBADO'},{s:610,r:'CONDICIONADO',n:'MEDIO',c:'var(--warning)',cl:'condicionado',sc:'SC-02 · Cliente Activo',m:'$80M',p:'30 días',e:'EST-02 CONDICIONADO'},{s:380,r:'RECHAZADO',n:'CRÍTICO',c:'var(--danger)',cl:'rechazado',sc:'SC-01 · Cliente Nuevo',m:'$0',p:'N/A',e:'EST-03 BLOQUEADO'}];
+ const r=R[Math.floor(Math.random()*R.length)];
+ document.getElementById('res-score').textContent=r.s;document.getElementById('res-score').style.color=r.c;
+ document.getElementById('res-resultado').textContent=r.r;document.getElementById('res-resultado').className='result-title '+r.cl;
+ document.getElementById('res-nivel').textContent=r.n;document.getElementById('res-nivel').className='nivel-badge nivel-'+r.n.toLowerCase().replace('í','i');
+ document.getElementById('res-sc').textContent=r.sc;document.getElementById('res-circle').className='result-circle '+r.cl;
+ document.getElementById('sr-monto').textContent=r.m;document.getElementById('sr-monto').style.color=r.c;
+ document.getElementById('sr-plazo').textContent=r.p;document.getElementById('sr-estado').textContent=r.e;
+}
+function selCliente(el,name,rut,score,nivel,estado,sc,hist){
+ document.querySelectorAll('#view-rc .selector-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+ const C={bajo:'var(--success)',medio:'var(--warning)',alto:'var(--status-orange)',critico:'var(--danger)'};const c=C[nivel]||'var(--warning)';
+ document.getElementById('rch-score-num').textContent=score;document.getElementById('rch-score-num').style.color=c;
+ document.getElementById('rch-circle').style.borderColor=c;document.getElementById('rch-circle').style.boxShadow='0 0 20px '+c.replace(')',', .2)').replace('var(','rgba(');
+ document.getElementById('rch-name').textContent=name;document.getElementById('rch-rut').textContent=rut;
+ document.getElementById('rch-nivel').textContent=nivel.toUpperCase();document.getElementById('rch-nivel').className='nivel-badge nivel-'+nivel;
+ document.getElementById('rch-sc').textContent=sc==='sc2'?'SC-02':'SC-01';document.getElementById('rch-sc').className='sc-badge '+(sc==='sc2'?'sc-02':'sc-01');
+ document.getElementById('rch-estado-pill').textContent=estado;
+ document.getElementById('rch-hist-int').textContent='tieneHistoricoInterno: '+(hist?'true':'false');
+}
+function selDeudor(el,name,rut,score,nivel,mora,protestos,conc){
+ document.querySelectorAll('#view-rd .selector-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+ const C={bajo:'var(--success)',medio:'var(--warning)',critico:'var(--danger)'};const c=C[nivel]||'var(--warning)';
+ document.getElementById('rd-name').textContent=name;document.getElementById('rd-rut').textContent=rut;
+ document.getElementById('pm-val').textContent=mora+' días';document.getElementById('pm-val').style.color=c;
+ document.getElementById('pm-circle').style.borderColor=c;
+ document.getElementById('rd-nivel').textContent=nivel.toUpperCase();document.getElementById('rd-nivel').className='nivel-badge nivel-'+nivel;
+ document.getElementById('rd-score-pill').textContent=score;document.getElementById('rd-protestos').textContent=protestos;
+ document.getElementById('rd-conc').textContent=conc+'%';document.getElementById('rd-sheriff-score').textContent=score;
+ document.getElementById('rd-estado-pill').textContent=nivel==='bajo'?'EST-D01 DEUDOR_APTO':nivel==='medio'?'EST-D02 DEUDOR_OBSERVADO':'EST-D03 DEUDOR_BLOQUEADO';
+}
+document.addEventListener('DOMContentLoaded',function(){
+ const M=['Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar','Abr','May'];
+ // GG-mora: CC-03 una sola linea
+ const ctxM=document.getElementById('gg-mora');
+ if(ctxM)new Chart(ctxM,{type:'line',data:{labels:M,datasets:[{label:'Mora Real %',data:[4.2,4.0,3.8,3.5,3.4,3.2,3.0,2.8,2.7,2.5,2.4,2.3],borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.08)',tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#ef4444',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{color:'#94a3b8',font:{size:10},boxWidth:12}}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#64748b',font:{size:9},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'},min:1,max:5}}}});
+ const ctxD=document.getElementById('gg-donut');
+ if(ctxD)new Chart(ctxD,{type:'doughnut',data:{labels:['BAJO','MEDIO','ALTO','CRITICO'],datasets:[{data:[68,19,9,4],backgroundColor:['#10b981','#f59e0b','#f97316','#ef4444'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{display:false}}}});
+ const ctxT=document.getElementById('gc-tend');
+ if(ctxT)new Chart(ctxT,{type:'bar',data:{labels:['Dic','Ene','Feb','Mar','Abr','May'],datasets:[
+ {label:'APROBADO',data:[200,195,210,220,235,248],backgroundColor:'rgba(16,185,129,.75)',borderRadius:3,stack:'ops',yAxisID:'y'},
+ {label:'CONDICIONADO',data:[75,80,72,70,65,60],backgroundColor:'rgba(245,158,11,.75)',borderRadius:3,stack:'ops',yAxisID:'y'},
+ {label:'RECHAZADO',data:[55,55,50,48,45,44],backgroundColor:'rgba(239,68,68,.75)',borderRadius:3,stack:'ops',yAxisID:'y'},
+ {label:'Mora %',data:[3.5,3.2,3.0,2.8,2.6,2.3],type:'line',borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.08)',tension:.4,pointRadius:4,pointBackgroundColor:'#3b82f6',borderWidth:2,yAxisID:'y2',stack:undefined}
+ ]},options:{responsive:true,maintainAspectRatio:false,
+ plugins:{legend:{position:'top',labels:{color:'#4b5563',font:{size:10},boxWidth:12,padding:12}}},
+ scales:{
+ x:{stacked:true,ticks:{color:'#6b7280',font:{size:10}},grid:{display:false}},
+ y:{stacked:true,position:'left',ticks:{color:'#6b7280',font:{size:10}},grid:{color:'rgba(0,0,0,.04)'},title:{display:false}},
+ y2:{position:'right',ticks:{color:'#3b82f6',font:{size:10},callback:v=>v+'%'},grid:{display:false},min:0,max:4}
+ }
+ }});
+ const ctxGD=document.getElementById('gc-donut');
+ if(ctxGD)new Chart(ctxGD,{type:'doughnut',data:{labels:['BAJO','MEDIO','ALTO','CRITICO'],datasets:[{data:[68,19,9,4],backgroundColor:['#10b981','#f59e0b','#f97316','#ef4444'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{display:false}}}});
+});
+</script>
+    <!-- Footer -->
+    <script src="assets/js/vendor.min.js"></script>
+    <script src="assets/js/app.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+</body>
+</html>

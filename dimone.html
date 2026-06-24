@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIM-ONE | Portal de Sistemas</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3 -DIM -->
+       <link href="assets/css/app-dim.min.css" rel="stylesheet" type="text/css" class="app-style" />
+    <!-- Icons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <style>
+        :root {
+            --primary: #c81f4b;
+            --primary-light: #e8456f;
+            --primary-dark: #a0183d;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --shadow-glow: 0 0 40px rgba(200, 31, 75, 0.3);
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+            --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --duration-slow: 0.8s;
+            --duration-base: 0.5s;
+            --duration-fast: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            overflow-x: hidden;
+            color: var(--text-primary);
+        }
+
+        /* Timeline Container */
+        #timeline {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Individual Card */
+        .tl-item {
+            position: relative;
+            width: 13%;
+            height: 100vh;
+            overflow: hidden;
+            cursor: pointer;
+            transition: width var(--duration-slow) var(--ease-out-expo);
+            border-right: 1px solid #0f172a;
+        }
+
+        .tl-item:last-child {
+            border-right: none;
+        }
+
+        /* Expanded state (por click) */
+        .tl-item.expanded {
+            width: 37%;
+        }
+
+        /* Background Image */
+        .tl-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transition: 
+                filter var(--duration-slow) var(--ease-out-quart),
+                transform var(--duration-slow) var(--ease-out-expo);
+            filter: grayscale(100%) brightness(0.35) contrast(1.1);
+            transform: scale(1.15);
+        }
+
+        /* Solo coloreado en hover, sin expansión ni contenido extra */
+        .tl-item:hover .tl-bg {
+            filter: grayscale(0%) brightness(0.55) contrast(1.05);
+            transform: scale(1.02);
+        }
+
+        /* Dark Overlay */
+        .tl-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(15, 23, 42, 0.85) 0%,
+                rgba(15, 23, 42, 0.3) 40%,
+                rgba(15, 23, 42, 0.6) 70%,
+                rgba(15, 23, 42, 0.95) 100%
+            );
+            transition: background var(--duration-slow) var(--ease-out-quart);
+            z-index: 1;
+        }
+
+        .tl-item:hover .tl-overlay {
+            background: linear-gradient(
+                180deg,
+                rgba(15, 23, 42, 0.75) 0%,
+                rgba(200, 31, 75, 0.15) 40%,
+                rgba(15, 23, 42, 0.5) 70%,
+                rgba(15, 23, 42, 0.98) 100%
+            );
+        }
+
+        /* Content Container */
+        .tl-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: var(--duration-slow) var(--ease-out-expo);
+        }
+
+        /* Badge Number - Positioned behind the pill */
+        .tl-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.15);
+            background: rgba(200, 31, 75, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 
+                color var(--duration-base) var(--ease-out-quart),
+                background var(--duration-base) var(--ease-out-quart),
+                padding-left var(--duration-slow) var(--ease-out-expo);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .tl-item:hover .tl-badge {
+            color: rgba(255, 255, 255, 0.25);
+            background: rgba(200, 31, 75, 0.15);
+            padding-left: 2rem;
+        }
+
+        /* Title Pill - Sticky to top, full width, no border-radius */
+        .tl-year {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(200, 31, 75, 0.85);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid var(--primary-light);
+            z-index: 4;
+            transition: 
+                background var(--duration-base) var(--ease-out-quart),
+                padding var(--duration-slow) var(--ease-out-expo),
+                box-shadow var(--duration-base) var(--ease-out-quart);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tl-year p {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin: 0;
+            transition: 
+                font-size var(--duration-slow) var(--ease-out-expo),
+                letter-spacing var(--duration-slow) var(--ease-out-expo);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Coloreado sutil en hover del título (sin expansión) */
+        .tl-item:hover .tl-year {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 4px 30px rgba(200, 31, 75, 0.4);
+        }
+
+        .tl-item:hover .tl-year p {
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+        }
+
+        /* Description Area - Oculto por defecto, solo visible en estado expandido */
+        .tl-description {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 
+                opacity var(--duration-base) var(--ease-out-quart),
+                transform var(--duration-slow) var(--ease-out-expo),
+                visibility var(--duration-base) var(--ease-out-quart);
+            width: 80%;
+            max-width: 80%;
+            pointer-events: none;
+        }
+
+        .tl-description h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: 
+                opacity var(--duration-base) 0.1s var(--ease-out-quart),
+                transform var(--duration-slow) 0.1s var(--ease-out-expo);
+        }
+
+        .tl-description p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: 
+                opacity var(--duration-base) 0.2s var(--ease-out-quart),
+                transform var(--duration-slow) 0.2s var(--ease-out-expo);
+        }
+
+        .tl-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 2.5rem;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            opacity: 0;
+            transform: translateY(15px) scale(0.95);
+            transition: 
+                opacity var(--duration-base) 0.3s var(--ease-out-quart),
+                transform var(--duration-slow) 0.3s var(--ease-out-back),
+                background var(--duration-fast) var(--ease-out-quart),
+                color var(--duration-fast) var(--ease-out-quart),
+                border-color var(--duration-fast) var(--ease-out-quart),
+                box-shadow var(--duration-fast) var(--ease-out-quart);
+            pointer-events: auto;
+        }
+
+        .tl-cta:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(200, 31, 75, 0.5);
+            transform: translateY(-3px) scale(1);
+        }
+
+        .tl-cta ion-icon {
+            font-size: 1.2rem;
+            transition: transform var(--duration-fast) var(--ease-out-back);
+        }
+
+        .tl-cta:hover ion-icon {
+            transform: translateX(6px);
+        }
+
+        /* Footer Info - oculto por defecto */
+        .tl-footer {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: 
+                opacity var(--duration-base) 0.4s var(--ease-out-quart),
+                transform var(--duration-slow) 0.4s var(--ease-out-expo),
+                visibility var(--duration-base) 0.4s var(--ease-out-quart);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .tl-footer span {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: color var(--duration-base) var(--ease-out-quart);
+        }
+
+        /* Mostrar contenido solo cuando la tarjeta está expandida (por click) */
+        .tl-item.expanded .tl-description,
+        .tl-item.expanded .tl-footer {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tl-item.expanded .tl-description {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .tl-item.expanded .tl-description h2 {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tl-item.expanded .tl-description p {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tl-item.expanded .tl-cta {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .tl-item.expanded .tl-footer {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .tl-item.expanded .tl-footer span {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Estilo adicional para el título cuando está expandido (similar al hover) */
+        .tl-item.expanded .tl-year {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 4px 30px rgba(200, 31, 75, 0.4);
+        }
+
+        .tl-item.expanded .tl-year p {
+            font-size: 0.95rem;
+            letter-spacing: 4px;
+        }
+
+        /* Active/Focus States */
+        .tl-item:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: -3px;
+        }
+
+        /* Offcanvas Modernization */
+        .offcanvas {
+            background: var(--bg-dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .offcanvas-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 2rem;
+            border-bottom: none;
+        }
+
+        .offcanvas-header h5 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
+            margin: 0;
+        }
+
+        .offcanvas-body {
+            padding: 1.5rem;
+            background: var(--bg-dark);
+        }
+
+        .fun-nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .fun-nav-list li {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideIn 0.5s var(--ease-out-expo) forwards;
+        }
+
+        .fun-nav-list li:nth-child(1) { animation-delay: 0.1s; }
+        .fun-nav-list li:nth-child(2) { animation-delay: 0.15s; }
+        .fun-nav-list li:nth-child(3) { animation-delay: 0.2s; }
+        .fun-nav-list li:nth-child(4) { animation-delay: 0.25s; }
+        .fun-nav-list li:nth-child(5) { animation-delay: 0.3s; }
+        .fun-nav-list li:nth-child(6) { animation-delay: 0.35s; }
+        .fun-nav-list li:nth-child(7) { animation-delay: 0.4s; }
+        .fun-nav-list li:nth-child(8) { animation-delay: 0.45s; }
+        .fun-nav-list li:nth-child(9) { animation-delay: 0.45s; }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .nav-link-module {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.4s var(--ease-out-quart);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+        }
+
+        .nav-link-module:hover {
+            background: rgba(200, 31, 75, 0.1);
+            color: var(--text-primary);
+            border-color: rgba(200, 31, 75, 0.3);
+            transform: translateX(8px);
+        }
+
+        .nav-link-module ion-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            transition: all 0.4s var(--ease-out-back);
+        }
+
+        .nav-link-module:hover ion-icon {
+            transform: scale(1.15);
+            color: var(--primary-light);
+        }
+
+        .nav-link-module span {
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .btn-close-custom {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s var(--ease-out-back);
+            margin-top: 1.5rem;
+        }
+
+        .btn-close-custom:hover {
+            background: var(--primary);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        /* Loading Animation */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s var(--ease-out-quart);
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            #timeline {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .tl-item {
+                width: 100% !important;
+                height: 180px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                transition: height var(--duration-slow) var(--ease-out-expo);
+            }
+
+            /* En móvil la expansión es por altura */
+            .tl-item.expanded {
+                height: 50vh !important;
+                width: 100% !important;
+            }
+            
+            .tl-description {
+                width: 100%;
+                bottom: 10%;
+            }
+            
+            .tl-description h2 {
+                font-size: 1.1rem;
+            }
+            
+            .tl-description p {
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            .tl-cta {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tl-item {
+                height: 140px;
+            }
+            
+            .tl-item.expanded {
+                height: 60vh !important;
+            }
+
+            .tl-badge {
+                height: 44px;
+                font-size: 0.9rem;
+            }
+            
+            .tl-year {
+                padding: 0.75rem 1rem;
+            }
+            
+            .tl-year p {
+                font-size: 0.7rem;
+                letter-spacing: 2px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        a {
+            color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+            text-decoration: none !important;
+        }
+        /* Submenús para offcanvas */
+        .fun-submenu-list {
+            margin-top: 0.5rem;
+            margin-left: 2rem;
+        }
+        .nav-link-submodule {
+            padding: 0.4rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+        .nav-link-submodule:hover {
+            background: rgba(200, 31, 75, 0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="container-fluid m-0 p-0">
+        <section id="timeline">
+            <!-- Card 1: DimFichaCliente (se agrega data-offcanvas) -->
+            <div class="tl-item" tabindex="0" data-offcanvas="slide1" aria-label="DimFichaCliente">
+                <div class="tl-bg" style="background-image: url('img/ficha_cliente.png')"></div>
+                <div class="tl-overlay"></div>
+                <div class="tl-content">
+                    <div class="tl-badge">01</div>
+                    <div class="tl-year">
+                        <p>Dim-FichaCliente</p>
+                    </div>
+                    <div class="tl-description">
+                        <h2>Ficha cliente</h2>
+                        <p>Componente centralizado para registrar y consultar información general del cliente o deudor en DIM-ONE. Incluye datos básicos de identificación, clasificación y referencia operativa, brindando una vista trazable y con acceso controlado. Su alcance excluye la gestión documental integral o evaluación avanzada, enfocándose en mantener consistencia en la operación.</p>
+                        <a href="cec.html" target="_blank" class="tl-cta">
+                            <span>Acceder</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </a>
+                    </div>
+                    <div class="tl-footer">
+                        <span>Sistema Comercial</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Offcanvas 1 -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="slide1" aria-labelledby="slide1Label">
+                <div class="offcanvas-header">
+                    <h5 id="slide1Label">Dim-FichaCliente</h5>
+                </div>
+                <div class="offcanvas-body">
+                    <nav>
+                        <ul class="fun-nav-list">
+                            <li><a class="nav-link-module" href="#"><ion-icon name="business-outline"></ion-icon><span>Entidades</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="person-add-outline"></ion-icon><span>Nueva Entidad</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="shield-checkmark-outline"></ion-icon><span>Control Dual</span></a></li>
+                        </ul>
+                        <button class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Cerrar">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            <!-- Card 2: Dim 720 -->
+            <div class="tl-item" tabindex="0" data-offcanvas="slide2" aria-label="Dim 720">
+                <div class="tl-bg" style="background-image: url('img/dim_720.png')"></div>
+                <div class="tl-overlay"></div>
+                <div class="tl-content">
+                    <div class="tl-badge">02</div>
+                    <div class="tl-year">
+                        <p>Dim-720</p>
+                    </div>
+                    <div class="tl-description">
+                        <h2>Evaluador de Riesgo</h2>
+                        <p>Dim-720 (DIM BO-720): Módulo de soporte para el análisis y control de riesgo, que consolida antecedentes, alertas, trazabilidad y vistas de seguimiento de clientes, deudores y operaciones. Busca dejar evidencia auditable para áreas como Riesgo Factoring, aunque su modelo de evaluación, reglas y automatización requieren un levantamiento posterior con Bancos.</p>
+                        <a href="Maquetas_Dim720_DIMONE_3.html" target="_blank" class="tl-cta">
+                            <span>Acceder</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </a>
+                    </div>
+                    <div class="tl-footer">
+                        <span>Riesgo & Bloqueos</span>
+                    </div>
+                </div>
+            </div>
+        <!-- Offcanvas 2 -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="slide2" aria-labelledby="slide2Label">
+    <div class="offcanvas-header">
+        <h5 id="slide2Label">Dim-720</h5>
+    </div>
+    <div class="offcanvas-body">
+        <nav>
+            <ul class="fun-nav-list">
+                <!-- Ícono de analítica/gráficos para evaluación de mercado externo -->
+                <li><a class="nav-link-module" href="dashboard_720.html" target="_blank"><ion-icon name="analytics-outline"></ion-icon><span>Evaluador Externo</span></a></li>
+                <!-- Ícono de escudo de verificación para el control de riesgo interno -->
+                <li><a class="nav-link-module" href="http://172.27.4.220:8081/" target="_blank"><ion-icon name="shield-checkmark-outline"></ion-icon><span>Evaluador Interno</span></a></li>
+            </ul>
+            <button class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Cerrar">
+                <ion-icon name="close-outline"></ion-icon>
+            </button>
+        </nav>
+    </div>
+</div>
+
+            <!-- Card 3: DimLíneaGlobal -->
+            <div class="tl-item" tabindex="0" data-offcanvas="slide3" aria-label="DimLíneaGlobal">
+                <div class="tl-bg" style="background-image: url('img/linea_global.png')"></div>
+                <div class="tl-overlay"></div>
+                <div class="tl-content">
+                    <div class="tl-badge">03</div>
+                    <div class="tl-year">
+                        <p>Dim-LíneaGlobal</p>
+                    </div>
+                    <div class="tl-description">
+                        <h2>Línea Global</h2>
+                        <p>Centraliza la administración y control de las líneas de financiamiento del banco, permitiendo distribuir la exposición crediticia mediante una estructura jerárquica (global, producto, rol, pagador, proveedor o tipo de documento). Proporciona control granular alineado con políticas de riesgo, asegurando disponibilidad, coherencia estratégica y prevención de sobreasignaciones.</p>
+                        <a href="http://172.27.4.218:8181" target="_blank">
+                        <div class="tl-cta">
+                            <span>Acceder</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </div>
+                        </a>
+
+                    </div>
+
+                    <div class="tl-footer">
+                        <span>Facility Integrado</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Offcanvas 3 -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="slide3" aria-labelledby="slide3Label">
+                <div class="offcanvas-header">
+                    <h5 id="slide3Label">Dim-LíneaGlobal</h5>
+                </div>
+                <div class="offcanvas-body">
+                    <nav>
+                        <ul class="fun-nav-list">
+                            <li><a class="nav-link-module" href="#"><ion-icon name="business-outline"></ion-icon><span>Mantenimiento Linea Global</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="pulse-outline"></ion-icon><span>Control Dual</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="swap-horizontal-outline"></ion-icon><span>Informe Lineas</span></a></li>
+                        </ul>
+                        <button class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Cerrar">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            <!-- Card 4: Factoring -->
+            <div class="tl-item" tabindex="0" data-offcanvas="slide4" aria-label="DimFactoring">
+                <div class="tl-bg" style="background-image: url('img/factoring.png')"></div>
+                <div class="tl-overlay"></div>
+                <div class="tl-content">
+                    <div class="tl-badge">04</div>
+                    <div class="tl-year">
+                        <p>Dim Factoring</p>
+                    </div>
+                    <div class="tl-description">
+                        <h2>Factoring</h2>
+                        <p>Solución core de DIM-ONE para la gestión integral de operaciones de factoring, con modelo multimoneda y multiproducto (Factoring Tradicional, Electrónico y Anticipos). Cubre todo el ciclo operativo: ingreso, simulación, curse, otorgamiento, giro y desembolso, funcionando de manera continua en entornos bancarios.</p>
+                        <a href="panel_general.html" target="_blank">
+                        <div class="tl-cta">
+                            <span>Acceder</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="tl-footer">
+                        <span>Core de Productos</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Offcanvas Factoring 4 -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="slide4" aria-labelledby="slide4Label">
+                <div class="offcanvas-header">
+                    <h5 id="slide4Label">Dim-Factoring</h5>
+                </div>
+                <div class="offcanvas-body">
+                    <nav>
+                        <ul class="fun-nav-list">
+                            <li><a class="nav-link-module" data-bs-toggle="collapse" href="#subCEC" role="button" aria-expanded="true"><ion-icon name="folder-open-outline"></ion-icon><span>CEC (Carpeta Electrónica)</span></a>
+                                <div class="collapse show" id="subCEC">
+                                    <ul class="fun-submenu-list ps-4 py-2 list-unstyled">
+                                        <li><a class="nav-link-submodule" href="#">Mantenedor Cliente</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Mantenedor Deudor</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Cuentas por Cobrar</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Cuentas por Pagar</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Cuentas y No Cedidos</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Solicitud Línea de Financiamiento</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li><a class="nav-link-module" data-bs-toggle="collapse" href="#subComercial" role="button"><ion-icon name="trending-up-outline"></ion-icon><span>Comercial</span></a>
+                                <div class="collapse" id="subComercial">
+                                    <ul class="fun-submenu-list ps-4 py-2 list-unstyled">
+                                        <li><a class="nav-link-submodule" href="#">Módulo de Control</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Asignación Ejecutivos</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Evaluación Cliente/Deudor</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Negociación</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Alertas</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Cuentas y Excedentes</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Solicitud de Prórroga</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li><a class="nav-link-module" data-bs-toggle="collapse" href="#subAprobaciones" role="button"><ion-icon name="checkbox-outline"></ion-icon><span>Aprobaciones</span></a>
+                                <div class="collapse" id="subAprobaciones">
+                                    <ul class="fun-submenu-list ps-4 py-2 list-unstyled">
+                                        <li><a class="nav-link-submodule" href="#">Línea de Financiamiento</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Operaciones</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Pagos</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Prórroga</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Recaudación</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Aplicaciones</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li><a class="nav-link-module" data-bs-toggle="collapse" href="#subOperacion" role="button"><ion-icon name="cog-outline"></ion-icon><span>Operación</span></a>
+                                <div class="collapse" id="subOperacion">
+                                    <ul class="fun-submenu-list ps-4 py-2 list-unstyled">
+                                        <li><a class="nav-link-submodule" href="#">Recepción de Operaciones</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Ingreso de Operación</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Simulación</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Otorgamiento</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Confirmación</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Abono Anticipo</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Consulta de Documentos</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Consulta de Operaciones</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                        <button class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Cerrar">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            <!--Card 5: Dim Core-Factoring-->
+            <div class="tl-item" tabindex="0" data-offcanvas="slide9" aria-label="Dim Core-Factoring">
+                <div class="tl-bg" style="background-image: url('img/Core-factor.png')"></div>
+                <div class="tl-overlay"></div>
+                <div class="tl-content">
+                    <div class="tl-badge">04</div>
+                    <div class="tl-year">
+                        <p>Dim Core-Factoring</p>
+                    </div>
+                    <div class="tl-description">
+                        <h2>Core Factoring</h2>
+                        <p>CORE es el corazón de DIM-ONE: la base que centraliza y gobierna toda la parametrización de tu negocio de Factoring. Desde un único lugar configuras clientes, deudores, bancos, sucursales, tasas, costos y parámetros, con total control y trazabilidad. Una fuente única de verdad que aporta consistencia, agilidad y seguridad a cada operación, lista para escalar con tu institución.</p>
+                        <a href="core_panel.html" target="_blank">
+                        <div class="tl-cta">
+                            <span>Acceder</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="tl-footer">
+                        <span>Core de Productos</span>
+                    </div>
+                </div>
+            </div>
+            <!--offcanvas Core-Factor5-->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="slide9" aria-labelledby="slide9Label">
+                <div class="offcanvas-header">
+                    <h5 id="slide9Label">Dim Core-Factoring</h5>
+                </div>
+                <div class="offcanvas-body">
+                    <nav>
+                        <ul class="fun-nav-list">
+                            <li><a class="nav-link-module" data-bs-toggle="collapse" href="#subGeneral" role="button" aria-expanded="true"><ion-icon name="folder-open-outline"></ion-icon><span>General</span></a>
+                                <div class="collapse show" id="subGeneral">
+                                    <ul class="fun-submenu-list ps-4 py-2 list-unstyled">
+                                        <li><a class="nav-link-submodule" href="#">Mantenedor Cliente</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Mantenedor Deudor</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Ingreso Bancos</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Ingreso Sucursales</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Ingreso Regiones/Comunas</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li><a class="nav-link-module" data-bs-toggle="collapse" href="#subNegocio" role="button"><ion-icon name="trending-up-outline"></ion-icon><span>Negocio</span></a>
+                                <div class="collapse" id="subNegocio">
+                                    <ul class="fun-submenu-list ps-4 py-2 list-unstyled">
+                                        <li><a class="nav-link-submodule" href="#">Costo Fondo</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Paridad</a></li>
+                                        <li><a class="nav-link-submodule" href="#">Tasa Maxima Convencional</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                        <button class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Cerrar">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            <!-- Card 6: Dim BO-Aprobación -->
+            <div class="tl-item" tabindex="0" data-offcanvas="slide5" aria-label="DimBO-Aprobación">
+                <div class="tl-bg" style="background-image: url('img/ceo.png')"></div>
+                <div class="tl-overlay"></div>
+                <div class="tl-content">
+                    <div class="tl-badge">05</div>
+                    <div class="tl-year">
+                        <p>CEO Aprobación</p>
+                    </div>
+                    <div class="tl-description">
+                        <h2>Administración & Control</h2>
+                        <p>Mesa digital de decisión para ejecutivos y alta gerencia, que permite consultar, visar, aprobar o rechazar operaciones de Factoring y Confirming (incluyendo Anticipos, Prórrogas y Excedentes). Con esquema dinámico basado en perfiles, cargos y puntajes, asegura continuidad operacional, acceso seguro, trazabilidad y decisiones acordes a la política de riesgo.</p>
+                       <a href="WorkFlowAprobacion.html" target="_blank">
+                        <div class="tl-cta">
+                            <span>Acceder</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="tl-footer">
+                        <span>Administración Ejecutiva</span>
+                    </div>
+                </div>
+            </div>
+         <!-- Offcanvas 6 -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="slide5" aria-labelledby="slide5Label">
+    <div class="offcanvas-header">
+        <h5 id="slide5Label">CEO Aprobación</h5>
+    </div>
+    <div class="offcanvas-body">
+        <nav>
+            <ul class="fun-nav-list">
+                
+                <!-- 1. Mantención -->
+                <li>
+                    <a class="nav-link-module" data-bs-toggle="collapse" href="#menuMantencion" role="button" aria-expanded="true" aria-controls="menuMantencion">
+                        <!-- Representa la configuración de las reglas y matrices del sistema -->
+                        <ion-icon name="build-outline"></ion-icon>
+                        <span>Mantención</span>
+                    </a>
+                    <div class="collapse show" id="menuMantencion">
+                        <ul class="fun-submenu-list ps-4 list-unstyled">
+                            <li><a class="nav-link-submodule py-1 d-block text-muted" href="#" onclick="mostrarToast('Etapas de Aprobación','info')">Etapas de Aprobación</a></li>
+                            <li><a class="nav-link-submodule py-1 d-block text-muted" href="#" onclick="mostrarToast('Usuario-Nivel-Etapa','info')">Usuario-Nivel-Etapa</a></li>
+                            <li><a class="nav-link-submodule py-1 d-block text-muted" href="#" onclick="mostrarToast('Req. Aprobación Negocio','info')">Req. Aprobación Negocio</a></li>
+                            <li><a class="nav-link-submodule py-1 d-block text-muted" href="#" onclick="mostrarToast('Esquema de Aprobación','info')">Esquema de Aprobación</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- 2. Pizarra de Aprobación -->
+                <li>
+                    <a class="nav-link-module" data-bs-toggle="collapse" href="#menuPizarra" role="button" aria-expanded="false" aria-controls="menuPizarra">
+                        <!-- Representa el tablero operativo o mesa de control de riesgos -->
+                        <ion-icon name="clipboard-outline"></ion-icon>
+                        <span>Pizarra de Aprobación</span>
+                    </a>
+                    <div class="collapse" id="menuPizarra">
+                        <ul class="fun-submenu-list ps-4 list-unstyled">
+                            <li><a class="nav-link-submodule py-1 d-block text-muted active" href="#">Aprobación de Negocio</a></li>
+                            <li><a class="nav-link-submodule py-1 d-block text-muted" href="#" onclick="mostrarToast('Negocios Históricos','info')">Negocios Históricos</a></li>
+                            <li><a class="nav-link-submodule py-1 d-block text-muted" href="#" onclick="mostrarToast('Tiempos de Aprobación','info')">Tiempos de Aprobación</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- 3. Reportes -->
+                <li>
+                    <a class="nav-link-module" data-bs-toggle="collapse" href="#menuReportes" role="button" aria-expanded="false" aria-controls="menuReportes">
+                        <!-- Representa los informes de riesgo, mora y rentabilidad de la mesa -->
+                        <ion-icon name="document-text-outline"></ion-icon>
+                        <span>Reportes</span>
+                    </a>
+                    <div class="collapse" id="menuReportes">
+                        <ul class="fun-submenu-list ps-4 list-unstyled">
+                            <li><a class="nav-link-submodule py-1 d-block text-muted" href="#" onclick="mostrarToast('Cartera por Cliente','info')">Cartera por Cliente</a></li>
+                            <li><a class="nav-link-submodule py-1 d-block text-muted" href="#" onclick="mostrarToast('Mora por Deudor','info')">Mora por Deudor</a></li>
+                            <li><a class="nav-link-submodule py-1 d-block text-muted" href="#" onclick="mostrarToast('Rentabilidad','info')">Rentabilidad</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <button class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Cerrar">
+                <ion-icon name="close-outline"></ion-icon>
+            </button>
+        </nav>
+    </div>
+</div>
+
+            <!-- Card 7: Dim BO-Cobranza -->
+            <div class="tl-item" tabindex="0" data-offcanvas="slide6" aria-label="Dim BO-Cobranza">
+                <div class="tl-bg" style="background-image: url('img/cobranza.png')"></div>
+                <div class="tl-overlay"></div>
+                <div class="tl-content">
+                    <div class="tl-badge">06</div>
+                    <div class="tl-year">
+                        <p>Dim Cobranza</p>
+                    </div>
+                    <div class="tl-description">
+                        <h2>Cobranza</h2>
+                        <p>Administra la cartera en gestión dentro del core operativo, permitiendo asignar documentos a cobradores, registrar gestiones y compromisos de pago, y dar seguimiento estructurado hasta la recaudación o reingreso. Entrega trazabilidad por documento, pagador y gestor, facilitando el control operativo, la priorización y una recuperación eficiente.</p>
+                        <a href="dashboard_cobranza.html" target="_blank">
+                        <div class="tl-cta">
+                            <span>Acceder</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="tl-footer">
+                        <span>Administración de Cartera</span>
+                    </div>
+                </div>
+            </div>  
+            <!-- Offcanvas 7 -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="slide6" aria-labelledby="slide6Label">
+                <div class="offcanvas-header">
+                    <h5 id="slide6Label">Dim Cobranza</h5>
+                </div>
+                <div class="offcanvas-body">
+                    <nav>
+                        <ul class="fun-nav-list">
+                            <li><a class="nav-link-module" href="#"><ion-icon name="headset-outline"></ion-icon><span>Asignación de Cobrador Telefónico</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="arrow-redo-outline"></ion-icon><span>Asignación Especial</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="create-outline"></ion-icon><span>Ingreso Gestión</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="wallet-outline"></ion-icon><span>Cartera Vigente/Morosa</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="call-outline"></ion-icon><span>Gestión Cobranza</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="chatbox-ellipses-outline"></ion-icon><span>Ingreso Código/Comentario</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="search-outline"></ion-icon><span>Consulta Código Descripción y Cobranza</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="cloud-upload-outline"></ion-icon><span>Ingreso Gestión Masiva</span></a></li>
+                        </ul>
+                        <button class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Cerrar">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            <!-- Card 8: Dim BO-Recaudación -->
+            <div class="tl-item" tabindex="0" data-offcanvas="slide7" aria-label="Dim-Cobranza">
+                <div class="tl-bg" style="background-image: url('img/recaudacion.png')"></div>
+                <div class="tl-overlay"></div>
+                <div class="tl-content">
+                    <div class="tl-badge">07</div>
+                    <div class="tl-year">
+                        <p>Dim Recaudación</p>
+                    </div>
+                    <div class="tl-description">
+                        <h2>Recaudación</h2>
+                        <p>Centraliza la gestión de pagos y aplicación de facturas, abarcando procesos manuales, masivos, automatizados y de conciliación de ingresos. Soporta cargos a cuenta, identificación de transferencias e integración con canales bancarios, facilitando la recaudación operativa, la conciliación transaccional y la liberación de líneas de financiamiento asociadas.</p>
+                       <a href="dashboard_recaudacion.html" target="_blank">
+                        <div class="tl-cta">
+                            <span>Acceder</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="tl-footer">
+                        <span>Gestión de Pagos y Facturas</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Offcanvas 8 -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="slide7" aria-labelledby="slide7Label">
+                <div class="offcanvas-header">
+                    <h5 id="slide7Label">Dim Recaudación</h5>
+                </div>
+                <div class="offcanvas-body">
+                    <nav>
+                        <ul class="fun-nav-list">
+                            <li><a class="nav-link-module" href="#"><ion-icon name="cash-outline"></ion-icon><span>Pago Directo</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="bar-chart-outline"></ion-icon><span>Informe de Pagos</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="list-circle-outline"></ion-icon><span>Listado Pagos</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="receipt-outline"></ion-icon><span>Gestion de Pagos</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="refresh-circle-outline"></ion-icon><span>Anulacion Pago</span></a></li>
+                        </ul>
+                        <button class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Cerrar">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            <!-- Card 9: DimRepo -->
+            <div class="tl-item" tabindex="0" data-offcanvas="slide8" aria-label="DimRepo">
+                <div class="tl-bg" style="background-image: url('img/dim_repo.png')"></div>
+                <div class="tl-overlay"></div>
+                <div class="tl-content">
+                    <div class="tl-badge">08</div>
+                    <div class="tl-year">
+                        <p>DimRepo</p>
+                    </div>
+                    <div class="tl-description">
+                        <h2>Reportes & Análisis</h2>
+                        <p>Centraliza la información operativa de DIM-ONE para su consulta, explotación en línea y generación de reportes. Incluye reportería transversal, integración de datos vía API desde sistemas satélite y procesos desatendidos de generación de archivos, consolidándose como base de inteligencia operativa y trazabilidad para la toma de decisiones.</p>
+                         <a href="http://172.27.4.220:8001/" target="_blank" >
+                        <div class="tl-cta">
+                            <span>Acceder</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="tl-footer">
+                        <span>Business Intelligence</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Offcanvas 9 -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="slide8" aria-labelledby="slide8Label">
+                <div class="offcanvas-header">
+                    <h5 id="slide8Label">DimRepo</h5>
+                </div>
+                <div class="offcanvas-body">
+                    <nav>
+                        <ul class="fun-nav-list">
+                            <li><a class="nav-link-module" href="#"><ion-icon name="receipt-outline"></ion-icon><span>Informe de desembolsos</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="wallet-outline"></ion-icon><span>Cartera por gerente</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="trending-up-outline"></ion-icon><span>Proyección de vencimientos</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="time-outline"></ion-icon><span>Vencimientos LDF Proveedores</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="timer-outline"></ion-icon><span>Vencimientos LDF Pagadores</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="library-outline"></ion-icon><span>Histórico Mensual</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="checkmark-circle-outline"></ion-icon><span>Operaciones Activas</span></a></li>
+                            <li><a class="nav-link-module" href="#"><ion-icon name="checkmark-done-circle-outline"></ion-icon><span>Activas Data Mining</span></a></li>
+                        </ul>
+                        <button class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Cerrar">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 600);
+        });
+
+        // --- NUEVA LÓGICA: Expansión por click y offcanvas sincronizado ---
+        (function() {
+            // Estado global
+            let currentExpandedCard = null;      // Elemento DOM de la tarjeta expandida actual
+            let currentOffcanvas = null;          // Instancia de Bootstrap Offcanvas activa
+            let currentOffcanvasCard = null;      // Tarjeta asociada al offcanvas abierto
+
+            // Función para colapsar una tarjeta (remover clase expanded)
+            function collapseCard(cardElement) {
+                if (cardElement && cardElement.classList.contains('expanded')) {
+                    cardElement.classList.remove('expanded');
+                }
+            }
+
+            // Función para expandir una tarjeta (colapsa la anterior antes)
+            function expandCard(cardElement) {
+                if (currentExpandedCard === cardElement) return; // ya está expandida
+                // Colapsar la anterior si existe
+                if (currentExpandedCard) {
+                    collapseCard(currentExpandedCard);
+                }
+                // Expandir la nueva
+                cardElement.classList.add('expanded');
+                currentExpandedCard = cardElement;
+            }
+
+            // Función para cerrar cualquier offcanvas abierto y limpiar referencias
+            function closeAnyOffcanvas() {
+                if (currentOffcanvas) {
+                    currentOffcanvas.hide();
+                    // La limpieza se hará en el evento hidden.bs.offcanvas, pero forzamos aquí también
+                    currentOffcanvas = null;
+                    currentOffcanvasCard = null;
+                }
+            }
+
+            // Función para abrir el offcanvas asociado a una tarjeta
+            function openOffcanvasForCard(cardElement) {
+                const offcanvasId = cardElement.getAttribute('data-offcanvas');
+                if (!offcanvasId) return;
+                const offcanvasElement = document.getElementById(offcanvasId);
+                if (!offcanvasElement) return;
+
+                // Si ya hay un offcanvas abierto de la misma tarjeta, no hacer nada
+                if (currentOffcanvas && currentOffcanvasCard === cardElement) return;
+
+                // Cerrar cualquier offcanvas previo
+                closeAnyOffcanvas();
+
+                // Crear o recuperar instancia de Bootstrap Offcanvas
+                let offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasElement);
+                if (!offcanvasInstance) {
+                    offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement, {
+                        backdrop: true,
+                        keyboard: true
+                    });
+                }
+                // Guardar referencia
+                currentOffcanvas = offcanvasInstance;
+                currentOffcanvasCard = cardElement;
+
+                // Suscribirse al evento hidden para limpiar estado cuando se cierra (por cualquier motivo)
+                const cleanUpHandler = () => {
+                    if (currentOffcanvas === offcanvasInstance) {
+                        currentOffcanvas = null;
+                        currentOffcanvasCard = null;
+                    }
+                    offcanvasElement.removeEventListener('hidden.bs.offcanvas', cleanUpHandler);
+                };
+                offcanvasElement.addEventListener('hidden.bs.offcanvas', cleanUpHandler);
+
+                // Mostrar offcanvas
+                offcanvasInstance.show();
+            }
+
+            // Manejador de clic en cada tarjeta
+            function onCardClick(event) {
+                const card = event.currentTarget;
+                // Evitar propagación si el clic vino desde dentro del botón .tl-cta (para que no interfiera)
+                // Pero ya manejaremos stopPropagation en los enlaces/botones.
+
+                // Determinar si el offcanvas de esta tarjeta está actualmente abierto
+                const isOffcanvasOpenForThis = (currentOffcanvas && currentOffcanvasCard === card);
+
+                // Caso 1: La tarjeta ya está expandida
+                if (card.classList.contains('expanded')) {
+                    if (isOffcanvasOpenForThis) {
+                        // Si el offcanvas está abierto, lo cerramos
+                        closeAnyOffcanvas();
+                    } else {
+                        // Si está expandida pero offcanvas cerrado, lo abrimos
+                        openOffcanvasForCard(card);
+                    }
+                } 
+                // Caso 2: La tarjeta NO está expandida
+                else {
+                    // Cerrar cualquier offcanvas abierto (de otra tarjeta)
+                    if (currentOffcanvas) {
+                        closeAnyOffcanvas();
+                    }
+                    // Expandir esta tarjeta (colapsa la anterior automáticamente)
+                    expandCard(card);
+                    // Nota: NO abrimos offcanvas en este primer click, solo expandimos
+                }
+            }
+
+            // Prevenir que los clics en enlaces o botones dentro de .tl-cta propaguen al manejador de la tarjeta
+            function preventPropagationOnCta() {
+                document.querySelectorAll('.tl-cta').forEach(cta => {
+                    cta.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // Si el enlace tiene href, se navegará normalmente
+                    });
+                });
+            }
+
+            // Inicializar todas las tarjetas: quitar data-bs-toggle y asignar evento click personalizado
+            function initCards() {
+                const cards = document.querySelectorAll('.tl-item');
+                cards.forEach(card => {
+                    // Eliminar cualquier atributo residual que pudiera abrir offcanvas automáticamente
+                    card.removeAttribute('data-bs-toggle');
+                    card.removeAttribute('data-bs-target');
+                    // Asignar nuevo event listener
+                    card.addEventListener('click', onCardClick);
+                });
+                // También aseguramos que ningún offcanvas se abra por atributos data-bs-*
+                // Los offcanvas se manejarán solo mediante JS.
+                preventPropagationOnCta();
+            }
+
+            // Limpiar estado cuando el offcanvas se cierra desde su botón (ya se maneja con evento hidden)
+            // Pero adicionalmente, cuando se oculta cualquier offcanvas por cualquier razón, si la tarjeta asociada
+            // sigue expandida, la dejamos expandida (sin offcanvas). Eso es correcto.
+            
+            // Iniciar la nueva lógica después de cargar el DOM
+            document.addEventListener('DOMContentLoaded', () => {
+                initCards();
+            });
+        })();
+
+        // Keyboard Navigation (mejorado)
+        document.querySelectorAll('.tl-item').forEach(item => {
+            item.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    item.click();
+                }
+            });
+        });
+
+        // Touch device detection (opcional, mantiene funcionalidad)
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+        if (isTouchDevice) {
+            // Pequeña mejora para evitar conflictos en táctil
+            document.querySelectorAll('.tl-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    // no hacemos nada extra, la lógica principal ya maneja
+                });
+            });
+        }
+
+        // Performance: Lazy load images
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.style.backgroundImage = img.style.backgroundImage;
+                        observer.unobserve(img);
+                    }
+                });
+            });
+            document.querySelectorAll('.tl-bg').forEach(bg => {
+                imageObserver.observe(bg);
+            });
+        }
+    </script>
+</body>
+</html>

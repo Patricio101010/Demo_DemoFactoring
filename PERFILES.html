@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es-cl"><head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>PERFILES</title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <link rel="icon" href="img/icon.png" type="image/x-icon" />
+    <!-- Fonts and icons -->
+    <script src="js/plugin/webfont/webfont.min.js"></script>
+    <script>
+        WebFont.load({
+            google: { "families": ["Lato:300,400,700,900"] },
+            custom: {
+                "families": ["Poppins","Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['css/fonts.min.css'] },
+            active: function () {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+
+    <style>
+        .pointer-mouse a:hover {
+            cursor: pointer;           
+        }
+    </style>
+
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/azzara.css">
+    <link rel="stylesheet" href="css/mainsys.css">
+
+</head>
+<body onload="JavaScript:timedRefresh(5000);">
+    <div class="wrapper">
+
+        <div class="main-header d-flex justify-content-between" data-background-color="Dimension">
+            <!-- Logo Header -->
+            <div class="logo-header justify-content-center">
+
+                <a class="logo"> <img src="img/Logo_Himmel_.png" width="120" alt="navbar brand" class="navbar-brand"> </a>
+
+                <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon">
+                        <i class="fa fa-bars"></i>
+                    </span>
+                </button>
+                <button class="topbar-toggler more"><i class="fa fa-ellipsis-v"></i></button>
+                <div class="navbar-minimize">
+                    <button class="btn btn-minimize btn-rounded">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- End Logo Header -->
+
+            <div class="text-center text-bold" style="margin-top: 0.8rem !important;">
+
+            </div>
+
+
+            <!-- Navbar Header -->
+            <div class="navbar navbar-header navbar-expand-lg">
+
+                <div class="">
+                    <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+
+                        <li><a class="logo"> <img src="img/logo_h1.png" width="150" alt="Dimension" class="navbar-brand"> </a><span><img class="pl-3" width="35" src="img/flags/cl_.png"></span>
+                            <span><img class="pl-3" width="35" src="img/flags/pe_.png"></span><span><img class="pl-3" width="35" src="img/flags/co_.png"></span></li>
+
+
+
+                    </ul>
+                </div>
+            </div>
+            <!-- End Navbar -->
+
+
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+
+            <div class="sidebar-background"></div>
+            <div class="scroll-wrapper sidebar-wrapper scrollbar-inner" style="position: relative;"><div class="sidebar-wrapper scrollbar-inner scroll-content" style="height: 909px; margin-bottom: 0px; margin-right: 0px; max-height: none;">
+                <div class="sidebar-content">
+                    <div class="user">
+                        <div class="avatar-sm float-left mr-2">
+                            <img id="imgPerfilsidebar" src="img/perfilM.png" alt="..." class="avatar-img rounded-circle">
+                        </div>
+                        <div class="info">
+                            <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
+                                <span style="color:#4481b6">
+                                    ana
+                                    <span class="user-level">ADMINISTRADOR</span>
+                                    <span class="caret"></span>
+                                </span>
+                            </a>
+                            <div class="clearfix"></div>
+
+                            <div class="collapse in" id="collapseExample">
+                                <ul class="nav">
+                                    <label class="text-normal pointer-mouse">
+                                        <a >
+                                            <i class="fa  fa-power-off"></i>  Cerrar Sesion
+                                        </a>
+                                    </label>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <ul class="nav navview-menu nav-search">
+                        <li class="nav-item active">
+                            <a>
+                                <i class="fa fa-search search-icon"></i>
+                                <input id="search" type="text" placeholder="  Buscar..." class="form-control">
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navview-menu">
+                        <li id="fixed" class="nav-item active">
+                            <a href="Perfiles.html">
+                                <i class="fas fa-home"></i>
+                                <p>SISTEMAS </p>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <nav class="navview-pane">
+                        <ul class="nav navview-menu">
+
+
+                            <li class="nav-section">
+                                <span class="sidebar-mini-icon">
+                                    <i class="fa fa-ellipsis-h"></i>
+                                </span>
+                                <h3 class="text-section">SERVICIOS</h3>
+                            </li>
+
+                                <li class="nav-section">
+                                    <span class="sidebar-mini-icon">
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </span>
+                                    <h6 class="text-muted pl-4">Sin permisos para acceder al menú</h6>
+                                </li>
+
+                        </ul>
+                    </nav>
+                </div>
+            </div><div class="scroll-element scroll-x"><div class="scroll-element_outer"><div class="scroll-element_size"></div><div class="scroll-element_track"></div><div class="scroll-bar ui-draggable ui-draggable-handle" style="width: 100px;"></div></div></div><div class="scroll-element scroll-y"><div class="scroll-element_outer"><div class="scroll-element_size"></div><div class="scroll-element_track"></div><div class="scroll-bar ui-draggable ui-draggable-handle" style="height: 100px;"></div></div></div></div>
+        </div>
+        <!-- End Sidebar -->
+
+        <div class="main-panel">
+            <div class="content">
+
+
+
+
+
+                
+<style>
+    .image-upload > input {
+        display: none;
+    }
+
+    .pointer-mouse a:hover {
+        cursor: pointer;
+    }
+
+    .pointer-mouse  {
+        cursor: pointer !important;
+    }
+</style>
+
+
+
+
+<div class="row row-card-no-pd">
+    <div class="col-sm-2 col-md-2">
+        <div class="">
+            <div class="text-center">
+                <div class="text-right text-info">
+                    T.C. 29/11/2023
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-md-3">
+        <div class="">
+            <div class="text-center">
+                <div class="text-right ">
+                    Dolar $1
+                    <i class="fa fa-ellipsis-h"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3 col-md-3">
+        <div class="">
+            <div class="text-center">
+                <div class="text-right ">
+                    UF $1
+                    <i class="fa fa-ellipsis-h"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="scene">
+    <div id="left-zone">
+        <ul class="list">
+       
+                <li class="item">
+                    <input type="radio" id="CEO Factoring" name="basic_carousel" value="CEO Factoring" checked="checked">
+                    <label class="label_25" for="CEO Factoring">CEO Factoring</label>
+                    <div class="content content_25">
+                        <span class="picto"></span>
+
+                        <button onclick="location.href='Sistemas.html';" class="btn btn-sm btn-sm-pri" role="button" name="sys" value="CEO Factoring">Ingresar</button>
+                    </div>
+                </li>
+                <li class="item">
+                    <input type="radio" id="Factoring" name="basic_carousel" value="Factoring" checked="checked">
+                    <label class="label_3" for="Factoring">Factoring</label>
+                    <div class="content content_3">
+                        <span class="picto"></span>
+
+                        <button onclick="location.href='Sistemas.html';" class="btn btn-sm btn-sm-pri"  role="button" name="sys" value="Factoring">Ingresar</button>
+                    </div>
+                </li>
+                <li class="item">
+                    <input type="radio" id="Imagenes" name="basic_carousel" value="Imagenes" checked="checked">
+                    <label class="label_24" for="Imagenes">Imagenes</label>
+                    <div class="content content_24">
+                        <span class="picto"></span>
+
+                        <button onclick="location.href='Sistemas.html';" class="btn btn-sm btn-sm-pri"  role="button" name="sys" value="Imagenes">Ingresar</button>
+                    </div>
+                </li>
+       
+        </ul>
+    </div>
+    <div id="middle-border"></div>
+    <div id="right-zone"></div>
+</div>
+
+
+
+<div class="page-sidebar">
+    <header class="sidebar-header d-xl-none">
+        <a class="back">
+            <i class="breadcrumb-icon fa fa-angle-left mr-2"></i>Back
+        </a>
+    </header>
+    <div class="page-sidebar-section pt-lg-4 pb-3">
+        <div class="text-center pt-5 ">
+            <div class="avatar avatar-xxl mb-3 image-upload">
+                <img id="imgPerfil" src="img/perfilM.png" alt="..." class="avatar-img rounded-circle border border-white">
+                <label for="file-input" class="text-normal pointer-mouse">
+                    <i class="fa fas fa-camera"></i> Cambiar imagen
+                </label>
+                <input type="file" id="file-input" onchange="loadFile(event)" name="file-input" accept="image/png, image/gif, image/jpeg">
+            </div>
+            <h4 class="fw-bold" style="color:#4481b6;">ana</h4>
+            <h6 class="text-muted mb-3">ADMINISTRADOR</h6>
+
+            <div class="conversations-action mt-4">
+
+                <a class="action text-normal" style="text-decoration:none" id="alert_demo_5">
+                    <i class="fa fa-eye"></i>
+                    <span>Cambiar contraseña</span>
+                </a>
+                <a  class="action danger" style="text-decoration:none">
+                    <i class="fa fa-power-off"></i>
+                    <span>Cerrar Session</span>
+                </a>              
+            </div>
+            <div class="list-group list-group-file-item list-group-reflow list-group-flush list-group-divider mt-3">
+                <!-- .list-group-header -->
+                <div class="list-group-header"> Ultimos accesos </div>
+                <!-- /.list-group-header -->
+                        <!-- .list-group-item -->
+                        <div class="list-group-item align-items-start">
+
+                            <div class="list-group-item-figure">
+                                <a class="tile tile-circle text-success">
+                                    <span class="fa fa-check-circle "></span>
+                                </a>
+                            </div>
+
+                            <div class="list-group-item-body">
+                                <p class="list-group-item-text">  NUEVO USUARIO (11100) </p>
+                            </div>
+                            <div class="list-group-item-figure">
+                                <button class="btn btn-sm btn-light">
+                                    <i class="fa fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.list-group-item -->
+                        <!-- .list-group-item -->
+                        <div class="list-group-item align-items-start">
+
+                            <div class="list-group-item-figure">
+                                <a class="tile tile-circle text-success">
+                                    <span class="fa fa-check-circle "></span>
+                                </a>
+                            </div>
+
+                            <div class="list-group-item-body">
+                                <p class="list-group-item-text">  MODIFICAR USUARIO (11200) </p>
+                            </div>
+                            <div class="list-group-item-figure">
+                                <button class="btn btn-sm btn-light">
+                                    <i class="fa fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.list-group-item -->
+                        <!-- .list-group-item -->
+                        <div class="list-group-item align-items-start">
+
+                            <div class="list-group-item-figure">
+                                <a class="tile tile-circle text-success">
+                                    <span class="fa fa-check-circle "></span>
+                                </a>
+                            </div>
+
+                            <div class="list-group-item-body">
+                                <p class="list-group-item-text">  MODIFICAR PERFIL (12120) </p>
+                            </div>
+                            <div class="list-group-item-figure">
+                                <button class="btn btn-sm btn-light">
+                                    <i class="fa fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.list-group-item -->
+             
+
+               
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var loadFile = function (event) {
+        var output_ = document.getElementById('imgPerfilsidebar');
+        var output = document.getElementById('imgPerfil');
+        const file = document.querySelector('#file-input').files[0];
+        getBase64(file);
+        output_.src = URL.createObjectURL(event.target.files[0]);
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function () {
+            URL.revokeObjectURL(output.src)
+        }
+        output_.onload = function () {
+            URL.revokeObjectURL(output_.src)
+        }
+    };
+
+    function getBase64(file) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            GrabarImagen(reader.result);
+            //console.log(reader.result);
+        };
+        reader.onerror = function (error) {
+            //  console.log('Error: ', error);
+        };
+    };
+
+    function GrabarImagen(imgbase64) {
+        const http = new XMLHttpRequest();
+        var formdata = new FormData();
+        formdata.append("baseimage", imgbase64);
+        $.ajax({
+            url: "/Sistemas/UploadImg",
+            type: "POST",
+            data: formdata,
+            processData: false,
+            contentType: false
+        });
+    };
+
+
+</script>
+
+<script>
+    //== Class definition
+    var SweetAlert2Demo = function () {
+
+        //== Demos
+        var initDemos = function () {
+
+
+            $('#alert_demo_5').click(function (e) {
+                swal({
+                    title: 'Cambio de contraseña',
+                    intput: "ide",
+                    text: "Verificacion de contraseña, si su contraseña no coincide con la actual su sesion se cerrara, desea continuar?",
+                    content: {
+                        element: "input",
+                        attributes: {
+                            placeholder: "Ingrese su contraseña actual",
+                            type: "text",
+                            id: "Pass",
+                            className: "form-control"
+                        },
+                    },
+                    buttons: {
+                        cancel: {
+                            text: "Cancelar",
+                            visible: true,
+                            className: 'btn btn-danger'
+                        },
+                        confirm: {
+                            text: "Continuar",
+                            className: 'btn btn-success'
+                        }
+                    },
+                }).then((Continuar) => {
+                    if (Continuar) {
+                        var pass = $('#Pass').val();
+                        const http = new XMLHttpRequest();
+                        var formdata = new FormData();
+                        formdata.append("password", pass);                        
+                        var url = '/Pass/PasswordActual';                                            
+                        http.open("POST", url);
+                        http.send(formdata);
+                        http.onreadystatechange = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                var json = JSON.parse(this.responseText);
+                                console.log(json.ok);
+                                if (json.ok == 1) {
+                                    swal({
+                                        title: 'Nueva Contraseña',
+                                        text: "al confirmar su nueva contraseña esta se guardara",
+                                        content: {
+                                            element: "input",
+                                            attributes: {
+                                                placeholder: "Ingrese su nueva contraseña",
+                                                type: "text",
+                                                id: "Passnew",
+                                                className: "form-control"
+                                            },
+                                        },
+                                        buttons: {
+                                            cancel: {
+                                                text: "Cancelar",
+                                                visible: true,
+                                                className: 'btn btn-danger'
+                                            },
+                                            confirm: {
+                                                text: "Confirmar",
+                                                className: 'btn btn-success'
+                                            }
+                                        },
+                                    }).then((Confirmar) => {
+                                        if (Confirmar) {
+                                            var passnew = $('#Passnew').val();
+                                            const http = new XMLHttpRequest();
+                                            var url = '/Pass/Password';
+                                            var formdata_ = new FormData();
+                                            formdata_.append("passnew", passnew);
+                                            console.log(passnew);
+                                            http.open("POST", url);
+                                            http.send(formdata_);
+                                            http.onreadystatechange = function () {
+                                                if (this.readyState == 4 && this.status == 200) {
+                                                    var json = JSON.parse(this.responseText);
+                                                    if (json.ok == 1) {
+                                                        swal({
+                                                            title: 'Cambio Realizado!',
+                                                            text: 'Tu Contraseña ha sido cambiada.',
+                                                            type: 'success',
+                                                            buttons: {
+                                                                confirm: {
+                                                                    className: 'btn btn-success'
+                                                                }
+                                                            }
+                                                        });
+                                                    } else {
+                                                        swal({
+                                                            title: 'Ocurrio un error!',
+                                                            text: json.texto,
+                                                            type: 'warning',
+                                                            buttons: {
+                                                                confirm: {
+                                                                    className: 'btn btn-warning'
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                } else {
+                                                    swal.close();
+                                                }
+
+                                            }
+
+                                        } else {
+                                            swal.close();
+                                        }
+                                    });
+
+
+                                } else {
+                                    swal({
+                                        title: 'Ocurrio un error!',
+                                        text: json.texto,
+                                        type: 'warning',
+                                        buttons: {
+                                            confirm: {
+                                                className: 'btn btn-warning'
+                                            }
+                                        }
+                                    }).then((Cerrar) => {
+                                        window.location.href = '/Index/Salir';
+
+                                    });
+
+
+                                }
+                            } else {
+                                swal.close();
+                            }
+
+                        }
+
+                    } else {
+                        swal.close();
+                    }
+                });
+
+            });
+
+        };
+
+        return {
+            //== Init
+            init: function () {
+                initDemos();
+            },
+        };
+    }();
+
+    //== Class Initialization
+    jQuery(document).ready(function () {
+        SweetAlert2Demo.init();
+    });
+</script>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#search").keyup(function () {
+
+                var filter = $(this).val();
+                $(`nav li:not(.nav-section)`).each(function (index, element) {
+                    const item = $(element);
+
+                    const parentListIsNested = item.closest('ul').hasClass('navview-menu');
+
+                    if (item.text().match(new RegExp(filter, 'gi'))) {
+                        item.fadeIn();
+                        if (parentListIsNested) {
+                            item.closest('ul').addClass('in');
+                        }
+                    } else {
+                        item.fadeOut();
+                        if (parentListIsNested) {
+                            item.closest('ul').removeClass('in');
+                        }
+                    }
+                });
+            });
+        })
+    </script>
+
+
+
+    <!--   Core JS Files   -->
+    <script src="js/core/jquery.3.2.1.min.js"></script>
+    <script src="js/core/popper.min.js"></script>
+    <script src="js/core/bootstrap.min.js"></script>
+
+    <!-- jQuery UI -->
+    <script src="js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script src="js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+
+    <!-- jQuery Scrollbar -->
+    <script src="js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+    <!-- Moment JS -->
+    <script src="js/plugin/moment/moment.min.js"></script>
+    .
+
+    <!-- Chart JS -->
+    <script src="js/plugin/chart.js/chart.min.js"></script>
+
+    <!-- jQuery Sparkline -->
+    <script src="js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+
+    <!-- Chart Circle -->
+    <script src="js/plugin/chart-circle/circles.min.js"></script>
+
+
+    <script src="js/plugin/datepicker/bootstrap-datetimepicker.min.js"></script>
+    <!-- Bootstrap Notify -->
+    <script src="js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+    <!-- Bootstrap Toggle -->
+    <script src="js/plugin/bootstrap-toggle/bootstrap-toggle.min.js"></script>
+
+    <!-- jQuery Vector Maps -->
+    <script src="js/plugin/jqvmap/jquery.vmap.min.js"></script>
+    <script src="js/plugin/jqvmap/maps/jquery.vmap.world.js"></script>
+
+    <!-- Google Maps Plugin -->
+    <script src="js/plugin/gmaps/gmaps.js"></script>
+
+    <!-- Sweet Alert -->
+    <script src="js/plugin/sweetalert/sweetalert.min.js"></script>
+
+    <!-- Azzara JS -->
+    <script src="js/ready.min.js"></script>
+
+    <!-- Datatables -->
+    <script src="js/plugin/datatables/datatables.min.js"></script>
+
+
+<script>
+    var msg = ''; 
+    if(msg)
+    {
+        if (msg.provider == "sweetAlert")
+        {
+            if (msg.question_type == "renovarPorVigencia")
+            {
+                swal({
+                    type: 'info',
+                    title: msg.title,
+                    text: msg.message,
+                    animation: "slide-from-top",
+                    confirmButtonColor: '#5642de',
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    confirmButtonText: 'Sí, renovar',                    
+                    cancelButtonText: 'Mas tarde'
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            swal({
+                                type: 'info',
+                                title: "Confirmación",
+                                text: "¿Se cerrara su sesión, desea continuar?",
+                                animation: "slide-from-top",
+                                confirmButtonColor: '#5642de',
+                                showCancelButton: true,
+                                confirmButtonText: 'Sí, continuar',                                
+                                cancelButtonText: 'Cancelar'
+                            },
+                                function (isConfirm) {
+                                    if (isConfirm) {
+                                        var url = '/Login/RenovarPassPorVigencia?tipo_renovacion=renovar';
+                                        window.location.href = url;
+                                    }
+                                }
+                            );
+                        }
+                    }
+                );
+            }
+            else if (msg.question_type == "primera")
+            {
+                swal({
+                    type: 'info',
+                    title: msg.title,
+                    text: msg.message,
+                    animation: "slide-from-top",
+                    confirmButtonColor: '#5642de',
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    confirmButtonText: 'Actualizar',                    
+                    cancelButtonText: 'Mas tarde'
+                },
+                   function (isConfirm) {
+                                    if (isConfirm) {
+                                        var url = '/Login/RenovarPass?tipo_renovacion=primera&amp;View_Actual=Index&amp;Controller_Actual=Index';
+                                        window.location.href = url;
+                                    }
+                                }
+                );
+            }
+            else if (msg.question_type == "confirmacion_eliminar")
+            {
+                swal({
+                    type: 'info',
+                    title: msg.title,
+                    text: msg.message,
+                    animation: "slide-from-top",
+                    confirmButtonColor: '#5642de',
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    confirmButtonText: 'Eliminar',                    
+                    cancelButtonText: 'Cancelar'
+                },
+                   function (isConfirm) {
+                                    if (isConfirm)
+                                    {
+                                        var url = '/Sistemas/EliminarSistema';
+                                        window.location.href = url;
+                                    }
+                                }
+                );
+            }
+            else {
+                swal({
+                    type: msg.icon,
+                    title: msg.title,
+                    text: msg.message,
+                    confirmButtonColor: '#5642de'//Color coval en HEX
+                });
+            }
+        }
+    }
+</script>
+
+
+
+
